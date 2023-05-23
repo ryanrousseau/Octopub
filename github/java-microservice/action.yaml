@@ -151,11 +151,13 @@ runs:
 
     # Integration tests are performed with Postman using an exported collection.
     - name: Build Postman package
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: >
-        octo pack
+        octopus package zip create
         --id products-microservice-postman
         --version ${{ steps.determine_version.outputs.semVer }}
-        --format zip
         --include test.json
         --basePath postman-products
       shell: bash

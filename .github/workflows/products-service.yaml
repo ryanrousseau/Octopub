@@ -17,17 +17,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # This action provides a way to determine what files were changed with the last push.
-      - name: Get changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v35
-
-      - name: Show changed files
-        run: echo "${{steps.changed-files.outputs.all_modified_files}}"
-        shell: bash
-
       - name: Build Java Microservice
-        #if: contains(steps.changed-files.outputs.all_modified_files, 'java')
         uses: ./github/java-microservice
         with:
           run_number: ${{ github.run_number }}
