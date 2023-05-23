@@ -1,4 +1,4 @@
-name: EKS Deployment
+name: Build
 permissions:
   contents: write
   packages: write
@@ -30,8 +30,6 @@ jobs:
         if: contains(steps.changed-files.outputs.all_modified_files, 'java')
         uses: ./github/java-microservice
         with:
-          image_tag: ${{ steps.ecr_products_resources.outputs.aws_ecr_repository_url }}
-          postman_image_tag: ${{ steps.ecr_postman_resources.outputs.aws_ecr_repository_url }}
           run_number: ${{ github.run_number }}
           github_repo: ${{ github.repository }}
           github_token: ${{ github.token }}

@@ -29,6 +29,11 @@ runs:
     - name: Clone code repo
       uses: actions/checkout@v2
 
+    - name: Install Octopus CLI 🐙
+      uses: OctopusDeploy/install-octopus-cli-action@v3
+      with:
+        version: 'latest'
+
     - name: Get branch name
       id: branch-name
       uses: tj-actions/branch-names@v7
