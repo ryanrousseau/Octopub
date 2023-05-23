@@ -127,10 +127,9 @@ runs:
     # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
     - name: Build SBOM package
       run: >
-        octo pack
+        octopus package zip create
         --id products-microservice-sbom
         --version ${{ steps.determine_version.outputs.semVer }}
-        --format zip
         --include **/bom.xml
       shell: bash
       working-directory: java/products-microservice
