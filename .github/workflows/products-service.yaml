@@ -27,7 +27,7 @@ jobs:
         shell: bash
 
       - name: Build Java Microservice
-        if: contains(steps.changed-files.outputs.all_modified_files, 'java')
+        #if: contains(steps.changed-files.outputs.all_modified_files, 'java')
         uses: ./github/java-microservice
         with:
           run_number: ${{ github.run_number }}
