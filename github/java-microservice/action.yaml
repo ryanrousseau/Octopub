@@ -1,12 +1,6 @@
 name: Docker Build and Push
 description: Build the Java microservice
 inputs:
-  image_tag:
-    description: 'The ECR Docker products service image tag'
-    required: true
-  postman_image_tag:
-    description: 'The ECR Docker postman worker image tag'
-    required: true
   run_number:
     required: true
     description: The GitHub Actions Workflow run number
@@ -21,6 +15,12 @@ inputs:
     required: true
   dockerhub_password:
     description: 'The dockerhub password'
+    required: true
+  octopus_url:
+    description: 'The octopus server'
+    required: true
+  octopus_apikey:
+    description: 'The octopus apikey'
     required: true
 
 runs:
@@ -126,6 +126,9 @@ runs:
 
     # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
     - name: Build SBOM package
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: >
         octopus package zip create
         --id products-microservice-sbom
