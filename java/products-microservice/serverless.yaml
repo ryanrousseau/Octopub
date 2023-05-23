@@ -1,0 +1,207 @@
+service: products-microservice
+
+params:
+  default:
+    # Note this value must be changed for each deployment, as S3 buckets must have globally unique names
+    tenantName: ""
+
+provider:
+  name: aws
+  runtime: java11
+  region: us-west-1
+  stackName: ${param:tenantName}products-microservice-${sls:stage}
+  environment:
+    DATABASE_HOSTNAME: ${self:custom.AURORA.HOST}
+    DATABASE_PORT: ${self:custom.AURORA.PORT}
+    DATABASE_NAME: ${self:custom.AURORA.DB_NAME}
+    DATABASE_USERNAME: ${self:custom.AURORA.USERNAME}
+    DATABASE_PASSWORD: ${self:custom.AURORA.PASSWORD}
+
+package:
+  artifact: target/function.zip
+
+functions:
+  productsdb:
+    handler: not.used
+    runtime: provided
+    timeout: 300
+    environment:
+      LAMBDA_NAME: DatabaseInit
+    vpc:
+      securityGroupIds:
+        - !Ref InstanceSecurityGroup
+      subnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+  products:
+    handler: not.used
+    runtime: provided
+    timeout: 30
+    vpc:
+      securityGroupIds:
+        - !Ref InstanceSecurityGroup
+      subnetIds:
+        - !Ref SubnetA
+        - !Ref SubnetB
+    events:
+      - http:
+          path: /api/products
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Routing
+              - Data-Partition
+            allowCredentials: false
+      - http:
+          path: /api/products/{id}
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Routing
+              - Data-Partition
+            allowCredentials: false
+      - http:
+          path: /api/products
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Routing
+              - Data-Partition
+            allowCredentials: false
+      - http:
+          path: /health/products/GET
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Routing
+              - Data-Partition
+            allowCredentials: false
+      - http:
+          path: /health/products/{id}/GET
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Routing
+              - Data-Partition
+            allowCredentials: false
+      - http:
+          path: /health/products/POST
+          method: get
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Routing
+              - Data-Partition
+            allowCredentials: false
+
+custom:
+  AURORA:
+    DB_NAME: aurora${sls:stage}
+    USERNAME: admin
+    PASSWORD: Password01!
+    HOST:
+      Fn::GetAtt: [RDSCluster, Endpoint.Address]
+    PORT:
+      Fn::GetAtt: [RDSCluster, Endpoint.Port]
+    VPC_CIDR: 10
+
+# Build a public/private VPC with 4 subnets: 2 private hosting the Aurora database, and 2 public
+# hosting the lambdas.
+# Then build a serverless Aurora v2 database.
+resources:
+  Resources:
+    VPC:
+      Type: "AWS::EC2::VPC"
+      Properties:
+        CidrBlock: "10.0.0.0/16"
+        Tags:
+          - Key: "Name"
+            Value: "Product microservice"
+
+    SubnetA:
+      Type: "AWS::EC2::Subnet"
+      Properties:
+        AvailabilityZone: !Select
+          - 0
+          - !GetAZs
+            Ref: 'AWS::Region'
+        VpcId: !Ref "VPC"
+        CidrBlock: "10.0.0.0/24"
+
+    SubnetB:
+      Type: "AWS::EC2::Subnet"
+      Properties:
+        AvailabilityZone: !Select
+          - 1
+          - !GetAZs
+            Ref: 'AWS::Region'
+        VpcId: !Ref "VPC"
+        CidrBlock: "10.0.1.0/24"
+
+    RouteTable:
+      Type: "AWS::EC2::RouteTable"
+      Properties:
+        VpcId: !Ref "VPC"
+
+    SubnetGroup:
+      Type: "AWS::RDS::DBSubnetGroup"
+      Properties:
+        DBSubnetGroupName: "subnetgroup"
+        DBSubnetGroupDescription: "Subnet Group"
+        SubnetIds:
+          - !Ref "SubnetA"
+          - !Ref "SubnetB"
+
+    InstanceSecurityGroup:
+      Type: "AWS::EC2::SecurityGroup"
+      Properties:
+        GroupName: "Example Security Group"
+        GroupDescription: "RDS traffic"
+        VpcId: !Ref "VPC"
+        SecurityGroupEgress:
+          - IpProtocol: "-1"
+            CidrIp: "0.0.0.0/0"
+
+    InstanceSecurityGroupIngress:
+      Type: "AWS::EC2::SecurityGroupIngress"
+      DependsOn: "InstanceSecurityGroup"
+      Properties:
+        GroupId: !Ref "InstanceSecurityGroup"
+        IpProtocol: "tcp"
+        FromPort: "0"
+        ToPort: "65535"
+        SourceSecurityGroupId: !Ref "InstanceSecurityGroup"
+
+    RDSCluster:
+      Type: "AWS::RDS::DBCluster"
+      Properties:
+        DBSubnetGroupName: !Ref "SubnetGroup"
+        MasterUsername: "admin"
+        MasterUserPassword: "Password01!"
+        DatabaseName: "products"
+        Engine: "aurora"
+        EngineMode: "serverless"
+        VpcSecurityGroupIds:
+          - !Ref "InstanceSecurityGroup"
+        ScalingConfiguration:
+          AutoPause: true
+          MaxCapacity: 16
+          MinCapacity: 2
+          SecondsUntilAutoPause: 300

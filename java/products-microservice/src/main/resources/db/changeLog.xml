@@ -1,0 +1,152 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="mcasperson" id="1">
+        <createTable tableName="product">
+            <column autoIncrement="true" name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="dataPartition" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mcasperson" id="2">
+        <insert tableName="product">
+            <column name="name" value="The 10 Pillars of Pragmatic Kubernetes Deployments"/>
+            <column name="dataPartition" value="main"/>
+        </insert>
+    </changeSet>
+    <changeSet author="mcasperson" id="3">
+        <createTable tableName="REVINFO">
+            <column autoIncrement="true" name="REV" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="REVTSTMP" type="bigint"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="mcasperson" id="4">
+        <createTable tableName="product_AUD">
+            <column name="REV" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="REVTYPE" type="tinyint"/>
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="dataPartition" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="mcasperson" id="5">
+        <addColumn tableName="product">
+            <column name="pdf" type="varchar(255)"/>
+            <column name="epub" type="varchar(255)"/>
+            <column name="image" type="varchar(255)"/>
+            <column name="web" type="varchar(255)"/>
+            <column name="description" type="clob"/>
+        </addColumn>
+        <addColumn tableName="product_AUD">
+            <column name="pdf" type="varchar(255)"/>
+            <column name="epub" type="varchar(255)"/>
+            <column name="image" type="varchar(255)"/>
+            <column name="web" type="varchar(255)"/>
+            <column name="description" type="clob"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="mcasperson" id="6">
+        <update tableName="product">
+            <column name="pdf"
+              value="https://github.com/OctopusDeploy/TenPillarsK8s/releases/latest/download/tenpillarsk8s.pdf"/>
+            <column name="epub"
+              value="https://github.com/OctopusDeploy/TenPillarsK8s/releases/latest/download/tenpillarsk8s.epub"/>
+            <column name="image"
+              value="https://raw.githubusercontent.com/OctopusDeploy/TenPillarsK8s/main/KubernetesPDFcover.png"/>
+            <column name="description"
+              value="Learn how to apply the 10 pillars of pragmatic deployments to your Kubernetes infrastructure with practical tips for configuring Octopus and managing your Kubernetes cluster."/>
+            <where>id = 1</where>
+        </update>
+    </changeSet>
+    <changeSet author="mcasperson" id="7">
+        <insert tableName="product">
+            <column name="dataPartition" value="main"/>
+            <column name="name"
+              value="An introduction to DevOps"/>
+            <column name="web"
+              value="https://octopus.com/blog/introduction-to-devops"/>
+            <column name="image"
+              value="https://i.octopus.com/blog/2022-q2/introduction-to-devops/blogimage-introductiontodevops-2022.png"/>
+            <column name="description"
+              value="In this post, we take a surface-level look at the parts that make up DevOps. We explore the concepts, tools, unique roles, plus explain where Octopus fits in."/>
+        </insert>
+        <insert tableName="product">
+            <column name="dataPartition" value="main"/>
+            <column name="name"
+              value="An introduction to build servers and Continuous Integration"/>
+            <column name="web"
+              value="https://octopus.com/blog/introduction-to-build-servers"/>
+            <column name="image"
+              value="https://i.octopus.com/blog/2022-01/introduction-to-build-servers/blogimage-buildservers.png"/>
+            <column name="description"
+              value="Most development teams understand the importance of version control to coordinate code commits, and build servers to compile and package their software, but Continuous Integration (CI) is a big topic. Over the next few months, we’re going into detail about Continuous Integration and how two of the most popular build servers, Jenkins and GitHub Actions, can help with your CI processes."/>
+        </insert>
+        <insert tableName="product">
+            <column name="dataPartition" value="main"/>
+            <column name="name"
+              value="What is GitOps?"/>
+            <column name="web"
+              value="https://octopus.com/blog/what-is-gitops"/>
+            <column name="image"
+              value="https://i.octopus.com/blog/2022-q2/what-is-gitops/blogimage-whatisgitops-2022.png"/>
+            <column name="description"
+              value=" in this post we look at: The history of GitOps, GitOps goals and ideals, The limitations of GitOps, The tools that support GitOps, The practical implications of adopting GitOps in your own organization"/>
+        </insert>
+    </changeSet>
+    <changeSet author="mcasperson" id="8">
+        <insert tableName="product">
+            <column name="dataPartition" value="main"/>
+            <column name="name"
+              value="The importance of Continuous Delivery"/>
+            <column name="web"
+              value="https://www.dropbox.com/s/ca80kc8hb64ttya/importance-of-cd.pdf?dl=1"/>
+            <column name="image"
+              value="https://user-images.githubusercontent.com/160104/200215794-ee00c136-09e5-44a1-948f-3f2b07465be4.png"/>
+            <column name="description"
+              value="In this white paper, you learn Continuous Delivery principles that will help you meet and exceed your goals."/>
+        </insert>
+        <insert tableName="product">
+            <column name="dataPartition" value="main"/>
+            <column name="name"
+              value="How to map your deployment pipeline"/>
+            <column name="web"
+              value="https://www.dropbox.com/s/2ln1ij7fuqca6hh/map-deployment-pipeline.pdf?dl=1"/>
+            <column name="image"
+              value="https://user-images.githubusercontent.com/160104/200216377-aa2f7d34-ebf0-414f-ab98-a96a27a691b7.png"/>
+            <column name="description"
+              value="Our white paper, How to map your deployment pipeline, addresses the challenges of adopting DevOps for any size team using any tech stack."/>
+        </insert>
+        <insert tableName="product">
+            <column name="dataPartition" value="main"/>
+            <column name="name"
+              value="Measuring Continuous Delivery and DevOps"/>
+            <column name="web"
+              value="https://www.dropbox.com/s/8to2n5l6w70lzui/measuring-cd-and-devops.pdf?dl=1"/>
+            <column name="image"
+              value="https://user-images.githubusercontent.com/160104/200216425-ea9c0f8c-d9ae-4a94-bee9-4a01c37d9a59.png"/>
+            <column name="description"
+              value="Our white paper, Measuring Continuous Delivery and DevOps, helps you measure the impact of software delivery improvements."/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
+

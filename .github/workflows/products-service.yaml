@@ -1,0 +1,39 @@
+name: EKS Deployment
+permissions:
+  contents: write
+  packages: write
+'on':
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '**/*'
+      - '!.github/badges/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      # This action provides a way to determine what files were changed with the last push.
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v35
+
+      - name: Show changed files
+        run: echo "${{steps.changed-files.outputs.all_modified_files}}"
+        shell: bash
+
+      - name: Build Java Microservice
+        if: contains(steps.changed-files.outputs.all_modified_files, 'java')
+        uses: ./github/java-microservice
+        with:
+          image_tag: ${{ steps.ecr_products_resources.outputs.aws_ecr_repository_url }}
+          postman_image_tag: ${{ steps.ecr_postman_resources.outputs.aws_ecr_repository_url }}
+          run_number: ${{ github.run_number }}
+          github_repo: ${{ github.repository }}
+          github_token: ${{ github.token }}
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
