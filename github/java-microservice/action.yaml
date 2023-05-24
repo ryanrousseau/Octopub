@@ -65,6 +65,12 @@ runs:
         distribution: adopt
         cache: 'maven'
 
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub_username }}
+        password: ${{ inputs.dockerhub_password }}
+
     # These are the dependencies that need to be manually installed to support https://github.com/ehsaniara/maven-repository-aws-s3
     - name: Install maven-repository-aws-s3 dependencies
       run: |
@@ -212,19 +218,16 @@ runs:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: >
-        octopus package zip create
-        --id ${{ inputs.service_directory }}-postman
-        --version ${{ steps.determine_version.outputs.semVer }}
-        --include test.json
-        --base-path postman-products
+        if [[ -f "${{ inputs.service_directory }}-postman" ]]
+        then
+          octopus package zip create
+          --id ${{ inputs.service_directory }}-postman
+          --version ${{ steps.determine_version.outputs.semVer }}
+          --include test.json
+          --base-path ${{ inputs.service_directory }}-postman
+        fi
       shell: bash
       working-directory: java
-
-    - name: Login to DockerHub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ inputs.dockerhub_username }}
-        password: ${{ inputs.dockerhub_password }}
 
     # The Postman package is pushed to the Octopus built-in feed.
     - name: Push Postman Package
