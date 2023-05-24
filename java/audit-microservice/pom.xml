@@ -5,7 +5,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>audit-service</artifactId>
   <groupId>com.octopus</groupId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.1.0</version>
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>content-team-apps</artifactId>

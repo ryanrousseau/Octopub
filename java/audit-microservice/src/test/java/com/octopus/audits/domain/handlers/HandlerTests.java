@@ -12,6 +12,7 @@ import com.octopus.audits.BaseTest;
 import com.octopus.audits.domain.entities.Audit;
 import com.octopus.audits.domain.exceptions.EntityNotFound;
 import com.octopus.audits.domain.exceptions.InvalidInput;
+import com.octopus.audits.domain.features.impl.DisableSecurityFeature;
 import com.octopus.audits.domain.handlers.AuditsHandler;
 import com.octopus.audits.domain.handlers.HealthHandler;
 import com.octopus.audits.infrastructure.utilities.LiquidbaseUpdater;
@@ -21,6 +22,8 @@ import java.sql.Timestamp;
 import java.util.List;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+
+import io.quarkus.test.junit.mockito.InjectMock;
 import liquibase.exception.LiquibaseException;
 import lombok.NonNull;
 import org.apache.commons.codec.binary.Base64;
@@ -30,6 +33,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mockito;
 
 @QuarkusTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -47,9 +51,13 @@ public class HandlerTests extends BaseTest {
   @Inject
   ResourceConverter resourceConverter;
 
+  @InjectMock
+  DisableSecurityFeature cognitoDisableAuth;
+
   @BeforeAll
   public void setup() throws SQLException, LiquibaseException {
     liquidbaseUpdater.update();
+    Mockito.when(cognitoDisableAuth.getCognitoAuthDisabled()).thenReturn(true);
   }
 
   @ParameterizedTest
