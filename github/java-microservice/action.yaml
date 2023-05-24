@@ -224,7 +224,7 @@ runs:
           --id ${{ inputs.service_directory }}-postman \
           --version ${{ steps.determine_version.outputs.semVer }} \
           --include test.json \
-          --base-path ${{ inputs.service_directory }}-postman \
+          --base-path ${{ inputs.service_directory }}-postman
         fi
       shell: bash
       working-directory: java
