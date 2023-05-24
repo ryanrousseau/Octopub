@@ -1,0 +1,169 @@
+name: Docker Build and Push
+description: Build the JavaScript frontend
+inputs:
+  run_number:
+    required: true
+    description: The GitHub Actions Workflow run number
+
+runs:
+  using: "composite"
+  steps:
+    - name: Clone code repo
+      uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 14
+        cache: 'npm'
+        cache-dependency-path: js/frontend/yarn.lock
+
+    - name: Install Octopus CLI 🐙
+      uses: OctopusDeploy/install-octopus-cli-action@v3
+      with:
+        version: 'latest'
+
+    - name: Get branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v7
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.15
+      with:
+        versionSpec: 5.x
+
+    - id: determine_version
+      name: Determine Version
+      uses: gittools/actions/gitversion/execute@v0.9.15
+      with:
+        additionalArguments: /overrideconfig mode=Mainline
+
+    - name: Install modules
+      run: yarn install
+      shell: bash
+      working-directory: js/frontend
+
+    - name: Instance CycloneDX
+      run: npm install --global @cyclonedx/cyclonedx-npm
+      shell: bash
+
+    # This step generates a Source Bill of Materials (SBOM) package that captures all the dependencies compiled
+    # into the application.
+    - name: Generate SBOM
+      run: cyclonedx-npm --ignore-npm-errors --output-file bom.xml
+      shell: bash
+      working-directory: js/frontend
+
+    # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
+    - name: Build SBOM package
+      run: >
+        octopus package zip create
+        --id javascript-frontend-sbom
+        --version ${{ steps.determine_version.outputs.semVer }}
+        --include **/bom.xml
+      shell: bash
+      working-directory: js/frontend
+
+    # The SBOM package is pushed to the sales maven feed
+    - name: Push SBOM Package
+      run: |       
+        mvn deploy:deploy-file \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=javascript-frontend-sbom" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=js/frontend/javascript-frontend-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+    - name: Build App
+      run: yarn run build
+      shell: bash
+      working-directory: js/frontend
+
+    - name: Build and deploy serverless package
+      run: |
+        pushd js/frontend
+        zip -r octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml build public/config.json.dot
+        popd
+        mvn deploy:deploy-file \
+        "-DgroupId=com.octopus" \
+        "-DartifactId=octopub-frontend-serverless" \
+        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+        "-Dpackaging=zip" \
+        "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+        "-DrepositoryId=octopus-sales-public-snapshot" \
+        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+    - name: Build image
+      uses: mamezou-tech/buildpacks-action@master
+      if: inputs.image_tag != ''
+      with:
+        image: '${{ inputs.image_tag }}'
+        tag: '${{ steps.determine_version.outputs.semVer }}'
+        path: 'js/frontend'
+        builder: 'heroku/buildpacks:20'
+        buildpacks: 'heroku/nodejs https://cnb-shim.herokuapp.com/v1/heroku-community/static'
+        env: NODE_OPTIONS=--openssl-legacy-provider
+
+    # The Docker image is built and pushed. It uses the same tag as the SBOM package version to allow us to match the
+    # two packages in Octopus.
+    - name: Push image to Dockerhub
+      run: docker push ${{ inputs.image_tag }}:${{ steps.determine_version.outputs.semVer }}
+      shell: bash
+      working-directory: js/frontend
+
+    - name: Build and push static web package
+      run: |
+        pushd js/frontend/build
+        zip -r ../octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip .
+        popd
+        
+        mvn deploy:deploy-file \
+        "-DgroupId=com.octopus" \
+        "-DartifactId=octopub-frontend" \
+        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+        "-Dpackaging=zip" \
+        "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+        "-DrepositoryId=octopus-sales-public-snapshot" \
+        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+    # The Docker image used to run Cypress tests is built and pushed.
+    - name: Build, tag, and push postman image to Amazon ECR
+      if: ${{ env.BRANCH_NAME == 'main' }}
+      run: |
+        cd cypress
+        docker build -t ${{ inputs.cypress_image_tag }} .
+        docker push ${{ inputs.cypress_image_tag }}
+      shell: bash
+      working-directory: js
+
+    - name: Install Cypress modules
+      run: npm install
+      shell: bash
+      working-directory: js/cypress-frontend
+
+    # End-to-end tests are performed with Cypress.
+    - name: Build Cypress package
+      run: >
+        octopus package zip create
+        --id octopub-frontend-cypress
+        --version ${{ steps.determine_version.outputs.semVer }}
+        --out-folder ..
+      shell: bash
+      working-directory: js/cypress-frontend
+
+    # The Cypress package is pushed to the sales maven feed.
+    - name: Push Cypress Package
+      run: |
+        mvn deploy:deploy-file \
+        "-DgroupId=com.octopus" \
+        "-DartifactId=octopub-frontend-cypress" \
+        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+        "-Dpackaging=zip" \
+        "-Dfile=js/octopub-frontend-cypress.${{ steps.determine_version.outputs.semVer }}.zip" \
+        "-DrepositoryId=octopus-sales-public-snapshot" \
+        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash

@@ -17,6 +17,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Configure maven
+        uses: ./github/maven-config
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
       - name: Build Java Microservice
         uses: ./github/products-microservice
         with:
@@ -27,5 +33,8 @@ jobs:
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
           octopus_url: ${{ secrets.OCTOPUS_URL }}
           octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Build JavaScript Frontend
+        uses: ./github/js-frontend
+        with:
+          run_number: ${{ github.run_number }}

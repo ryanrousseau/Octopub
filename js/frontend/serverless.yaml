@@ -1,0 +1,73 @@
+service: octopub-frontend
+plugins:
+  - serverless-s3-sync
+  - serverless-plugin-dot-template
+
+params:
+  default:
+    # Note this value must be changed for each deployment, as S3 buckets must have globally unique names
+    tenantName: ""
+    siteName: ${param:tenantName}octopub-frontend
+
+custom:
+
+  # Process a https://olado.github.io/doT/index.html doT template file
+  dotTemplate:
+    name: Frontend Config
+    input: public/config.json.dot
+    output: build/config.json
+    vars:
+      # Get the product service endpoint from the previously deployed cloud formation stack
+      productServiceEndpoint: ${cf:products-microservice-${sls:stage}.ServiceEndpoint}/api/products
+      productHealthEndpoint: ${cf:products-microservice-${sls:stage}.ServiceEndpoint}/health/products
+      auditEndpoint: /api/audits
+      auditHealthEndpoint: /health/audits
+      title: Octopub
+      frontendVersion: v0.1.0
+      overrideTheme: ""
+  s3Sync:
+    - bucketName: ${param:siteName}
+      localDir: build
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: us-west-1
+  stackName: ${param:tenantName}octopub-frontend-${sls:stage}
+
+resources:
+  Resources:
+    StaticSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: ${param:siteName}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+    StaticSiteS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket:
+          Ref: StaticSite
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal: "*"
+              Action:
+                - s3:GetObject
+              Resource:
+                Fn::Join: [
+                  "", [
+                    "arn:aws:s3:::",
+                    {
+                      "Ref": "StaticSite"
+                    },
+                    "/*"
+                  ]
+                ]
+  Outputs:
+    StaticSite:
+      Value: !Ref StaticSite
+    StaticSiteDomain:
+      Value: !GetAtt StaticSite.DomainName
