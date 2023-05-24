@@ -197,11 +197,10 @@ runs:
         "-DartifactId=products-microservice-sbom" \
         "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
         "-Dpackaging=zip" \
-        "-Dfile=products-microservice-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+        "-Dfile=java/products-microservice/products-microservice-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
         "-DrepositoryId=octopus-sales-public-snapshot" \
         "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
-      working-directory: java/products-microservice
 
     # Integration tests are performed with Postman using an exported collection.
     - name: Build Postman package
@@ -231,11 +230,10 @@ runs:
           "-DartifactId=products-microservice-postman" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
-          "-Dfile=products-microservice-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=java/products-microservice-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
-      working-directory: java
 
     # The Docker image used to run Postman tests is built and pushed.
     - name: Build, tag, and push postman image to Dockerhub
@@ -267,13 +265,17 @@ runs:
           -Dquarkus.native.container-build=true \
           -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
         zip products-service.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml target/function.zip
+      shell: bash
+      working-directory: java/products-microservice
+
+    - name: Deploy serverless package
+      run: |
         ./mvnw deploy:deploy-file \
           "-DgroupId=com.octopus" \
           "-DartifactId=products-service-lambda" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
-          "-Dfile=products-service.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=java/products-microservice/products-service.${{ steps.determine_version.outputs.semVer }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
-      working-directory: java/products-microservice
