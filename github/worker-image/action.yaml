@@ -1,0 +1,37 @@
+name: Docker Build and Push
+description: Build the worker image
+inputs:
+  dockerhub_username:
+    description: 'The dockerhub username'
+    required: true
+  dockerhub_password:
+    description: 'The dockerhub password'
+    required: true
+  service_directory:
+    description: 'The directory holding the microservice'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Clone code repo
+      uses: actions/checkout@v2
+
+    - name: Get branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v7
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub_username }}
+        password: ${{ inputs.dockerhub_password }}
+
+    # The Docker image used to run workers
+    - name: Build, tag, and push worker image to Dockerhub
+      if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
+      run: |
+        docker build -t octopussamples/${{ inputs.service_directory }}-worker-image .
+        docker push octopussamples/${{ inputs.service_directory }}-worker-image
+      shell: bash
+      working-directory: docker/${{ inputs.service_directory }}

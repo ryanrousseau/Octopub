@@ -201,16 +201,6 @@ runs:
         "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
-    # The Docker image used to run Cypress tests is built and pushed.
-    - name: Build, tag, and push cypress image to DockerHub
-      if: ${{ env.BRANCH_NAME == 'main' }}
-      run: |
-        cd cypress
-        docker build -t octopussamples/cypress-worker-image .
-        docker push octopussamples/cypress-worker-image
-      shell: bash
-      working-directory: js
-
     - name: Install Cypress modules
       run: npm install
       shell: bash

@@ -42,4 +42,16 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           service_directory: products-microservice
 
+      - name: Build Postman Worker Image
+        uses: ./github/worker-image
+        with:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          service_directory: postman
 
+      - name: Build Cypress Worker Image
+        uses: ./github/worker-image
+        with:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          service_directory: cypress
