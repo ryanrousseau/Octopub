@@ -192,14 +192,14 @@ runs:
     # The SBOM package is pushed to the Octopus built-in feed.
     - name: Push SBOM Package
       run: |
-        ./mvnw deploy:deploy-file \
-        "-DgroupId=com.octopus" \
-        "-DartifactId=products-microservice-sbom" \
-        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
-        "-Dpackaging=zip" \
-        "-Dfile=java/products-microservice/products-microservice-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
-        "-DrepositoryId=octopus-sales-public-snapshot" \
-        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        mvn deploy:deploy-file \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=products-microservice-sbom" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=java/products-microservice/products-microservice-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
     # Integration tests are performed with Postman using an exported collection.
@@ -225,7 +225,7 @@ runs:
     # The Postman package is pushed to the Octopus built-in feed.
     - name: Push Postman Package
       run: |
-        ./mvnw deploy:deploy-file \
+        mvn deploy:deploy-file \
           "-DgroupId=com.octopus" \
           "-DartifactId=products-microservice-postman" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
@@ -270,7 +270,7 @@ runs:
 
     - name: Deploy serverless package
       run: |
-        ./mvnw deploy:deploy-file \
+        mvn deploy:deploy-file \
           "-DgroupId=com.octopus" \
           "-DartifactId=products-service-lambda" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
