@@ -16,6 +16,7 @@
 
   <modules>
     <module>products-microservice</module>
+    <module>audit-microservice</module>
     <module>microservice-utils</module>
   </modules>
 
