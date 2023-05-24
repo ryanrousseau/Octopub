@@ -28,6 +28,7 @@ import liquibase.exception.LiquibaseException;
 import lombok.NonNull;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,6 +39,9 @@ import org.mockito.Mockito;
 @QuarkusTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HandlerTests extends BaseTest {
+
+  @InjectMock
+  DisableSecurityFeature cognitoDisableAuth;
 
   @Inject
   LiquidbaseUpdater liquidbaseUpdater;
@@ -51,13 +55,14 @@ public class HandlerTests extends BaseTest {
   @Inject
   ResourceConverter resourceConverter;
 
-  @InjectMock
-  DisableSecurityFeature cognitoDisableAuth;
+  @BeforeEach
+  public void beforeEach() {
+    Mockito.when(cognitoDisableAuth.getCognitoAuthDisabled()).thenReturn(true);
+  }
 
   @BeforeAll
   public void setup() throws SQLException, LiquibaseException {
     liquidbaseUpdater.update();
-    Mockito.when(cognitoDisableAuth.getCognitoAuthDisabled()).thenReturn(true);
   }
 
   @ParameterizedTest
