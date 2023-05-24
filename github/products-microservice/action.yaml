@@ -70,6 +70,7 @@ runs:
         do
            split=(${dep//:/ })
            mvn dependency:get \
+            --batch-mode \
             -DrepoUrl=https://repo.maven.apache.org/maven2 \
             -Dartifact=${dep} \
             -Ddest=/usr/share/maven/lib/${split[0]}.${split[1]}.jar
