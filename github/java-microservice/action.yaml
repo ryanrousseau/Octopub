@@ -218,7 +218,7 @@ runs:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: |
-        if [[ -f "${{ inputs.service_directory }}-postman" ]]
+        if [[ -d "${{ inputs.service_directory }}-postman" ]]
         then
           octopus package zip create \
           --id ${{ inputs.service_directory }}-postman \
@@ -231,17 +231,18 @@ runs:
 
     # The Postman package is pushed to the Octopus built-in feed.
     - name: Push Postman Package
-      env:
-        AWS_DEFAULT_REGION: ap-southeast-2
       run: |
-        mvn deploy:deploy-file \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-postman" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        if [[ -f "java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-postman" \
+            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
       shell: bash
 
     # The Docker image is built and pushed. It uses the same tag as the SBOM package version to allow us to match the
