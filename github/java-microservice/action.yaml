@@ -241,16 +241,6 @@ runs:
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
-    # The Docker image used to run Postman tests is built and pushed.
-    - name: Build, tag, and push postman image to Dockerhub
-      if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
-      run: |
-        cd postman
-        docker build -t octopussamples/postman-worker-image .
-        docker push octopussamples/postman-worker-image
-      shell: bash
-      working-directory: java
-
     # The Docker image is built and pushed. It uses the same tag as the SBOM package version to allow us to match the
     # two packages in Octopus.
     - name: Build, tag, and push image to Dockerhub
