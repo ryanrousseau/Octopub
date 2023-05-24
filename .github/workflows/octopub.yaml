@@ -43,7 +43,7 @@ jobs:
           octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          service_directory: audit-service
+          service_directory: audit-microservice
 
       - name: Build JavaScript Frontend
         uses: ./github/js-frontend
