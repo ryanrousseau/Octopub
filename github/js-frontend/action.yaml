@@ -106,6 +106,9 @@ runs:
 
     # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
     - name: Build SBOM package
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: >
         octopus package zip create
         --id javascript-frontend-sbom
@@ -198,6 +201,9 @@ runs:
 
     # End-to-end tests are performed with Cypress.
     - name: Build Cypress package
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: >
         octopus package zip create
         --id octopub-frontend-cypress
