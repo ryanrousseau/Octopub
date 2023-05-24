@@ -10,6 +10,12 @@ inputs:
   aws_secret_access_key:
     description: 'The aws secret access key'
     required: true
+  octopus_url:
+    description: 'The octopus server'
+    required: true
+  octopus_apikey:
+    description: 'The octopus apikey'
+    required: true
 
 runs:
   using: "composite"
@@ -141,13 +147,13 @@ runs:
         zip -r octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml build public/config.json.dot
         popd
         mvn deploy:deploy-file \
-        "-DgroupId=com.octopus" \
-        "-DartifactId=octopub-frontend-serverless" \
-        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
-        "-Dpackaging=zip" \
-        "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
-        "-DrepositoryId=octopus-sales-public-snapshot" \
-        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+          "-DgroupId=com.octopus" \
+          "-DartifactId=octopub-frontend-serverless" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
     - name: Build image

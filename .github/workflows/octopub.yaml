@@ -23,6 +23,8 @@ jobs:
           run_number: ${{ github.run_number }}
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          octopus_url: ${{ secrets.OCTOPUS_URL }}
+          octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
 
       - name: Build Java Microservice
         uses: ./github/products-microservice
