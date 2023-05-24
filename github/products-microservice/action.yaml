@@ -216,14 +216,14 @@ runs:
       shell: bash
       working-directory: java/products-microservice
 
-    - name: Build and push lambda package
-      run: |
-        mv target/function.zip products-microservice-lambda.${{ steps.determine_version.outputs.semVer }}.zip
-        octo push \
-          --package products-microservice-lambda.${{ steps.determine_version.outputs.semVer }}.zip \
-          --server ${{ inputs.octopus_server }} \
-          --apiKey ${{ inputs.octopus_apikey }} \
-          --space "${{ inputs.octopus_space }}" \
-          --overwrite-mode OverwriteExisting
-      shell: bash
-      working-directory: java/products-microservice
+#    - name: Build and push lambda package
+#      run: |
+#        mv target/function.zip products-microservice-lambda.${{ steps.determine_version.outputs.semVer }}.zip
+#        octo push \
+#          --package products-microservice-lambda.${{ steps.determine_version.outputs.semVer }}.zip \
+#          --server ${{ inputs.octopus_server }} \
+#          --apiKey ${{ inputs.octopus_apikey }} \
+#          --space "${{ inputs.octopus_space }}" \
+#          --overwrite-mode OverwriteExisting
+#      shell: bash
+#      working-directory: java/products-microservice

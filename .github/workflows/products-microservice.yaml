@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build Java Microservice
-        uses: ./github/java-microservice
+        uses: ./github/products-microservice
         with:
           run_number: ${{ github.run_number }}
           github_repo: ${{ github.repository }}
