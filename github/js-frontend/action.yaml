@@ -16,6 +16,12 @@ inputs:
   octopus_apikey:
     description: 'The octopus apikey'
     required: true
+  dockerhub_username:
+    description: 'The dockerhub username'
+    required: true
+  dockerhub_password:
+    description: 'The dockerhub password'
+    required: true
 
 runs:
   using: "composite"
@@ -64,6 +70,12 @@ runs:
         EOT
       shell: bash
       working-directory: java
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub_username }}
+        password: ${{ inputs.dockerhub_password }}
 
     - name: Clone code repo
       uses: actions/checkout@v2
