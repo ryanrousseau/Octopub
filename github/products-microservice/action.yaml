@@ -66,6 +66,7 @@ runs:
     # These are the dependencies that need to be manually installed to support https://github.com/ehsaniara/maven-repository-aws-s3
     - name: Install maven-repository-aws-s3 dependencies
       run: |
+        echo "${MAVEN_HOME}"
         for dep in "com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar" "org.apache.httpcomponents:httpcore:4.4.16:jar" "com.amazonaws:aws-java-sdk-s3:1.12.405:jar" "com.amazonaws:aws-java-sdk-core:1.12.405:jar" "com.fasterxml.jackson.core:jackson-core:2.14.2:jar" "com.fasterxml.jackson.core:jackson-databind:2.14.2:jar" "com.fasterxml.jackson.core:jackson-annotations:2.14.2:jar" "joda-time:joda-time:2.12.2:jar" "org.apache.httpcomponents:httpclient:4.5.14:jar"
         do
            split=(${dep//:/ })
