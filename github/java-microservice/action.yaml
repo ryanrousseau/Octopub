@@ -199,8 +199,6 @@ runs:
 
     # The SBOM package is pushed to the Octopus built-in feed.
     - name: Push SBOM Package
-      env:
-        AWS_DEFAULT_REGION: ap-southeast-2
       run: |
         mvn deploy:deploy-file \
           "-DgroupId=com.octopus" \
@@ -229,7 +227,7 @@ runs:
       shell: bash
       working-directory: java
 
-    # The Postman package is pushed to the Octopus built-in feed.
+    # The Postman package is pushed to the maven repo.
     - name: Push Postman Package
       run: |
         if [[ -f "java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" ]]
@@ -256,28 +254,32 @@ runs:
 
     - name: Build and deploy serverless package
       run: |
-        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
-        ./mvnw \
-          --batch-mode package \
-          -P "lambda,native" \
-          -DskipTests \
-          -Dquarkus.profile=faas \
-          -Dquarkus.native.container-build=true \
-          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
-        zip ${{ inputs.service_directory }}.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml target/function.zip
+        if [[ -f "serverless.yaml" ]]
+        then
+          # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+          ./mvnw \
+            --batch-mode package \
+            -P "lambda,native" \
+            -DskipTests \
+            -Dquarkus.profile=faas \
+            -Dquarkus.native.container-build=true \
+            -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
+          zip ${{ inputs.service_directory }}.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml target/function.zip
+        fi
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
     - name: Deploy serverless package
-      env:
-        AWS_DEFAULT_REGION: ap-southeast-2
       run: |
-        mvn deploy:deploy-file \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-lambda" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}.${{ steps.determine_version.outputs.semVer }}.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        if [[ -f "${{ inputs.service_directory }}.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-lambda" \
+            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}.${{ steps.determine_version.outputs.semVer }}.zip" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
       shell: bash
