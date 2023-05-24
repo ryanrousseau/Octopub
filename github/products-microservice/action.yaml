@@ -85,8 +85,8 @@ runs:
           <servers>
             <server>
               <id>octopus-sales-public-snapshot</id>
-              <username>$${ inputs.aws_access_key }}</username>
-              <password>$${ inputs.aws_secret_access_key }}</password>
+              <username>${{ inputs.aws_access_key }}</username>
+              <password>${{ inputs.aws_secret_access_key }}</password>
               <configuration>
                 <region>ap-southeast-2</region>
                 <publicRepository>true</publicRepository>
@@ -94,8 +94,8 @@ runs:
             </server>
             <server>
               <id>octopus-sales-public-release</id>
-              <username>$${ inputs.aws_access_key }}</username>
-              <password>$${ inputs.aws_secret_access_key }}</password>
+              <username>${{ inputs.aws_access_key }}</username>
+              <password>${{ inputs.aws_secret_access_key }}</password>
               <configuration>
                 <region>ap-southeast-2</region>
                 <publicRepository>true</publicRepository>
