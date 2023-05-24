@@ -28,6 +28,9 @@ inputs:
   aws_secret_access_key:
     description: 'The aws secret access key'
     required: true
+  service_directory:
+    description: 'The directory holding the microservice'
+    required: true
 
 runs:
   using: "composite"
@@ -130,7 +133,7 @@ runs:
     - name: Test Backend
       run: ./mvnw --batch-mode test
       shell: bash
-      working-directory: java/products-microservice
+      working-directory: java/${{ inputs.service_directory }}
 
     - name: Test Shared Library
       run: ./mvnw --batch-mode test
@@ -140,15 +143,15 @@ runs:
     - name: Build with Maven
       run: ./mvnw --batch-mode package --file pom.xml -DskipTests
       shell: bash
-      working-directory: java/products-microservice
+      working-directory: java/${{ inputs.service_directory }}
 
     - name: Generate JaCoCo Badges
       uses: cicirello/jacoco-badge-generator@v2
       with:
         generate-branches-badge: true
-        jacoco-csv-file: java/products-microservice/target/jacoco-report/jacoco.csv
-        coverage-badge-filename: products-microservice.svg
-        branches-badge-filename: products-microservice-branches.svg
+        jacoco-csv-file: java/${{ inputs.service_directory }}/target/jacoco-report/jacoco.csv
+        coverage-badge-filename: ${{ inputs.service_directory }}.svg
+        branches-badge-filename: ${{ inputs.service_directory }}-branches.svg
 
     - name: Generate JaCoCo Badges for Shared Library
       uses: cicirello/jacoco-badge-generator@v2
@@ -182,11 +185,11 @@ runs:
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: >
         octopus package zip create
-        --id products-microservice-sbom
+        --id ${{ inputs.service_directory }}-sbom
         --version ${{ steps.determine_version.outputs.semVer }}
         --include **/bom.xml
       shell: bash
-      working-directory: java/products-microservice
+      working-directory: java/${{ inputs.service_directory }}
 
     # The SBOM package is pushed to the Octopus built-in feed.
     - name: Push SBOM Package
@@ -195,10 +198,10 @@ runs:
       run: |
         mvn deploy:deploy-file \
           "-DgroupId=com.octopus" \
-          "-DartifactId=products-microservice-sbom" \
+          "-DartifactId=${{ inputs.service_directory }}-sbom" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
-          "-Dfile=java/products-microservice/products-microservice-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
@@ -210,7 +213,7 @@ runs:
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: >
         octopus package zip create
-        --id products-microservice-postman
+        --id ${{ inputs.service_directory }}-postman
         --version ${{ steps.determine_version.outputs.semVer }}
         --include test.json
         --base-path postman-products
@@ -230,10 +233,10 @@ runs:
       run: |
         mvn deploy:deploy-file \
           "-DgroupId=com.octopus" \
-          "-DartifactId=products-microservice-postman" \
+          "-DartifactId=${{ inputs.service_directory }}-postman" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
-          "-Dfile=java/products-microservice-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
@@ -252,10 +255,10 @@ runs:
     # two packages in Octopus.
     - name: Build, tag, and push image to Dockerhub
       run: |
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub_products:${{ steps.determine_version.outputs.semVer }} .
-        docker push octopussamples/octopub_products:${{ steps.determine_version.outputs.semVer }}
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
+        docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
       shell: bash
-      working-directory: java/products-microservice
+      working-directory: java/${{ inputs.service_directory }}
 
     - name: Build and deploy serverless package
       run: |
@@ -267,9 +270,9 @@ runs:
           -Dquarkus.profile=faas \
           -Dquarkus.native.container-build=true \
           -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
-        zip products-service.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml target/function.zip
+        zip ${{ inputs.service_directory }}.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml target/function.zip
       shell: bash
-      working-directory: java/products-microservice
+      working-directory: java/${{ inputs.service_directory }}
 
     - name: Deploy serverless package
       env:
@@ -277,10 +280,10 @@ runs:
       run: |
         mvn deploy:deploy-file \
           "-DgroupId=com.octopus" \
-          "-DartifactId=products-service-lambda" \
+          "-DartifactId=${{ inputs.service_directory }}-lambda" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
-          "-Dfile=java/products-microservice/products-service.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}.${{ steps.determine_version.outputs.semVer }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash

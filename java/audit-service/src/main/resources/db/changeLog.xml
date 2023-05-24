@@ -1,0 +1,45 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+
+  <changeSet author="mcasperson" id="1">
+    <createTable tableName="audit">
+      <column autoIncrement="true" name="id" type="int">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="dataPartition" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="subject" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="object" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="action" type="varchar(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="encryptedSubject" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column name="encryptedObject" type="boolean">
+        <constraints nullable="false"/>
+      </column>
+      <column name="time" type="timestamp">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+  <!-- Encrypted strings can be pretty long, so these fields need to be expanded. -->
+  <changeSet id="2" author="mcasperson">
+    <modifyDataType tableName="audit" columnName="object" newDataType="varchar(5000)"/>
+    <modifyDataType tableName="audit" columnName="subject" newDataType="varchar(5000)"/>
+  </changeSet>
+</databaseChangeLog>
+
