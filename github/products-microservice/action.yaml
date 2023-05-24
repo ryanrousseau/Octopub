@@ -22,6 +22,13 @@ inputs:
   octopus_apikey:
     description: 'The octopus apikey'
     required: true
+  aws_access_key:
+    description: 'The aws access key'
+    required: true
+  aws_secret_access_key:
+    description: 'The aws secretaccess key'
+    required: true
+
 
 runs:
   using: "composite"
@@ -55,6 +62,50 @@ runs:
         java-version: '17'
         distribution: adopt
         cache: 'maven'
+
+    # These are the dependencies that need to be manually installed to support https://github.com/ehsaniara/maven-repository-aws-s3
+    - name: Install maven-repository-aws-s3 dependencies
+      run: |
+        for dep in "com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar" "org.apache.httpcomponents:httpcore:4.4.16:jar" "com.amazonaws:aws-java-sdk-s3:1.12.405:jar" "com.amazonaws:aws-java-sdk-core:1.12.405:jar" "com.fasterxml.jackson.core:jackson-core:2.14.2:jar" "com.fasterxml.jackson.core:jackson-databind:2.14.2:jar" "com.fasterxml.jackson.core:jackson-annotations:2.14.2:jar" "joda-time:joda-time:2.12.2:jar" "org.apache.httpcomponents:httpclient:4.5.14:jar"
+        do
+           split=(${dep//:/ })
+           mvn dependency:get \
+            -DrepoUrl=https://repo.maven.apache.org/maven2 \
+            -Dartifact=${dep} \
+            -Ddest=/usr/share/maven/lib/${split[0]}.${split[1]}.jar
+        done
+      shell: bash
+      working-directory: java
+
+    - name: Configure maven-repository-aws-s3
+      run: |
+        cat <<EOT >> ~/.m2/settings.xml
+        <settings>
+          <servers>
+            <server>
+              <id>octopus-sales-public-snapshot</id>
+              <username>$${ inputs.aws_access_key }}</username>
+              <password>$${ inputs.aws_secret_access_key }}</password>
+              <configuration>
+                <region>ap-southeast-2</region>
+                <publicRepository>true</publicRepository>
+              </configuration>
+            </server>
+            <server>
+              <id>octopus-sales-public-release</id>
+              <username>$${ inputs.aws_access_key }}</username>
+              <password>$${ inputs.aws_secret_access_key }}</password>
+              <configuration>
+                <region>ap-southeast-2</region>
+                <publicRepository>true</publicRepository>
+              </configuration>
+            </server>
+          </servers>
+        </settings>
+        EOT
+      shell: bash
+      working-directory: java
+
 
     - uses: DeLaGuardo/setup-graalvm@4.0
       with:
@@ -138,16 +189,18 @@ runs:
       working-directory: java/products-microservice
 
     # The SBOM package is pushed to the Octopus built-in feed.
-#    - name: Push SBOM Package
-#      run: >
-#        octo push
-#        --package products-microservice-sbom.${{ steps.determine_version.outputs.semVer }}.zip
-#        --server ${{ inputs.octopus_server }}
-#        --apiKey ${{ inputs.octopus_apikey }}
-#        --space "${{ inputs.octopus_space }}"
-#        --overwrite-mode OverwriteExisting
-#      shell: bash
-#      working-directory: java/products-microservice
+    - name: Push SBOM Package
+      run: |
+        ./mvnw deploy:deploy-file \
+        "-DgroupId=com.octopus" \
+        "-DartifactId=products-microservice-sbom" \
+        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+        "-Dpackaging=zip" \
+        "-Dfile=products-microservice-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+        "-DrepositoryId=octopus-sales-public-snapshot" \
+        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+      working-directory: java/products-microservice
 
     # Integration tests are performed with Postman using an exported collection.
     - name: Build Postman package
@@ -170,16 +223,18 @@ runs:
         password: ${{ inputs.dockerhub_password }}
 
     # The Postman package is pushed to the Octopus built-in feed.
-#    - name: Push Postman Package
-#      run: >
-#        octo push
-#        --package products-microservice-postman.${{ steps.determine_version.outputs.semVer }}.zip
-#        --server ${{ inputs.octopus_server }}
-#        --apiKey ${{ inputs.octopus_apikey }}
-#        --space "${{ inputs.octopus_space }}"
-#        --overwrite-mode OverwriteExisting
-#      shell: bash
-#      working-directory: java
+    - name: Push Postman Package
+      run: |
+        ./mvnw deploy:deploy-file \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=products-microservice-postman" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=products-microservice-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+      working-directory: java
 
     # The Docker image used to run Postman tests is built and pushed.
     - name: Build, tag, and push postman image to Dockerhub
@@ -203,27 +258,21 @@ runs:
     - name: Build and deploy serverless package
       run: |
         # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
-        ./mvnw --batch-mode package -P "lambda,native" -DskipTests -Dquarkus.profile=faas -Dquarkus.native.container-build=true -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
+        ./mvnw \
+          --batch-mode package \
+          -P "lambda,native" \
+          -DskipTests \
+          -Dquarkus.profile=faas \
+          -Dquarkus.native.container-build=true \
+          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
         zip products-service.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml target/function.zip
-        mvn deploy:deploy-file \
-          --batch-mode \
-          -Dfile=products-service.${{ steps.determine_version.outputs.semVer }}.zip \
-          -Durl="https://${{ github.actor }}:${{ inputs.github_token }}@maven.pkg.github.com/${{ github.repository }}" \
-          -DgroupId=com.octopus \
-          -DartifactId=products-service \
-          -Dversion=${{ steps.determine_version.outputs.semVer }} \
-          -Dpackaging=zip
+        ./mvnw deploy:deploy-file \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=products-service-lambda" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=products-service.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
       working-directory: java/products-microservice
-
-#    - name: Build and push lambda package
-#      run: |
-#        mv target/function.zip products-microservice-lambda.${{ steps.determine_version.outputs.semVer }}.zip
-#        octo push \
-#          --package products-microservice-lambda.${{ steps.determine_version.outputs.semVer }}.zip \
-#          --server ${{ inputs.octopus_server }} \
-#          --apiKey ${{ inputs.octopus_apikey }} \
-#          --space "${{ inputs.octopus_space }}" \
-#          --overwrite-mode OverwriteExisting
-#      shell: bash
-#      working-directory: java/products-microservice

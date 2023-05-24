@@ -27,3 +27,5 @@ jobs:
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
           octopus_url: ${{ secrets.OCTOPUS_URL }}
           octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
