@@ -217,14 +217,14 @@ runs:
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: >
+      run: |
         if [[ -f "${{ inputs.service_directory }}-postman" ]]
         then
-          octopus package zip create
-          --id ${{ inputs.service_directory }}-postman
-          --version ${{ steps.determine_version.outputs.semVer }}
-          --include test.json
-          --base-path ${{ inputs.service_directory }}-postman
+          octopus package zip create \
+          --id ${{ inputs.service_directory }}-postman \
+          --version ${{ steps.determine_version.outputs.semVer }} \
+          --include test.json \
+          --base-path ${{ inputs.service_directory }}-postman \
         fi
       shell: bash
       working-directory: java
