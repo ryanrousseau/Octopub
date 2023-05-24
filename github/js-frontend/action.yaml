@@ -158,9 +158,8 @@ runs:
 
     - name: Build image
       uses: mamezou-tech/buildpacks-action@master
-      if: inputs.image_tag != ''
       with:
-        image: '${{ inputs.image_tag }}'
+        image: 'octopub-frontend'
         tag: '${{ steps.determine_version.outputs.semVer }}'
         path: 'js/frontend'
         builder: 'heroku/buildpacks:20'
