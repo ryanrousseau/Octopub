@@ -1,4 +1,4 @@
-name: Build
+name: Build Worker Images
 permissions:
   contents: write
   packages: write
