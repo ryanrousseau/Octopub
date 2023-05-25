@@ -72,6 +72,11 @@ runs:
         password: ${{ inputs.dockerhub_password }}
 
     # These are the dependencies that need to be manually installed to support https://github.com/ehsaniara/maven-repository-aws-s3
+    # Typically the deployment of artifacts is configured in a pom.xml file and executed as part of an application's build.
+    # However, because we are using the Maven feed to host arbitrary artifacts, it is nice to be able to call
+    # "mvn deploy:deploy-file" against any file. This means we don't have the luxury of referencing the
+    # "com.github.ehsaniara:maven-repository-aws-s3" dependency directly in a pom.xml file and having all the necessary
+    # transitive dependencies downloaded for us. Instead, we must download these dependencies manually.
     - name: Install maven-repository-aws-s3 dependencies
       run: |
         HOME=$(dirname $(readlink -f $(which mvn)))

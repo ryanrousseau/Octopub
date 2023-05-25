@@ -155,7 +155,9 @@ runs:
       working-directory: js/frontend
 
     - name: Set version
-      run: jq '.frontendVersion = "v${{ steps.determine_version.outputs.semVer }}"' config.json | sponge config.json
+      run: |
+        jq '.frontendVersion = "v${{ steps.determine_version.outputs.semVer }}"' config.json > /tmp/config.json
+        mv /tmp/config.json config.json
       shell: bash
       working-directory: js/frontend/build
 
