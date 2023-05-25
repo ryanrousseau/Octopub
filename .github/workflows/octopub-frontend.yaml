@@ -1,0 +1,29 @@
+name: Build
+permissions:
+  contents: write
+  packages: write
+'on':
+  workflow_dispatch: {}
+  push:
+    paths:
+      - '**/*'
+      - '!.github/badges/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build JavaScript Frontend
+        uses: ./github/js-frontend
+        with:
+          run_number: ${{ github.run_number }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          octopus_url: ${{ secrets.OCTOPUS_URL }}
+          octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
