@@ -154,6 +154,11 @@ runs:
       shell: bash
       working-directory: js/frontend
 
+    - name: Set version
+      run: jq '.frontendVersion = "v${{ steps.determine_version.outputs.semVer }}"' config.json | sponge config.json
+      shell: bash
+      working-directory: js/frontend/build
+
     - name: Build and deploy serverless package
       run: |
         pushd js/frontend
