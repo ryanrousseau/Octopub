@@ -15,3 +15,14 @@ The following images are built:
 * `octopussamples/octopub-frontend` - the frontend web UI
 * `octopussamples/postman-worker-image` - a worker image that includes Postman
 * `octopussamples/cypress-worker-image` - a worker image that includes Cypress
+
+## Local testing
+
+To test Octopub locally, use the supplied Docker Compose file:
+
+```bash
+cd compose
+docker-compose up
+```
+
+You can then access the page at http://localhost:7080.
