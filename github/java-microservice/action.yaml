@@ -201,6 +201,7 @@ runs:
     - name: Push SBOM Package
       run: |
         mvn deploy:deploy-file \
+          --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-sbom" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
@@ -233,6 +234,7 @@ runs:
         if [[ -f "java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" ]]
         then
           mvn deploy:deploy-file \
+            --batch-mode \
             "-DgroupId=com.octopus" \
             "-DartifactId=${{ inputs.service_directory }}-postman" \
             "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
@@ -256,7 +258,8 @@ runs:
       run: |
         # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
         ./mvnw \
-          --batch-mode package \
+          --batch-mode \
+          package \
           -P "lambda,native" \
           -DskipTests \
           -Dquarkus.profile=faas \
@@ -269,6 +272,7 @@ runs:
     - name: Deploy serverless package
       run: |
         mvn deploy:deploy-file \
+          --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-lambda" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \

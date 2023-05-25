@@ -139,6 +139,7 @@ runs:
     - name: Push SBOM Package
       run: |       
         mvn deploy:deploy-file \
+          --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=javascript-frontend-sbom" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
@@ -159,6 +160,7 @@ runs:
         zip -r octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml build public/config.json.dot
         popd
         mvn deploy:deploy-file \
+          --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=octopub-frontend-serverless" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
@@ -192,13 +194,14 @@ runs:
         popd
         
         mvn deploy:deploy-file \
-        "-DgroupId=com.octopus" \
-        "-DartifactId=octopub-frontend" \
-        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
-        "-Dpackaging=zip" \
-        "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
-        "-DrepositoryId=octopus-sales-public-snapshot" \
-        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=octopub-frontend" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
     - name: Install Cypress modules
@@ -223,11 +226,12 @@ runs:
     - name: Push Cypress Package
       run: |
         mvn deploy:deploy-file \
-        "-DgroupId=com.octopus" \
-        "-DartifactId=octopub-frontend-cypress" \
-        "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
-        "-Dpackaging=zip" \
-        "-Dfile=js/octopub-frontend-cypress.${{ steps.determine_version.outputs.semVer }}.zip" \
-        "-DrepositoryId=octopus-sales-public-snapshot" \
-        "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=octopub-frontend-cypress" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=js/octopub-frontend-cypress.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
