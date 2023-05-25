@@ -322,7 +322,7 @@ runs:
         mvn deploy:deploy-file \
           --batch-mode \
           "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-lambda" \
+          "-DartifactId=${{ inputs.service_directory }}-liquidbase" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
           "-Dfile=java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" \
