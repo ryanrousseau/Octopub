@@ -251,6 +251,8 @@ runs:
       run: |
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
+        docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}:latest
+        docker push octopussamples/octopub-${{ inputs.service_directory }}:latest
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 

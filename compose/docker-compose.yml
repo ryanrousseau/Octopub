@@ -1,0 +1,14 @@
+services:
+  products:
+    image: "octopussamples/octopub-products-microservice"
+    ports:
+      - "8083:8083"
+  audits:
+    image: "octopussamples/octopub-audits-microservice"
+    ports:
+      - "10000:10000"
+  web:
+    image: "octopussamples/octopub-frontend"
+    ports:
+      - "7080:7080"
+
