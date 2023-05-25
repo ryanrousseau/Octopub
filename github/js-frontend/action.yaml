@@ -141,7 +141,7 @@ runs:
         mvn deploy:deploy-file \
           --batch-mode \
           "-DgroupId=com.octopus" \
-          "-DartifactId=javascript-frontend-sbom" \
+          "-DartifactId=octopub-frontend-sbom" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
           "-Dfile=js/frontend/javascript-frontend-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
