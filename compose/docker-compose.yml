@@ -11,4 +11,6 @@ services:
     image: "octopussamples/octopub-frontend"
     ports:
       - "7080:7080"
+    volumes:
+      - ${PWD}/config.json:/workspace/build/config.json
 
