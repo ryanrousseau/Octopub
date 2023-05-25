@@ -1,8 +1,17 @@
 services:
   products:
-    image: "octopussamples/octopub-products-microservice"
+    image: "octopussamples/octopub-products-microservice-mysql"
+    environment:
+      DATABASE_USERNAME: octopub
+      DATABASE_PASSWORD: Password01!
+      DATABASE_HOSTNAME: db
+      DATABASE_PORT: 3306
+      DATABASE_NAME: product
     ports:
       - "8083:8083"
+    depends_on:
+      db:
+        condition: service_healthy
   audits:
     image: "octopussamples/octopub-audit-microservice"
     ports:
@@ -13,4 +22,22 @@ services:
       - "5001:5000"
     volumes:
       - ${PWD}/config.json:/workspace/build/config.json
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'product'
+      MYSQL_USER: 'octopub'
+      MYSQL_PASSWORD: 'Password01!'
+      MYSQL_ROOT_PASSWORD: 'Password01!'
+    ports:
+      - '3306:3306'
+    volumes:
+      - my-db:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+volumes:
+  my-db:
 

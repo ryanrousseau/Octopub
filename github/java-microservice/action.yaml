@@ -146,11 +146,6 @@ runs:
       shell: bash
       working-directory: java/microservice-utils
 
-    - name: Build with Maven
-      run: ./mvnw --batch-mode package --file pom.xml -DskipTests
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
-
     - name: Generate JaCoCo Badges
       uses: cicirello/jacoco-badge-generator@v2
       with:
@@ -245,14 +240,34 @@ runs:
         fi
       shell: bash
 
-    # The Docker image is built and pushed. It uses the same tag as the SBOM package version to allow us to match the
-    # two packages in Octopus.
+    - name: Build with Maven
+      run: ./mvnw --batch-mode package --file pom.xml -DskipTests
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       run: |
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
         docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}:latest
         docker push octopussamples/octopub-${{ inputs.service_directory }}:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    # Rebuild the app to support a MySQL database
+    - name: Build MySQL version with Maven
+      run: ./mvnw --batch-mode package --file pom.xml -DskipTests -Dquarkus.profile=mysql
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    # The MySQL Docker image is built and pushed.
+    - name: Build, tag, and push image to Dockerhub
+      run: |
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
+        docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
+        docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+        docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
