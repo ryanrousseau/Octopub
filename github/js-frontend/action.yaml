@@ -183,7 +183,10 @@ runs:
     # The Docker image is built and pushed. It uses the same tag as the SBOM package version to allow us to match the
     # two packages in Octopus.
     - name: Push image to Dockerhub
-      run: docker push octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
+      run: |
+        docker push octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
+        docker tag  octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-frontend:latest
+        docker push octopussamples/octopub-frontend:latest
       shell: bash
       working-directory: js/frontend
 
