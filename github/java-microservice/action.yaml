@@ -240,6 +240,7 @@ runs:
         fi
       shell: bash
 
+    # Build the self-contained H2 backed version of the app.
     - name: Build with Maven
       run: ./mvnw --batch-mode package --file pom.xml -DskipTests
       shell: bash
