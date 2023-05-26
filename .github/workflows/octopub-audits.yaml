@@ -4,10 +4,10 @@ permissions:
   packages: write
 'on':
   workflow_dispatch: {}
-#  push:
-#    paths:
-#      - '**/*'
-#      - '!.github/badges/*'
+  push:
+    paths:
+      - '**/*'
+      - '!.github/badges/*'
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           service_directory: audit-microservice
 
-      - name: Build Products Helm Chart
+      - name: Build Audits Helm Chart
         uses: ./github/helm
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
