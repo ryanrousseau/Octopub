@@ -49,6 +49,9 @@ runs:
       working-directory: helm/${{ inputs.chart_directory }}
 
     - name: Build helm chart
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.aws_access_key }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.aws_secret_access_key }}
       run: helm s3 push ./${{ inputs.chart_directory }}-${{ steps.determine_version.outputs.semVer }}.tgz sales
       shell: bash
       working-directory: helm/${{ inputs.chart_directory }}
