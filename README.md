@@ -25,6 +25,13 @@ The following images are built:
 * `octopussamples/postman-worker-image` - a worker image that includes Postman
 * `octopussamples/cypress-worker-image` - a worker image that includes Cypress
 
+## Helm charts
+
+A number of helm charts are saved to the public Helm repo at 
+https://octopus-sales-public-helm-repo.s3.ap-southeast-2.amazonaws.com/charts:
+
+* `octopub-products-mysql` - Deploys the products microservice with supoprt for a MySQL database.
+
 ## Local testing
 
 To test Octopub locally, use the supplied Docker Compose file:
