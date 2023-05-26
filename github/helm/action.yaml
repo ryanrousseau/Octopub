@@ -43,7 +43,7 @@ runs:
       shell: bash
 
     - name: Update helm version
-      run: yq '.version = "${{ steps.determine_version.outputs.semVer }}"' Chart.yml
+      run: yq w Chart.yml '.version' "${{ steps.determine_version.outputs.semVer }}"
       shell: bash
       working-directory: helm/${{ inputs.chart_directory }}
 
