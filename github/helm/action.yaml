@@ -1,0 +1,47 @@
+name: Helm Chart Build and Push
+description: Build the Java microservice
+inputs:
+  aws_access_key:
+    description: 'The aws access key'
+    required: true
+  aws_secret_access_key:
+    description: 'The aws secret access key'
+    required: true
+  chart_directory:
+    description: 'The directory holding the microservice'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Clone code repo
+      uses: actions/checkout@v2
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.15
+      with:
+        versionSpec: 5.x
+
+    - id: determine_version
+      name: Determine Version
+      uses: gittools/actions/gitversion/execute@v0.9.15
+      with:
+        additionalArguments: /overrideconfig mode=Mainline
+
+    - name: Install yq
+      run: wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq && chmod +x /usr/bin/yq
+      shell: bash
+
+    - name: Install Helm S3 plugin
+      run: helm plugin install https://github.com/hypnoglow/helm-s3.git
+      shell: bash
+
+    - name: Update helm version
+      run: yq -i e '.version |= ${{ steps.determine_version.outputs.semVer }}' Chart.yml
+      shell: bash
+      working-directory: helm/${{ inputs.chart_directory }}
+
+    - name: Build helm chart
+      run: helm package .
+      shell: bash
+      working-directory: helm/${{ inputs.chart_directory }}
