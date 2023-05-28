@@ -10,6 +10,13 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
 
+database:
+  hostname: localhost
+  port: 3306
+  name: product
+  username: root
+  password: password
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
