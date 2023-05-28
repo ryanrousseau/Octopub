@@ -4,10 +4,10 @@ permissions:
   packages: write
 'on':
   workflow_dispatch: {}
-#  push:
-#    paths:
-#      - '**/*'
-#      - '!.github/badges/*'
+  push:
+    paths:
+      - '**/*'
+      - '!.github/badges/*'
 
 jobs:
   build:
@@ -27,3 +27,10 @@ jobs:
           octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Frontend Helm Chart
+        uses: ./github/helm
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          chart_directory: octopub-frontend
