@@ -4,6 +4,7 @@ metadata:
   name: {{ include "octopub.fullname" . }}
   labels:
     {{- include "octopub.labels" . | nindent 4 }}
+    {{ .Values.service.labels | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
