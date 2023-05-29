@@ -4,6 +4,10 @@ metadata:
   name: {{ include "octopub.fullname" . }}
   labels:
     {{- include "octopub.labels" . | nindent 4 }}
+  annotations:
+{{- range $name, $value := .Values.service.annotations }}
+    {{ $name | quote }}: {{ $value | quote }}
+{{- end}}
 spec:
   type: {{ .Values.service.type }}
   ports:
