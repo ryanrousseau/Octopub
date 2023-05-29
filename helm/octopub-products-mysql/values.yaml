@@ -16,6 +16,7 @@ database:
   name: product
   username: root
   password: password
+  migrateOnStartup: true
 
 imagePullSecrets: []
 nameOverride: ""

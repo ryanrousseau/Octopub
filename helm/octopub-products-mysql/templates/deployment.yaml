@@ -43,6 +43,8 @@ spec:
               value: {{ .Values.database.username }}
             - name: DATABASE_PASSWORD
               value: {{ .Values.database.password }}
+            - name: MIGRATE_AT_START
+              value: !!str {{ .Values.database.migrateOnStartup }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
