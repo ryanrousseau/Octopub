@@ -18,6 +18,9 @@ database:
   password: password
   migrateOnStartup: true
 
+network:
+  port: 8083
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
@@ -46,7 +49,7 @@ securityContext: {}
 
 service:
   type: LoadBalancer
-  port: 8083
+  port: 80
   annotations:
     # https://stackoverflow.com/a/76247614/8246539
     service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
