@@ -177,20 +177,10 @@ runs:
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
-    - name: Build image
-      uses: mamezou-tech/buildpacks-action@master
-      with:
-        image: 'octopussamples/octopub-frontend'
-        tag: '${{ steps.determine_version.outputs.semVer }}'
-        path: 'js/frontend'
-        builder: 'heroku/buildpacks:20'
-        buildpacks: 'heroku/nodejs https://cnb-shim.herokuapp.com/v1/heroku-community/static'
-        env: NODE_OPTIONS=--openssl-legacy-provider
-
-    # The Docker image is built and pushed. It uses the same tag as the SBOM package version to allow us to match the
-    # two packages in Octopus.
-    - name: Push image to Dockerhub
+    # The Docker image is built and pushed.
+    - name: Build, tag, and push image to Dockerhub
       run: |
+        docker build -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
         docker tag  octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-frontend:latest
         docker push octopussamples/octopub-frontend:latest
