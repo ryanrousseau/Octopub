@@ -35,19 +35,19 @@ spec:
           env:
             {{- if .Values.productEndpointOverride }}
             - name: UDL_SETVALUE_1
-              value: [/usr/share/nginx/html/config.json][productEndpoint]{{ .Values.productEndpointOverride }}
+              value: "[/usr/share/nginx/html/config.json][productEndpoint]{{ .Values.productEndpointOverride }}"
             {{- end }}
             {{- if .Values.productHealthEndpointOverride }}
             - name: UDL_SETVALUE_2
-              value: [/usr/share/nginx/html/config.json][productHealthEndpoint]{{ .Values.productHealthEndpointOverride }}
+              value: "[/usr/share/nginx/html/config.json][productHealthEndpoint]{{ .Values.productHealthEndpointOverride }}"
             {{- end }}
             {{- if .Values.auditsEndpointOverride }}
             - name: UDL_SETVALUE_3
-              value: [/usr/share/nginx/html/config.json][auditEndpoint]{{ .Values.auditsEndpointOverride }}
+              value: "[/usr/share/nginx/html/config.json][auditEndpoint]{{ .Values.auditsEndpointOverride }}"
             {{- end }}
             {{- if .Values.auditsHealthEndpointOverride }}
             - name: UDL_SETVALUE_4
-              value: [/usr/share/nginx/html/config.json][auditHealthEndpoint]{{ .Values.auditsHealthEndpointOverride }}
+              value: "[/usr/share/nginx/html/config.json][auditHealthEndpoint]{{ .Values.auditsHealthEndpointOverride }}"
             {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
