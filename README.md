@@ -19,8 +19,8 @@ The following images are built:
 
 * `octopussamples/octopub-products-microservice` - the backend products service
 * `octopussamples/octopub-products-microservice-mysql` - the backend products service configured to use an external MySQL database
-* `octopussamples/octopub-audits-microservice` - the backend audits service
-* `octopussamples/octopub-audits-microservice-mysql` - the backend audits service configured to use an external MySQL database
+* `octopussamples/octopub-audit-microservice` - the backend audits service
+* `octopussamples/octopub-audit-microservice-mysql` - the backend audits service configured to use an external MySQL database
 * `octopussamples/octopub-frontend` - the frontend web UI
 * `octopussamples/postman-worker-image` - a worker image that includes Postman
 * `octopussamples/cypress-worker-image` - a worker image that includes Cypress
