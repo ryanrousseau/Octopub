@@ -36,19 +36,19 @@ spec:
             {{- if .Values.productEndpointOverride }}
             - name: UDL_SETVALUE[/usr/share/nginx/html/config.json][productEndpoint]
               value: {{ .Values.productEndpointOverride }}
-            {{- end -}}
+            {{- end }}
             {{- if .Values.productHealthEndpointOverride }}
             - name: UDL_SETVALUE[/usr/share/nginx/html/config.json][productHealthEndpoint]
               value: {{ .Values.productHealthEndpointOverride }}
-            {{- end -}}
+            {{- end }}
             {{- if .Values.auditsEndpointOverride }}
             - name: UDL_SETVALUE[/usr/share/nginx/html/config.json][auditEndpoint]
               value: {{ .Values.auditsEndpointOverride }}
-            {{- end -}}
+            {{- end }}
             {{- if .Values.auditsHealthEndpointOverride }}
             - name: UDL_SETVALUE[/usr/share/nginx/html/config.json][auditHealthEndpoint]
               value: {{ .Values.auditsHealthEndpointOverride }}
-            {{- end -}}
+            {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
