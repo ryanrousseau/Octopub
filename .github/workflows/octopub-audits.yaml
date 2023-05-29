@@ -36,4 +36,4 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          chart_directory: octopub-products-mysql
+          chart_directory: octopub-audits-mysql
