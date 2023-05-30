@@ -51,10 +51,12 @@ spec:
               containerPort: {{ .Values.network.port }}
               protocol: TCP
           livenessProbe:
+            initialDelaySeconds: 60
             httpGet:
               path: /
               port: http
           readinessProbe:
+            initialDelaySeconds: 60
             httpGet:
               path: /
               port: http
