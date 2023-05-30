@@ -19,9 +19,9 @@ services:
   web:
     image: "octopussamples/octopub-frontend"
     ports:
-      - "5001:5000"
+      - "5001:80"
     volumes:
-      - ${PWD}/config.json:/workspace/build/config.json
+      - ${PWD}/config.json:/usr/share/nginx/html/config.json
   db:
     image: mysql:5.7
     restart: always

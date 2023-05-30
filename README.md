@@ -43,4 +43,4 @@ cd compose
 docker-compose up
 ```
 
-You can then access the page at http://localhost:7080.
+You can then access the page at http://localhost:5001.
