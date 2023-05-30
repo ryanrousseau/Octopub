@@ -8,6 +8,7 @@ permissions:
     paths:
       - '**/*'
       - '!.github/badges/*'
+      - '!README.md'
 
 jobs:
   build:
