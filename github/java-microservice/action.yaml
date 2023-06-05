@@ -288,7 +288,6 @@ runs:
           -Dquarkus.profile=faas \
           -Dquarkus.native.container-build=true \
           -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
-        zip ${{ inputs.service_directory }}-lambda.${{ steps.determine_version.outputs.semVer }}.zip *.yaml target/function.zip
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
@@ -300,7 +299,7 @@ runs:
           "-DartifactId=${{ inputs.service_directory }}-lambda" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}-lambda.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash

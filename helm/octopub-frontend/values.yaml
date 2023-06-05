@@ -8,6 +8,8 @@ productEndpointOverride: ""
 productHealthEndpointOverride: ""
 auditsEndpointOverride: ""
 auditsHealthEndpointOverride: ""
+# These values can be blue, green, pink, orange
+overrideTheme: ""
 
 image:
   repository: octopussamples/octopub-frontend
