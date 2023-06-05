@@ -180,7 +180,7 @@ runs:
     # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       run: |
-        docker build -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
+        docker build --build-arg UID=1000 --build-arg GID=1000 -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
         docker tag  octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-frontend:latest
         docker push octopussamples/octopub-frontend:latest
