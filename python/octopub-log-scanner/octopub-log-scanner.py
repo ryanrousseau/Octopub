@@ -1,18 +1,27 @@
+# This script provides a simple example of scanning log files to look for known issues and suggest common fixes.
+# It is designed to demonstrate the self-service functionality of runbooks.
+
 import sys
 import re
 
 
 class Hint:
+    """
+    A hint includes a regular expression that matches some known text in a log file, and a hint
+    indicating a possible solutions.
+    """
     def __init__(self, error, hint):
         self.error = error
         self.hint = hint
 
 
+# This is the database of hints
 hints = [
     Hint("java.nio.file.FileSystemException:.*?Read-only file system",
          "The Kubernetes.Application.ReadOnlyFileSystem variable may need to be set to false")
 ]
 
+# The name of the log file must be passed in as the first argument.
 if len(sys.argv) < 2:
     print("The first argument must be the log file to parse.")
     sys.exit(1)
