@@ -19,11 +19,11 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 
 The following images are built:
 
-* `octopussamples/octopub-products-microservice` - the backend products service
-* `octopussamples/octopub-products-microservice-mysql` - the backend products service configured to use an external MySQL database
-* `octopussamples/octopub-audit-microservice` - the backend audits service
-* `octopussamples/octopub-audit-microservice-mysql` - the backend audits service configured to use an external MySQL database
-* `octopussamples/octopub-frontend` - the frontend web UI
+* `octopussamples/octopub-products-microservice` - the backend products service. Exposes port `8083`.
+* `octopussamples/octopub-products-microservice-mysql` - the backend products service configured to use an external MySQL database. Exposes port `8083`.
+* `octopussamples/octopub-audit-microservice` - the backend audits service. Exposes port `10000`.
+* `octopussamples/octopub-audit-microservice-mysql` - the backend audits service configured to use an external MySQL database. Exposes port `10000`.
+* `octopussamples/octopub-frontend` - the frontend web UI. Exposes port `8080`.
 * `octopussamples/postman-worker-image` - a worker image that includes Postman
 * `octopussamples/cypress-worker-image` - a worker image that includes Cypress
 
