@@ -25,7 +25,7 @@ def check_log(log):
             for hint in hints:
                 if re.search(hint.error, line) is not None:
                     print("Possible error: " + line)
-                    print(hint.hint)
+                    print("Recommendation: " + hint.hint)
                     found += 1
     return found
 
