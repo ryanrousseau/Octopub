@@ -1,9 +1,9 @@
-Octopub is a sample application designed to be deployed to a variety of platforms such as AWS Lambda, Kubernetes, and 
+Octopub is a sample application designed to be deployed to a variety of platforms such as AWS Lambda, Kubernetes, and
 static web hosting. It also builds a number of test worker images, test scripts, and security packages.
 
 ## Maven feed
 
-A number of packages including SBOM packages and Lambda artifacts, are pushed to a public Maven repo hosted at 
+A number of packages including SBOM packages and Lambda artifacts, are pushed to a public Maven repo hosted at
 https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot.
 
 * `com.octopus:octopub-frontend` - The static frontend website
@@ -19,17 +19,19 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 
 The following images are built:
 
-* `octopussamples/octopub-products-microservice` - the backend products service. Exposes port `8083`.
-* `octopussamples/octopub-products-microservice-mysql` - the backend products service configured to use an external MySQL database. Exposes port `8083`.
-* `octopussamples/octopub-audit-microservice` - the backend audits service. Exposes port `10000`.
-* `octopussamples/octopub-audit-microservice-mysql` - the backend audits service configured to use an external MySQL database. Exposes port `10000`.
-* `octopussamples/octopub-frontend` - the frontend web UI. Exposes port `8080`.
-* `octopussamples/postman-worker-image` - a worker image that includes Postman
-* `octopussamples/cypress-worker-image` - a worker image that includes Cypress
+| Image                                              | Description                                                               | Port  | User ID | Group ID |
+|----------------------------------------------------|---------------------------------------------------------------------------|-------|---------|----------|
+| octopussamples/octopub-products-microservice       | The backend products service with embedded database                       | 8083  | 1001    | 1001     |
+| octopussamples/octopub-products-microservice-mysql | The backend products service configured to use an external MySQL database | 8083  | 1001    | 1001     |
+| octopussamples/octopub-audit-microservice          | The backend audits service with embedded database                         | 10000 | 1001    | 1001     |
+| octopussamples/octopub-audit-microservice-mysql    | The backend audits service configured to use an external MySQL database   | 10000 | 1001    | 1001     |
+| octopussamples/octopub-frontend                    | The frontend web UI                                                       | 8080  | 101     | 101      |
+| octopussamples/postman-worker-image                | a worker image that includes Postman                                      |       |         |          |
+| octopussamples/cypress-worker-image                | a worker image that includes Cypress                                      |       |         |          |
 
 ## Helm charts
 
-A number of helm charts are saved to the public Helm repo at 
+A number of helm charts are saved to the public Helm repo at
 https://octopus-sales-public-helm-repo.s3.ap-southeast-2.amazonaws.com/charts:
 
 * `octopub-products-mysql` - Deploys the products microservice with support for a MySQL database.
