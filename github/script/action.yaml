@@ -119,7 +119,7 @@ runs:
         mvn deploy:deploy-file \
           --batch-mode \
           "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}" \
+          "-DartifactId=${{ inputs.script_directory }}" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=zip" \
           "-Dfile=python/${{ inputs.script_directory }}/${{ inputs.script_directory }}.${{ steps.determine_version.outputs.semVer }}.zip" \
