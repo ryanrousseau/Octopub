@@ -9,7 +9,7 @@ permissions:
       - '**/*'
       - '!.github/badges/*'
       - '!README.md'
-      - '!script/**/*'
+      - '!python/**/*'
 
 jobs:
   build:
