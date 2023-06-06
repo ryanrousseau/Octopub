@@ -19,15 +19,15 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 
 The following images are built:
 
-| Image                                              | Description                                                               | Port  | User ID | Group ID |
-|----------------------------------------------------|---------------------------------------------------------------------------|-------|---------|----------|
-| octopussamples/octopub-products-microservice       | The backend products service with embedded database                       | 8083  | 1001    | 1001     |
-| octopussamples/octopub-products-microservice-mysql | The backend products service configured to use an external MySQL database | 8083  | 1001    | 1001     |
-| octopussamples/octopub-audit-microservice          | The backend audits service with embedded database                         | 10000 | 1001    | 1001     |
-| octopussamples/octopub-audit-microservice-mysql    | The backend audits service configured to use an external MySQL database   | 10000 | 1001    | 1001     |
-| octopussamples/octopub-frontend                    | The frontend web UI                                                       | 8080  | 101     | 101      |
-| octopussamples/postman-worker-image                | a worker image that includes Postman                                      |       |         |          |
-| octopussamples/cypress-worker-image                | a worker image that includes Cypress                                      |       |         |          |
+| Image                                              | Description                                                               | Port  | User ID | Group ID | Filesystem Write Access Required |
+|----------------------------------------------------|---------------------------------------------------------------------------|-------|---------|----------|----------------------------------|
+| octopussamples/octopub-products-microservice       | The backend products service with embedded database                       | 8083  | 1001    | 1001     | true                             |
+| octopussamples/octopub-products-microservice-mysql | The backend products service configured to use an external MySQL database | 8083  | 1001    | 1001     | true                             |
+| octopussamples/octopub-audit-microservice          | The backend audits service with embedded database                         | 10000 | 1001    | 1001     | true                             |
+| octopussamples/octopub-audit-microservice-mysql    | The backend audits service configured to use an external MySQL database   | 10000 | 1001    | 1001     | true                             |
+| octopussamples/octopub-frontend                    | The frontend web UI                                                       | 8080  | 101     | 101      | true                             |
+| octopussamples/postman-worker-image                | A worker image that includes Postman                                      |       |         |          |                                  |
+| octopussamples/cypress-worker-image                | A worker image that includes Cypress                                      |       |         |          |                                  |
 
 ## Helm charts
 
