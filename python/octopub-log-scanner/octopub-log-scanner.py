@@ -27,4 +27,6 @@ def check_log(log):
                     print(hint.hint)
 
 
+print("Checking log file for known errors.")
 check_log(sys.argv[1])
+print("Done!.")
