@@ -13,8 +13,8 @@ import com.octopus.lambda.RequestMatcher;
 import io.vavr.control.Try;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
 
 /**

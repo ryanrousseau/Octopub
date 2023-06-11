@@ -16,7 +16,7 @@ import com.octopus.products.domain.handlers.ResourceHandlerGetOne;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.mockito.InjectMock;
 import java.util.HashMap;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

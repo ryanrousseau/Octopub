@@ -21,7 +21,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-    <quarkus.platform.version>2.16.7.Final</quarkus.platform.version>
+    <quarkus.platform.version>3.1.1.Final</quarkus.platform.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
   </properties>
   <dependencyManagement>
@@ -42,15 +42,10 @@
       <version>3.1</version>
     </dependency>
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>2.0.SP1</version>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
+      <version>4.0.1</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.github.tennaito</groupId>
-      <artifactId>rsql-jpa</artifactId>
-      <version>2.0.2</version>
     </dependency>
     <dependency>
       <groupId>dev.failsafe</groupId>
@@ -129,6 +124,12 @@
       <groupId>com.octopus</groupId>
       <artifactId>microservice-utils</artifactId>
       <version>1.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.octopus</groupId>
+      <artifactId>rsql-jpa</artifactId>
+      <version>2.0.4</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

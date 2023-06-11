@@ -7,8 +7,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="audit-service" />
         <module name="products-microservice" />
+        <module name="rsql-jpa" />
+        <module name="audit-service" />
         <module name="microservice-utils" />
       </profile>
     </annotationProcessing>

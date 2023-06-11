@@ -1,7 +1,7 @@
 package com.octopus.products.domain.features.impl;
 
 import com.octopus.products.domain.features.CognitoClientIdFeature;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**

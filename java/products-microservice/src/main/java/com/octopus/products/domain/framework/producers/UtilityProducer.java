@@ -30,8 +30,8 @@ import com.octopus.utilties.PartitionIdentifier;
 import com.octopus.utilties.RegExUtils;
 import com.octopus.utilties.impl.PartitionIdentifierImpl;
 import com.octopus.utilties.impl.RegExUtilsImpl;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 
 /**
  * Produces a number of objects for injection.

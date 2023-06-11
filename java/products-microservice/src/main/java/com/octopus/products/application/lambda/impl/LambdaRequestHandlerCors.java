@@ -8,7 +8,7 @@ import com.octopus.lambda.ApiGatewayProxyResponseEventWithCors;
 import com.octopus.products.application.lambda.LambdaRequestHandler;
 import io.vavr.control.Try;
 import java.util.Optional;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.NonNull;
 
 /**
