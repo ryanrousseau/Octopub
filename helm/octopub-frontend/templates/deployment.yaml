@@ -53,6 +53,22 @@ spec:
             - name: UDL_SETVALUE_4
               value: "[/usr/share/nginx/html/config.json][auditHealthEndpoint]{{ .Values.auditsHealthEndpointOverride }}"
             {{- end }}
+            {{- if .Values.customPrimaryColor }}
+            - name: UDL_SETVALUE_5
+              value: "[/usr/share/nginx/html/config.json][customPrimaryColor]{{ .Values.customPrimaryColor }}"
+            {{- end }}
+            {{- if .Values.customSecondaryColor }}
+            - name: UDL_SETVALUE_6
+              value: "[/usr/share/nginx/html/config.json][customSecondaryColor]{{ .Values.customSecondaryColor }}"
+            {{- end }}
+            {{- if .Values.customBackgroundColor }}
+            - name: UDL_SETVALUE_7
+              value: "[/usr/share/nginx/html/config.json][customBackgroundColor]{{ .Values.customBackgroundColor }}"
+            {{- end }}
+            {{- if .Values.customPaperColor }}
+            - name: UDL_SETVALUE_8
+              value: "[/usr/share/nginx/html/config.json][customPaperColor]{{ .Values.customPaperColor }}"
+            {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
