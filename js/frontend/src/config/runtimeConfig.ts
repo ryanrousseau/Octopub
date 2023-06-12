@@ -9,4 +9,8 @@ export interface RuntimeSettings {
     title: string;
     overrideTheme: string;
     frontendVersion: string;
+    customPrimaryColor: string;
+    customSecondaryColor: string;
+    customBackgroundColor: string;
+    customPaperColor: string;
 }

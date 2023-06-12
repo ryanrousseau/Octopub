@@ -1,7 +1,7 @@
 import React, {createContext, useReducer, useState} from "react";
 import {createTheme, responsiveFontSizes, StyledEngineProvider, Theme, ThemeProvider,} from "@mui/material/styles";
 import {Helmet} from "react-helmet";
-import {darkTheme, lightTheme, colouredThemes} from "./theme/appTheme";
+import {darkTheme, lightTheme, createdColouredThemes} from "./theme/appTheme";
 import {RuntimeSettings} from "./config/runtimeConfig";
 import Layout from "./components/Layout";
 import {HashRouter, Route, Routes} from "react-router-dom";
@@ -41,11 +41,8 @@ function App(settings: RuntimeSettings) {
         localStorage.getItem('defaultTheme') !== "false");
 
     // In the absence of a theme override, use either the light or dark theme
-    const defaultTheme = useDefaultTheme ? lightTheme : darkTheme;
-    // If an override is specified, try to load it, falling back to the default theme
-    const overrideTheme = settings.overrideTheme ? colouredThemes[settings.overrideTheme] : defaultTheme;
-    let theme: Theme = createTheme(settings.overrideTheme ? overrideTheme : defaultTheme);
-    theme = responsiveFontSizes(theme);
+    const lightDarkTheme = useDefaultTheme ? lightTheme : darkTheme;
+    const theme: Theme = responsiveFontSizes(settings.overrideTheme ? createdColouredThemes(settings)[settings.overrideTheme] : lightDarkTheme);
 
     const [developerMode, setDeveloperMode] = useState<boolean>(localStorage.getItem("developerMode") === "true");
     const [partition, setPartition] = useState<string>(localStorage.getItem("partition") || "main");

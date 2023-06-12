@@ -7,5 +7,9 @@
   "auditEndpoint": "/api/audits",
   "auditHealthEndpoint": "/health/audits",
   "overrideTheme": "",
-  "frontendVersion": "v0.1.0"
+  "frontendVersion": "v0.1.0",
+  "customPrimaryColor": "#000000",
+  "customSecondaryColor": "#262626",
+  "customBackgroundColor": "#fafafa",
+  "customPaperColor": "#dd5900"
 }
