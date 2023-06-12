@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

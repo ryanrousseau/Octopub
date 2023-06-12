@@ -13,8 +13,8 @@ import com.octopus.exceptions.InvalidAcceptHeadersException;
 import com.octopus.exceptions.InvalidInputException;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import io.quarkus.test.junit.QuarkusTest;
-import javax.inject.Inject;
-import javax.ws.rs.core.Response;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

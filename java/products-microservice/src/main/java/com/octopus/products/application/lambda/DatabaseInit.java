@@ -11,8 +11,8 @@ import io.vavr.control.Try;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Map;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import liquibase.exception.LiquibaseException;
 
 /**

@@ -4,15 +4,15 @@ import com.github.jasminb.jsonapi.exceptions.DocumentSerializationException;
 import com.octopus.Constants;
 import com.octopus.products.application.Paths;
 import com.octopus.products.domain.handlers.HealthHandler;
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 /** A resource to respond to health check requests. */
 @Path(Paths.HEALTH_ENDPOINT)

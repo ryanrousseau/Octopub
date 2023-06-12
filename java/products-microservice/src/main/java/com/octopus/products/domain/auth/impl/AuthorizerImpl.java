@@ -7,8 +7,8 @@ import com.octopus.jwt.JwtUtils;
 import com.octopus.products.domain.auth.Authorizer;
 import com.octopus.products.domain.features.CognitoClientIdFeature;
 import com.octopus.products.domain.features.impl.DisableSecurityFeatureImpl;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * An implementation of the Authorizer service.

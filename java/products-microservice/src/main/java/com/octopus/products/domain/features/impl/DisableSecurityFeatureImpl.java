@@ -1,7 +1,7 @@
 package com.octopus.products.domain.features.impl;
 
 import com.octopus.features.DisableSecurityFeature;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
