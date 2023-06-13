@@ -149,17 +149,17 @@ runs:
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
-    - name: Build App
-      run: yarn run build
-      shell: bash
-      working-directory: js/frontend
-
     - name: Set version
       run: |
         jq '.frontendVersion = "v${{ steps.determine_version.outputs.semVer }}"' config.json > /tmp/config.json
         mv /tmp/config.json config.json
       shell: bash
-      working-directory: js/frontend/build
+      working-directory: js/frontend/public
+
+    - name: Build App
+      run: yarn run build
+      shell: bash
+      working-directory: js/frontend
 
     - name: Build and deploy serverless package
       run: |
