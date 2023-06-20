@@ -42,8 +42,13 @@ function App(settings: RuntimeSettings) {
 
     // In the absence of a theme override, use either the light or dark theme
     const lightDarkTheme = useDefaultTheme ? lightTheme : darkTheme;
-    const theme: Theme = responsiveFontSizes(settings.overrideTheme ? createdColouredThemes(settings)[settings.overrideTheme] : lightDarkTheme);
-
+    const customThemes = createdColouredThemes(settings);
+    const theme: Theme = responsiveFontSizes(settings.overrideTheme
+        ? Object.keys(customThemes)
+            .filter((key) => key === settings.overrideTheme)
+            .map(key => customThemes[key])
+            .pop() ?? lightDarkTheme
+        : lightDarkTheme);
     const [developerMode, setDeveloperMode] = useState<boolean>(localStorage.getItem("developerMode") === "true");
     const [partition, setPartition] = useState<string>(localStorage.getItem("partition") || "main");
     const [allBookId, setAllBookId] = useState<string>("");
