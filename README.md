@@ -35,6 +35,8 @@ A number of helm charts are saved to the public Helm repo at
 https://octopus-sales-public-helm-repo.s3.ap-southeast-2.amazonaws.com/charts:
 
 * `octopub-products-mysql` - Deploys the products microservice with support for a MySQL database.
+* `octopub-audits-mysql` - Deploys the audits microservice with support for a MySQL database.
+* `octopub-frontend` - Deploys the frontend.
 
 ## Local testing
 
