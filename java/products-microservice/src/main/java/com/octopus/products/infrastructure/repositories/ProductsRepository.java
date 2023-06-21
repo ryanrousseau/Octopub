@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.vavr.control.Try;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -80,7 +81,9 @@ public class ProductsRepository {
       final String pageOffset,
       final String pageLimit) {
 
-    final Long count = countResults(createQuery(partitions, filter, Tuple.class));
+    // Counting records is proving to be a PITA in Hibernate 6. If there is an exception, return -1.
+    final Long count = Try.of(() -> countResults(createQuery(partitions, filter, Tuple.class)))
+        .getOrElse(-1L);
 
     // Deal with paging
     final CriteriaQuery<Product> queryRoot = createQuery(partitions, filter, Product.class);
