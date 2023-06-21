@@ -199,6 +199,7 @@ runs:
         --id ${{ inputs.service_directory }}-sbom
         --version ${{ steps.determine_version.outputs.semVer }}
         --include **/bom.xml
+        --include **/bom.json
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
