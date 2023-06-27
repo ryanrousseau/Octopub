@@ -20,15 +20,25 @@ jobs:
           fetch-depth: 0
 
       - name: Build Postman Worker Image
-        uses: ./github/worker-image
+        uses: ./github/docker
         with:
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
           service_directory: postman
+          image: octopussamples/postman-worker-image
 
       - name: Build Cypress Worker Image
-        uses: ./github/worker-image
+        uses: ./github/docker
         with:
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
           service_directory: cypress
+          image: octopussamples/cypress-worker-image
+
+      - name: Build Self Contained Image
+        uses: ./github/docker
+        with:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          service_directory: selfcontained
+          image: octopussamples/octopus-selfcontained

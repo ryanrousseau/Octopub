@@ -10,6 +10,9 @@ inputs:
   service_directory:
     description: 'The directory holding the microservice'
     required: true
+  image:
+    description: 'The Docker image'
+    required: true
 
 runs:
   using: "composite"
@@ -31,7 +34,7 @@ runs:
     - name: Build, tag, and push worker image to Dockerhub
       if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
       run: |
-        docker build -t octopussamples/${{ inputs.service_directory }}-worker-image .
-        docker push octopussamples/${{ inputs.service_directory }}-worker-image
+        docker build -t ${{ inputs.image }} .
+        docker push ${{ inputs.image }}
       shell: bash
       working-directory: docker/${{ inputs.service_directory }}
