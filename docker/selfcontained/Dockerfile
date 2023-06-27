@@ -21,24 +21,7 @@ RUN DEBIAN_FRONTEND=noninteractive \
 COPY --from=builder /js/build /usr/share/nginx/html/
 COPY --from=builder /java/products-microservice/target/products-microservice-runner.jar /opt
 
-RUN printf '[supervisord] \n\
-nodaemon=true \n\
-logfile=/dev/null \n\
-logfile_maxbytes=0 \n\
-\n\
-[program:products] \n\
-command=java -jar /opt/products-microservice-runner.jar \n\
-autostart=true \n\
-autorestart=true \n\
-redirect_stderr=true \n\
-stdout_logfile=/var/log/products.log \n\
-\n\
-[program:nginx] \n\
-command=nginx -g "daemon off;" \n\
-autostart=true \n\
-autorestart=true \n\
-redirect_stderr=true \n\
-stdout_logfile=/var/log/nginx.log \n\
-' >> /etc/supervisor/conf.d/supervisord.conf
+COPY docker/selfcontained/nginx.conf /etc/nginx/nginx.conf
+COPY docker/selfcontained/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/usr/bin/supervisord"]
