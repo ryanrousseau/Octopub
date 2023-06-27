@@ -11,7 +11,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install
 RUN npm install --global yarn
 
 ADD js/frontend /js
-RUN cd /js; yarn build
+RUN cd /js; yarn install; yarn build
 
 FROM nginx
 RUN DEBIAN_FRONTEND=noninteractive \
