@@ -18,6 +18,7 @@
     <module>products-microservice</module>
     <module>audit-microservice</module>
     <module>microservice-utils</module>
+    <module>rsql-jpa</module>
   </modules>
 
   <build>
