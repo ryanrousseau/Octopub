@@ -1,4 +1,4 @@
-name: Build Worker Images
+name: Build Self Contained Image
 permissions:
   contents: write
   packages: write
