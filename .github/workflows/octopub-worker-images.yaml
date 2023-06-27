@@ -34,11 +34,3 @@ jobs:
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
           service_directory: cypress
           image: octopussamples/cypress-worker-image
-
-      - name: Build Self Contained Image
-        uses: ./github/docker
-        with:
-          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
-          service_directory: selfcontained
-          image: octopussamples/octopus-selfcontained
