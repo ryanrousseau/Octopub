@@ -18,6 +18,17 @@ jobs:
       - name: Clone code repo
         uses: actions/checkout@v2
 
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.15
+        with:
+          versionSpec: 5.x
+
+      - id: determine_version
+        name: Determine Version
+        uses: gittools/actions/gitversion/execute@v0.9.15
+        with:
+          additionalArguments: /overrideconfig mode=Mainline
+
       - name: Get branch name
         id: branch-name
         uses: tj-actions/branch-names@v7
@@ -32,6 +43,8 @@ jobs:
       - name: Build, tag, and push worker image to Dockerhub
         if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
         run: |
-          docker build -f docker/selfcontained/Dockerfile -t octopussamples/octopus-selfcontained .
-          docker push octopussamples/octopus-selfcontained
+          docker build -f docker/selfcontained/Dockerfile -t octopussamples/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }} .
+          docker push octopussamples/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }}
+          docker tag  octopussamples/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-selfcontained:latest
+          docker push octopussamples/octopub-selfcontained:latest
         shell: bash
