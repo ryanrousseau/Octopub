@@ -347,7 +347,7 @@ runs:
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-        OCTOPUS_SPACE: Matthew Casperson
+        OCTOPUS_SPACE: Spaces-792
       with:
         packages: com.octopus:${{ inputs.service_directory }}-lambda
         version: ${{ steps.determine_version.outputs.semVer }}
