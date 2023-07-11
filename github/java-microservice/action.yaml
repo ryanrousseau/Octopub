@@ -341,3 +341,13 @@ runs:
             "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
         fi
       shell: bash
+
+    - name: Push build information to Octopus Deploy 🐙
+      uses: OctopusDeploy/push-build-information-action@v3
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+        OCTOPUS_SPACE: Matthew Casperson
+      with:
+        packages: ${{ inputs.service_directory }}-lambda
+        version: ${{ steps.determine_version.outputs.semVer }}
