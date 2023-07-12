@@ -34,8 +34,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
             {{- if .Values.overrideTheme }}
-              - name: UDL_SETVALUE_1
-                value: "[/usr/share/nginx/html/config.json][overrideTheme]{{ .Values.overrideTheme }}"
+            - name: UDL_SETVALUE_0
+              value: "[/usr/share/nginx/html/config.json][overrideTheme]{{ .Values.overrideTheme }}"
             {{- end }}
             {{- if .Values.productEndpointOverride }}
             - name: UDL_SETVALUE_1
