@@ -43,9 +43,11 @@ Install these charts locally with the following commands:
 
 ```bash
 helm repo add SolutionEngineering https://octopus-sales-public-helm-repo.s3.ap-southeast-2.amazonaws.com/charts
-helm install octopubdb oci://registry-1.docker.io/bitnamicharts/mysql
+helm upgrade -i octopubdb oci://registry-1.docker.io/bitnamicharts/mysql
 helm upgrade -i --set database.hostname=octopubdb-mysql --set database.password=$(kubectl get secret --namespace default octopubdb-mysql -o jsonpath="{.data.mysql-root-password}" | base64 -d) octopusprod SolutionEngineering/octopub-products-mysql
-helm upgrade -i --set productEndpointOverride=$(kubectl get services octopusprod-octopub-products-mysql -o jsonpath="{.status.loadBalancer.ingress[0].hostname}") octopusweb SolutionEngineering/octopub-frontend
+helm upgrade -i \
+  --set productEndpointOverride=http://$(kubectl get services octopusprod-octopub-products-mysql -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")/api/products \
+  octopusweb SolutionEngineering/octopub-frontend
 ```
 
 ## Local testing
