@@ -39,6 +39,15 @@ https://octopus-sales-public-helm-repo.s3.ap-southeast-2.amazonaws.com/charts:
 * `octopub-audits-mysql` - Deploys the audits microservice with support for a MySQL database.
 * `octopub-frontend` - Deploys the frontend.
 
+Install these charts locally with the following commands:
+
+```bash
+helm repo add SolutionEngineering https://octopus-sales-public-helm-repo.s3.ap-southeast-2.amazonaws.com/charts
+helm install octopubdb oci://registry-1.docker.io/bitnamicharts/mysql
+helm upgrade -i --set database.hostname=octopubdb-mysql --set database.password=$(kubectl get secret --namespace default octopubdb-mysql -o jsonpath="{.data.mysql-root-password}" | base64 -d) octopusprod SolutionEngineering/octopub-products-mysql
+helm upgrade -i octopusweb SolutionEngineering/octopub-frontend
+```
+
 ## Local testing
 
 To test Octopub locally, use the supplied Docker Compose file:
