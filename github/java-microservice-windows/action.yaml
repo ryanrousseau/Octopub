@@ -64,6 +64,6 @@ runs:
       working-directory: java
 
     - name: Build and deploy Windows exe
-      run: ./mvnw --batch-mode package -P "native" -DskipTests -Dquarkus.profile=mysql
+      run: ./mvnw --batch-mode package -P "native" "-DskipTests" "-Dquarkus.profile=mysql"
       shell: powershell
       working-directory: java/${{ inputs.service_directory }}
