@@ -24,7 +24,7 @@ image:
   tag: ""
 
 network:
-  port: 80
+  port: 8080
 
 imagePullSecrets: []
 nameOverride: ""
