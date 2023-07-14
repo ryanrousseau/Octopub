@@ -13,7 +13,7 @@ import com.octopus.audits.domain.framework.providers.InvalidJsonApiResourceExcep
 import com.octopus.audits.domain.framework.providers.RsqlParserExceptionMapper;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import io.quarkus.test.junit.QuarkusTest;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest

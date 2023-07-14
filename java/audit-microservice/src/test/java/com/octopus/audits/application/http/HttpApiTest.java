@@ -13,7 +13,7 @@ import io.quarkus.test.junit.mockito.InjectMock;
 import io.restassured.response.ValidatableResponse;
 import java.sql.SQLException;
 import java.util.Objects;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

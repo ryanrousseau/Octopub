@@ -10,6 +10,12 @@ inputs:
   chart_directory:
     description: 'The directory holding the microservice'
     required: true
+  octopus_url:
+    description: 'The octopus server'
+    required: true
+  octopus_apikey:
+    description: 'The octopus apikey'
+    required: true
 
 runs:
   using: "composite"
@@ -62,3 +68,14 @@ runs:
       run: helm s3 push --relative --ignore-if-exists ./${{ inputs.chart_directory }}-${{ steps.determine_version.outputs.semVer }}.tgz sales
       shell: bash
       working-directory: helm/${{ inputs.chart_directory }}
+
+    - name: Push build information to Octopus Deploy 🐙
+      uses: OctopusDeploy/push-build-information-action@v3
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+        OCTOPUS_SPACE: Matthew Casperson
+      with:
+        packages: ${{ inputs.chart_directory }}
+        version: ${{ steps.determine_version.outputs.semVer }}
+        overwrite_mode: OverwriteExisting

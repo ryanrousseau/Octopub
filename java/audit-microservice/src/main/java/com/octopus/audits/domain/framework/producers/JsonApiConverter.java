@@ -4,7 +4,7 @@ import com.github.jasminb.jsonapi.DeserializationFeature;
 import com.github.jasminb.jsonapi.ResourceConverter;
 import com.octopus.audits.domain.entities.Audit;
 import com.octopus.audits.domain.entities.Health;
-import javax.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Produces;
 
 /** Produces a JSONAPI resource converter. */
 public class JsonApiConverter {

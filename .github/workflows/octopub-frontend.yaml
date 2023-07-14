@@ -36,3 +36,5 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           chart_directory: octopub-frontend
+          octopus_url: ${{ secrets.DSC_OCTOPUS_URL }}
+          octopus_apikey: ${{ secrets.DSC_OCTOPUS_API }}

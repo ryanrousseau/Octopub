@@ -20,8 +20,8 @@ import io.quarkus.test.junit.QuarkusTest;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
+import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 import io.quarkus.test.junit.mockito.InjectMock;
 import liquibase.exception.LiquibaseException;

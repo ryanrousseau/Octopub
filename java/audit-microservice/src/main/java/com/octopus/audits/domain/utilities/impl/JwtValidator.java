@@ -12,7 +12,7 @@ import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.commons.io.IOUtils;
 
 /**

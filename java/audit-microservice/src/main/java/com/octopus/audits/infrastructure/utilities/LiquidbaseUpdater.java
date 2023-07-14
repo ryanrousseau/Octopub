@@ -3,8 +3,8 @@ package com.octopus.audits.infrastructure.utilities;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import javax.sql.DataSource;
 
 import io.quarkus.logging.Log;

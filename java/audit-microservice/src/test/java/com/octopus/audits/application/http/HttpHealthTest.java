@@ -6,7 +6,7 @@ import com.octopus.audits.BaseTest;
 import com.octopus.audits.infrastructure.utilities.LiquidbaseUpdater;
 import io.quarkus.test.junit.QuarkusTest;
 import java.sql.SQLException;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import liquibase.exception.LiquibaseException;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeAll;

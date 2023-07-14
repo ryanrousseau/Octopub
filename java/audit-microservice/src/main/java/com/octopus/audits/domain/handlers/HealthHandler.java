@@ -7,8 +7,8 @@ import com.octopus.audits.domain.Constants;
 import com.octopus.audits.domain.entities.Health;
 import com.octopus.audits.infrastructure.repositories.AuditRepository;
 import java.util.List;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.NonNull;
 
 /**

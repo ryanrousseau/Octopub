@@ -17,10 +17,10 @@ import cz.jirutka.rsql.parser.RSQLParserException;
 import java.util.Base64;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.transaction.Transactional;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import org.apache.commons.lang3.ObjectUtils;
 

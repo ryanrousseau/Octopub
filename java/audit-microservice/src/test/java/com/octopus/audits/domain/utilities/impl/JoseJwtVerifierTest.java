@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

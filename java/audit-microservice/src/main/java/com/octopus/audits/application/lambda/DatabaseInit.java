@@ -5,8 +5,8 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.octopus.audits.infrastructure.utilities.LiquidbaseUpdater;
 import java.sql.SQLException;
 import java.util.Map;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import io.quarkus.logging.Log;
 import liquibase.exception.LiquibaseException;

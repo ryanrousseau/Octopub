@@ -7,8 +7,8 @@ import com.octopus.audits.domain.utilities.impl.JoseJwtVerifier;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 
 /**

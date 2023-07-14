@@ -1,6 +1,7 @@
 package com.octopus.audits.infrastructure.repositories;
 
 import com.github.tennaito.rsql.jpa.JpaPredicateVisitor;
+import com.octopus.Constants;
 import com.octopus.audits.GlobalConstants;
 import com.octopus.audits.domain.entities.Audit;
 import com.octopus.audits.domain.exceptions.InvalidInput;
@@ -11,20 +12,29 @@ import cz.jirutka.rsql.parser.ast.RSQLVisitor;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.From;
-import javax.persistence.criteria.Predicate;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+
+import io.vavr.control.Try;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import lombok.NonNull;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.h2.util.StringUtils;
+import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.query.sqm.tree.SqmCopyContext;
+import org.hibernate.query.sqm.tree.select.SqmQuerySpec;
+import org.hibernate.query.sqm.tree.select.SqmSelectStatement;
+import org.hibernate.query.sqm.tree.select.SqmSubQuery;
 
 /**
  * Repositories are the interface between the application and the data store. They don't contain any
@@ -73,10 +83,60 @@ public class AuditRepository {
       final String pageOffset,
       final String pageLimit) {
 
-    final CriteriaBuilder builder = em.getCriteriaBuilder();
-    final CriteriaQuery<Audit> criteria = builder.createQuery(Audit.class);
-    final From<Audit, Audit> root = criteria.from(Audit.class);
-    criteria.orderBy(builder.desc(root.get("time")));
+    // Counting records is proving to be a PITA in Hibernate 6. If there is an exception, return -1.
+    final Long count = Try.of(() -> countResults(createQuery(partitions, filter, Tuple.class)))
+        .getOrElse(-1L);
+
+    // Deal with paging
+    final CriteriaQuery<Audit> queryRoot = createQuery(partitions, filter, Audit.class);
+    final TypedQuery<Audit> query = em.createQuery(queryRoot);
+    final int pageLimitParsed = NumberUtils.toInt(pageLimit, Constants.DEFAULT_PAGE_LIMIT);
+    final int pageOffsetParsed = NumberUtils.toInt(pageOffset, Constants.DEFAULT_PAGE_OFFSET);
+    query.setFirstResult(pageOffsetParsed);
+    query.setMaxResults(pageLimitParsed);
+    final List<Audit> results = query.getResultList();
+
+    // detach all the entities
+    em.clear();
+
+    return new FilteredResultWrapper(results, count);
+  }
+
+  /**
+   * This function is lifted from <a href="https://hibernate.atlassian.net/browse/HHH-15434">here</a>.
+   *
+   * @param query The query whose results you wish to count
+   * @return The number of results
+   */
+  private Long countResults(final CriteriaQuery<Tuple> query) {
+    final HibernateCriteriaBuilder builder = (HibernateCriteriaBuilder) em.getCriteriaBuilder();
+
+    final var countQuery = builder.createQuery(Long.class);
+    final var subQuery = countQuery.subquery(Tuple.class);
+
+    final SqmSubQuery<Tuple> sqmSubQuery = (SqmSubQuery<Tuple>) subQuery;
+    final var sqmOriginalQuery = (SqmSelectStatement<Tuple>) query;
+    final var sqmOriginalQuerySpec = sqmOriginalQuery.getQuerySpec();
+    final SqmQuerySpec<Tuple> sqmSubQuerySpec = sqmOriginalQuerySpec.copy(SqmCopyContext.simpleContext());
+
+    sqmSubQuery.setQueryPart(sqmSubQuerySpec);
+    final Root<?> subQuerySelectRoot = subQuery.getRoots().iterator().next();
+    sqmSubQuery.multiselect(subQuerySelectRoot.get("id").alias("id"));
+
+    countQuery.from(sqmSubQuery);
+    countQuery.select(builder.count(builder.literal(1)));
+
+    return em.createQuery(countQuery).getSingleResult();
+  }
+
+  private <T> CriteriaQuery<T> createQuery(@NonNull final List<String> partitions,
+                                           final String filter,
+                                           Class<T> clazz) {
+    final HibernateCriteriaBuilder builder = (HibernateCriteriaBuilder) em.getCriteriaBuilder();
+
+    final CriteriaQuery<T> criteria = builder.createQuery(clazz);
+    final Root<Audit> root = criteria.from(Audit.class);
+    criteria.orderBy(builder.desc(root.get("id")));
 
     // add the partition search rules
     final Predicate partitionPredicate =
@@ -89,11 +149,11 @@ public class AuditRepository {
 
     if (!StringUtils.isNullOrEmpty(filter)) {
       /*
-       Makes use of RSQL queries to filter any responses:
-       https://github.com/jirutka/rsql-parser
+        Makes use of RSQL queries to filter any responses:
+        https://github.com/jirutka/rsql-parser
       */
-      final JpaPredicateVisitor<Audit> visitor = new JpaPredicateVisitor<Audit>().defineRoot(root);
-      visitor.getBuilderTools().setArgumentParser(new CustomizedArgumentParser());
+      final RSQLVisitor<Predicate, EntityManager> visitor =
+          new JpaPredicateVisitor<Audit>().defineRoot(root);
       final Node rootNode = new RSQLParser().parse(filter);
       final Predicate filterPredicate = rootNode.accept(visitor, em);
 
@@ -105,24 +165,7 @@ public class AuditRepository {
       criteria.where(partitionPredicate);
     }
 
-    // Deal with paging
-    final TypedQuery<Audit> query = em.createQuery(criteria);
-    final int pageLimitParsed = NumberUtils.toInt(pageLimit, GlobalConstants.DEFAULT_PAGE_LIMIT);
-    final int pageOffsetParsed = NumberUtils.toInt(pageOffset, GlobalConstants.DEFAULT_PAGE_OFFSET);
-    query.setFirstResult(pageOffsetParsed);
-    query.setMaxResults(pageLimitParsed);
-    final List<Audit> results = query.getResultList();
-
-    // Get total results
-    final CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
-    countQuery.select(builder.count(countQuery.from(Audit.class)));
-    countQuery.where(criteria.getRestriction());
-    final Long count = em.createQuery(countQuery).getSingleResult();
-
-    // detach all the entities
-    em.clear();
-
-    return new FilteredResultWrapper(results, count);
+    return criteria;
   }
 
   /**
