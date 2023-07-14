@@ -9,9 +9,11 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:octopub-frontend` - The static frontend website
 * `com.octopus:octopub-frontend-sbom` - The static frontend website SBOM
 * `com.octopus:products-microservice-lambda` - The product microservice AWS Lambda
+* `com.octopus:products-microservice-jar` - The product microservice uber jar
 * `com.octopus:products-microservice-liquidbase` - The product microservice Liquidbase database migration scripts
 * `com.octopus:products-microservice-sbom` - The product microservice SBOM
 * `com.octopus:audit-microservice-lambda` - The audit microservice AWS Lambda
+* `com.octopus:audit-microservice-jar` - The audit microservice uber jar
 * `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts
 * `com.octopus:audit-microservice-sbom` - The audit microservice SBOM
 
