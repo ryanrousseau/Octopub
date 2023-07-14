@@ -257,6 +257,22 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
+    - name: Deploy JAR package
+      run: |
+        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            --batch-mode \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-jar" \
+            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
+      shell: bash
+
     # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       run: |
@@ -273,14 +289,14 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
-    - name: Deploy JAR package
+    - name: Deploy MySQL JAR package
       run: |
         if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" ]]
         then
           mvn deploy:deploy-file \
             --batch-mode \
             "-DgroupId=com.octopus" \
-            "-DartifactId=${{ inputs.service_directory }}-jar" \
+            "-DartifactId=${{ inputs.service_directory }}-mysql-jar" \
             "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
             "-Dpackaging=zip" \
             "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
