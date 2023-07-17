@@ -264,7 +264,7 @@ runs:
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-jar" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
-          "-Dpackaging=zip" \
+          "-Dpackaging=jar" \
           "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
