@@ -7,8 +7,8 @@ SuccessExitStatus=143
 
 Type=simple
 
-WorkingDirectory=/opt/octopub-products
-ExecStart=java -jar octopub-products-runner.jar
+WorkingDirectory=/opt/products-microservice
+ExecStart=java -jar products-microservice-runner.jar
 ExecStop=/bin/kill -15 $MAINPID
 
 [Install]

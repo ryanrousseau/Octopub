@@ -7,8 +7,8 @@ SuccessExitStatus=143
 
 Type=simple
 
-WorkingDirectory=/opt/audits-microservice
-ExecStart=java -jar audits-microservice-runner.jar
+WorkingDirectory=/opt/audits-service
+ExecStart=java -jar audits-service-runner.jar
 ExecStop=/bin/kill -15 $MAINPID
 
 [Install]
