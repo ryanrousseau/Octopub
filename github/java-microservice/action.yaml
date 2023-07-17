@@ -259,13 +259,14 @@ runs:
 
     - name: Deploy JAR package
       run: |
+        files=( java/${{ inputs.service_directory }}/target/*-runner.jar )
         mvn deploy:deploy-file \
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-jar" \
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dpackaging=jar" \
-          "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
+          "-Dfile=${files[0]}" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
@@ -282,7 +283,8 @@ runs:
           "-Dfile=${{ inputs.service_directory }}-systemd.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: systemd/${{ inputs.service_directory }}
+      shell: bash
+      working-directory: systemd/${{ inputs.service_directory }}
 
     # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
