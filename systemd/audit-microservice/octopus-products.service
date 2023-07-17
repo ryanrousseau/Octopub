@@ -1,0 +1,15 @@
+[Unit]
+Description=Octopub Audits Service
+After=syslog.target network.target
+
+[Service]
+SuccessExitStatus=143
+
+Type=simple
+
+WorkingDirectory=/opt/audits-microservice
+ExecStart=java -jar audits-microservice-runner.jar
+ExecStop=/bin/kill -15 $MAINPID
+
+[Install]
+WantedBy=multi-user.target
