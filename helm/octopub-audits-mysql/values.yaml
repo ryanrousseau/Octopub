@@ -18,6 +18,9 @@ database:
   password: password
   migrateOnStartup: true
 
+application:
+  disableAuth: false
+
 network:
   port: 10000
 
