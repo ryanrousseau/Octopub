@@ -12,13 +12,13 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:products-microservice-jar` - The product microservice uber jar
 * `com.octopus:products-microservice-systemd` - The product microservice systemd service file
 * `com.octopus:products-microservice-mysql-jar` - The product microservice uber jar with MySQL
-* `com.octopus:products-microservice-liquidbase` - The product microservice Liquidbase database migration scripts
+* `com.octopus:products-microservice-liquidbase` - The product microservice Liquidbase database migration scripts. The changelog file is called `changeLog.xml`.
 * `com.octopus:products-microservice-sbom` - The product microservice SBOM
 * `com.octopus:audit-microservice-lambda` - The audit microservice AWS Lambda
 * `com.octopus:audit-microservice-jar` - The audit microservice uber jar
 * `com.octopus:audit-microservice-systemd` - The audit microservice systemd service file
 * `com.octopus:audit-microservice-mysql-jar` - The audit microservice uber jar with MySQL
-* `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts
+* `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts. The changelog file is called `changeLog.xml`.
 * `com.octopus:audit-microservice-sbom` - The audit microservice SBOM
 
 ## Docker images
