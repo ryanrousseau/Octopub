@@ -66,3 +66,24 @@ docker-compose up
 ```
 
 You can then access the page at http://localhost:5001.
+
+## Database migration examples
+
+If you wish to demonstrate a database migration using the `com.octopus:products-microservice-liquidbase` or 
+`com.octopus:audit-microservice-liquidbase` packages, the script below provdes an example with the Liquibase
+docker image:
+
+```bash
+echo "##octopus[stdout-verbose]"
+docker pull liquibase/liquibase
+echo "##octopus[stdout-default]"
+
+cd products-microservice-liquidbase
+
+docker run -e INSTALL_MYSQL=true --rm -v ${PWD}:/liquibase/changelog liquibase/liquibase \
+  "--changeLogFile=changeLog.xml" \
+  "--username=#{Database.Username}" \
+  "--password=#{Database.Password}" \
+  "--url=jdbc:mysql://#{Database.Hostname}:3306/product?createDatabaseIfNotExist=true" \
+  update
+```
