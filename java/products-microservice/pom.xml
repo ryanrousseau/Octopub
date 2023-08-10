@@ -145,6 +145,12 @@
   </distributionManagement>
   <build>
     <finalName>products-microservice</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <extensions>
       <extension>
         <groupId>com.github.ehsaniara</groupId>

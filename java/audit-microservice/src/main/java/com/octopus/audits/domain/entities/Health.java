@@ -16,6 +16,10 @@ public class Health {
   public String endpoint;
 
   public String path;
+
   public String method;
+
   public String status;
+
+  public String version;
 }
