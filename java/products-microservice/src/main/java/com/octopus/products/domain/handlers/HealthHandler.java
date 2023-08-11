@@ -53,6 +53,26 @@ public class HealthHandler {
             .build());
   }
 
+  /**
+   * Get the health check response content.
+   *
+   * @return The JSONAPI response representing the health check.
+   * @throws DocumentSerializationException Thrown if the entity could not be converted to a JSONAPI
+   *                                        resource.
+   */
+  public String getHealth()
+      throws DocumentSerializationException {
+
+    // Query for an empty set of results. This validates a connection to the database.
+    repository.findAll(List.of(Constants.DEFAULT_PARTITION), null, "0", "0");
+
+    return respondWithHealth(
+        Health.builder()
+            .status("OK")
+            .version(appVersion)
+            .build());
+  }
+
   private String respondWithHealth(final Health health) throws DocumentSerializationException {
     final JSONAPIDocument<Health> document = new JSONAPIDocument<>(health);
     return new String(resourceConverter.writeDocument(document));
