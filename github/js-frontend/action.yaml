@@ -118,7 +118,7 @@ runs:
     # This step generates a Source Bill of Materials (SBOM) package that captures all the dependencies compiled
     # into the application.
     - name: Generate SBOM
-      run: cyclonedx-npm --ignore-npm-errors --output-file bom.xml
+      run: cyclonedx-npm --ignore-npm-errors --output-file bom.json
       shell: bash
       working-directory: js/frontend
 
@@ -131,7 +131,7 @@ runs:
         octopus package zip create
         --id javascript-frontend-sbom
         --version ${{ steps.determine_version.outputs.semVer }}
-        --include **/bom.xml
+        --include **/bom.json
       shell: bash
       working-directory: js/frontend
 
