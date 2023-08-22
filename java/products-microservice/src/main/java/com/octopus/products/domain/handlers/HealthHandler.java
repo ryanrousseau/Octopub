@@ -10,6 +10,7 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * Handles the health check requests.
@@ -22,6 +23,10 @@ public class HealthHandler {
 
   @Inject
   ProductsRepository repository;
+
+  @ConfigProperty(name = "app.version")
+  String appVersion;
+
 
   /**
    * Get the health check response content.
@@ -44,6 +49,27 @@ public class HealthHandler {
             .path(path)
             .method(method)
             .endpoint(path + "/" + method)
+            .version(appVersion)
+            .build());
+  }
+
+  /**
+   * Get the health check response content.
+   *
+   * @return The JSONAPI response representing the health check.
+   * @throws DocumentSerializationException Thrown if the entity could not be converted to a JSONAPI
+   *                                        resource.
+   */
+  public String getHealth()
+      throws DocumentSerializationException {
+
+    // Query for an empty set of results. This validates a connection to the database.
+    repository.findAll(List.of(Constants.DEFAULT_PARTITION), null, "0", "0");
+
+    return respondWithHealth(
+        Health.builder()
+            .status("OK")
+            .version(appVersion)
             .build());
   }
 

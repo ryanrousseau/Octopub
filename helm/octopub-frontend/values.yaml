@@ -70,10 +70,8 @@ ingress:
   hosts:
     - host:
       paths:
-      - path: /*
-        pathType: ImplementationSpecific
-      - path: /static/*
-        pathType: ImplementationSpecific
+      - path: /
+        pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

@@ -10,6 +10,7 @@ import java.util.List;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * Handles the health check requests.
@@ -22,6 +23,9 @@ public class HealthHandler {
 
   @Inject
   AuditRepository auditRepository;
+
+  @ConfigProperty(name = "app.version")
+  String appVersion;
 
   /**
    * Get the health check response content.
@@ -44,6 +48,7 @@ public class HealthHandler {
             .path(path)
             .method(method)
             .endpoint(path + "/" + method)
+            .version(appVersion)
             .build());
   }
 
