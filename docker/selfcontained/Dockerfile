@@ -13,7 +13,7 @@ RUN npm install --global yarn
 ADD js/frontend /js
 RUN cd /js; yarn install; yarn build
 
-FROM nginx
+FROM nginxinc/nginx-unprivileged
 RUN DEBIAN_FRONTEND=noninteractive \
       apt-get update \
       && apt-get install -y supervisor default-jdk \

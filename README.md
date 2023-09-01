@@ -32,7 +32,7 @@ The following images are built:
 | octopussamples/octopub-audit-microservice          | The backend audits service with embedded database                         | 10000 | 1001    | 1001     | true                             |
 | octopussamples/octopub-audit-microservice-mysql    | The backend audits service configured to use an external MySQL database   | 10000 | 1001    | 1001     | true                             |
 | octopussamples/octopub-frontend                    | The frontend web UI                                                       | 8080  | 101     | 101      | true                             |
-| octopussamples/octopub-selfcontained               | A self contained image with the frontend and backend services             | 80    | 101     | 101      | true                             |
+| octopussamples/octopub-selfcontained               | A self contained image with the frontend and backend services             | 8080  | 101     | 101      | true                             |
 | octopussamples/postman-worker-image                | A worker image that includes Postman                                      |       |         |          |                                  |
 | octopussamples/cypress-worker-image                | A worker image that includes Cypress                                      |       |         |          |                                  |
 
