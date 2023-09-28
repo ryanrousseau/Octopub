@@ -15,6 +15,6 @@ RUN curl -s https://api.github.com/repos/mcasperson/UltimateDockerLauncher/relea
 RUN chmod +x /opt/udl
 COPY --from=build /usr/src/app/build /usr/share/nginx/html/
 RUN chown -R nginx:nginx /usr/share/nginx/html
-USER nginx
+USER 101
 ENTRYPOINT []
 CMD [  "/opt/udl", "nginx", "-g", "daemon off;" ]
