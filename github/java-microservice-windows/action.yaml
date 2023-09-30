@@ -131,3 +131,19 @@ runs:
       run: ./mvnw --batch-mode package -P "native" "-DskipTests" "-Dquarkus.profile=mysql"
       shell: powershell
       working-directory: java/${{ inputs.service_directory }}
+
+    - name: Push SBOM Package
+      run: |
+        $buildDir = Get-ChildItem target | ? {$_.Name.EndsWith("-native-image-source-jar")} | % {$_.Name}
+        Compress-Archive -Path target\$buildDir\* -DestinationPath ${{ inputs.service_directory }}-windows.${{ steps.determine_version.outputs.semVer }}.zip
+        mvn deploy:deploy-file `
+          --batch-mode `
+          "-DgroupId=com.octopus" `
+          "-DartifactId=${{ inputs.service_directory }}-windows" `
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" `
+          "-Dpackaging=zip" \
+          "-Dfile=${{ inputs.service_directory }}-windows.${{ steps.determine_version.outputs.semVer }}.zip" `
+          "-DrepositoryId=octopus-sales-public-snapshot" `
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: powershell
+      working-directory: java/${{ inputs.service_directory }}
