@@ -108,7 +108,7 @@ runs:
             </server>
           </servers>
         </settings>
-        @"
+        "@
       shell: powershell
       working-directory: java
 

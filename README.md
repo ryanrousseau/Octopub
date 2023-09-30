@@ -21,6 +21,16 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts. The changelog file is called `changeLog.xml`.
 * `com.octopus:audit-microservice-sbom` - The audit microservice SBOM
 
+## Downloading files locally
+
+You can download Maven artifacts locally with a command like:
+
+```
+mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get "-DremoteRepositories=https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot/" -Dartifact=com.octopus:products-microservice-lambda:LATEST:zip
+```
+
+Replace `com.octopus:products-microservice-lambda` with the artifact ID listed in the previous section.
+
 ## Docker images
 
 The following images are built:
