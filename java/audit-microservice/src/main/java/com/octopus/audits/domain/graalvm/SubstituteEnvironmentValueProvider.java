@@ -7,10 +7,10 @@ import com.oracle.svm.core.annotate.TargetClass;
 import java.util.Map;
 
 /**
- * Reimplements the fix from https://github.com/quarkusio/quarkus/pull/25960
- * See https://github.com/quarkusio/quarkus/issues/33030
+ * Reimplements the fix from <a href="https://github.com/quarkusio/quarkus/pull/25960">this PR</a>
+ * See <a href="https://github.com/quarkusio/quarkus/issues/33030">this issue</a>
  */
-@TargetClass(className = "liquibase.configuration.pro.EnvironmentValueProvider")
+@TargetClass(className = "liquibase.configuration.core.EnvironmentValueProvider")
 final class SubstituteEnvironmentValueProvider {
 
   @Delete
