@@ -76,7 +76,7 @@ runs:
           "org.apache.httpcomponents:httpclient:4.5.14:jar",
           "commons-io:commons-io:2.12.0")
         $deps | % {
-           eho "Installing $_"
+           echo "Installing $_"
            $split=$_.Split(":")
            mvn dependency:get `
             --batch-mode `
