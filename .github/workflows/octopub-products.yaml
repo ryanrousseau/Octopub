@@ -12,23 +12,22 @@ permissions:
       - '!python/**/*'
 
 jobs:
-# https://github.com/quarkusio/quarkus/issues/33030 needs to be fixed before Windows builds will work
-#  build-windows:
-#    runs-on: windows-latest
-#    steps:
-#      - uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#
-#      - name: Build Products Windows
-#        uses: ./github/java-microservice-windows
-#        with:
-#          run_number: ${{ github.run_number }}
-#          github_repo: ${{ github.repository }}
-#          github_token: ${{ github.token }}
-#          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          service_directory: products-microservice
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build Products Windows
+        uses: ./github/java-microservice-windows
+        with:
+          run_number: ${{ github.run_number }}
+          github_repo: ${{ github.repository }}
+          github_token: ${{ github.token }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          service_directory: products-microservice
   build:
     runs-on: ubuntu-latest
     steps:
