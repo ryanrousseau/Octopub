@@ -141,7 +141,7 @@ runs:
           "-DgroupId=com.octopus" `
           "-DartifactId=${{ inputs.service_directory }}-windows" `
           "-Dversion=${{ steps.determine_version.outputs.semVer }}" `
-          "-Dpackaging=zip" \
+          "-Dpackaging=zip" `
           "-Dfile=${{ inputs.service_directory }}-windows.${{ steps.determine_version.outputs.semVer }}.zip" `
           "-DrepositoryId=octopus-sales-public-snapshot" `
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
