@@ -61,7 +61,10 @@ runs:
     # transitive dependencies downloaded for us. Instead, we must download these dependencies manually.
     - name: Install maven-repository-aws-s3 dependencies
       run: |
-        $mavenDir = [System.IO.Path]::GetDirectoryName((get-command mvn).source)
+        $mavenExe = (get-command mvn).source
+        echo $mavenExe
+        $mavenDir = [System.IO.Path]::GetDirectoryName($mavenExe)
+        echo $mavenDir
         $deps=@("com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar", 
           "org.apache.httpcomponents:httpcore:4.4.16:jar",
           "com.amazonaws:aws-java-sdk-s3:1.12.405:jar",
@@ -73,6 +76,7 @@ runs:
           "org.apache.httpcomponents:httpclient:4.5.14:jar",
           "commons-io:commons-io:2.12.0")
         $deps | % {
+           eho "Installing $_"
            $split=$_.Split(":")
            mvn dependency:get `
             --batch-mode `
