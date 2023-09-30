@@ -9,6 +9,7 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:octopub-frontend` - The static frontend website
 * `com.octopus:octopub-frontend-sbom` - The static frontend website SBOM
 * `com.octopus:products-microservice-lambda` - The product microservice AWS Lambda
+* `com.octopus:products-microservice-windows` - The product microservice as a Windows executable
 * `com.octopus:products-microservice-jar` - The product microservice uber jar
 * `com.octopus:products-microservice-systemd` - The product microservice systemd service file
 * `com.octopus:products-microservice-mysql-jar` - The product microservice uber jar with MySQL
