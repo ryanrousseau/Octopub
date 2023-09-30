@@ -63,7 +63,8 @@ runs:
       run: |
         $mavenExe = (get-command mvn).source
         echo $mavenExe
-        $mavenDir = [System.IO.Path]::GetDirectoryName($mavenExe)
+        $mavenBinDir = [System.IO.Path]::GetDirectoryName($mavenExe)
+        $mavenDir = [System.IO.Path]::GetDirectoryName($mavenBinDir)
         echo $mavenDir
         $deps=@("com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar", 
           "org.apache.httpcomponents:httpcore:4.4.16:jar",
