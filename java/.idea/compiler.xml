@@ -7,13 +7,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="microservice-utils" />
         <module name="products-microservice" />
+        <module name="rsql-jpa" />
+        <module name="audit-service" />
+        <module name="microservice-utils" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="audit-service" options="-parameters" />
       <module name="products-microservice" options="-parameters" />
     </option>
   </component>
