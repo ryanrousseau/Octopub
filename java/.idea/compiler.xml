@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="products-microservice" />
+        <module name="products-microservice-gcf" />
         <module name="rsql-jpa" />
         <module name="audit-service" />
         <module name="microservice-utils" />
@@ -18,6 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="audit-service" options="-parameters" />
       <module name="products-microservice" options="-parameters" />
+      <module name="products-microservice-gcf" options="-parameters" />
     </option>
   </component>
 </project>
