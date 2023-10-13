@@ -45,6 +45,9 @@ jobs:
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
+          octopus_url: ${{ secrets.DSC_OCTOPUS_URL }}
+          octopus_apikey: ${{ secrets.DSC_OCTOPUS_API }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           service_directory: products-microservice-gcf
           lambda_build: false
           postman_build: false
