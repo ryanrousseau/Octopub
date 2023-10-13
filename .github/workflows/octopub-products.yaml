@@ -51,6 +51,7 @@ jobs:
           liquibase_build: false
           docker_build: false
           systemd_build: false
+          run_tests: false
   build:
     runs-on: ubuntu-latest
     steps:
