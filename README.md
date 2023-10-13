@@ -9,7 +9,7 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:octopub-frontend` - The static frontend website
 * `com.octopus:octopub-frontend-sbom` - The static frontend website SBOM
 * `com.octopus:products-microservice-lambda` - The product microservice AWS Lambda
-* `com.octopus:products-microservice-gcf` - The product microservice Google Cloud Function artifact
+* `com.octopus:products-microservice-gcf-jar` - The product microservice Google Cloud Function artifact
 * `com.octopus:products-microservice-windows` - The product microservice as a Windows executable
 * `com.octopus:products-microservice-jar` - The product microservice uber jar
 * `com.octopus:products-microservice-systemd` - The product microservice systemd service file
@@ -25,11 +25,18 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 
 ## Downloading files locally
 
-You can download Maven artifacts locally with a command like:
+You can download Zip Maven artifacts locally with a command like:
 
 ```
 mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get "-DremoteRepositories=https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot/" -Dartifact=com.octopus:products-microservice-lambda:LATEST:zip
 ```
+
+Jar files are downloaded with a command like:
+
+```
+mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get "-DremoteRepositories=https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot/" -Dartifact=com.octopus:products-microservice-gcf-jar:LATEST:jar
+```
+
 
 Replace `com.octopus:products-microservice-lambda` with the artifact ID listed in the previous section.
 
