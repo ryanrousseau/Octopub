@@ -207,7 +207,7 @@ runs:
         branches-badge-filename: microservice-utils-branches.svg
 
     - name: Update resources
-      if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
+      if: ${{ inputs.run_tests && steps.branch-name.outputs.current_branch == 'main' }}
       uses: test-room-7/action-update-file@v1.6.0
       with:
         file-path: |
