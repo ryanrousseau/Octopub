@@ -94,7 +94,7 @@ public class GoogleCloudFunction implements HttpFunction {
       return;
     }
 
-    if (Paths.HEALTH_ENDPOINT.equals(httpRequest.getPath())) {
+    if (Paths.API_ENDPOINT.equals(httpRequest.getPath())) {
       writer.write(resourceHandlerGetAll.getAll(
           getHeaderList(httpRequest, Constants.DATA_PARTITION_HEADER),
           getHeader(httpRequest, Constants.JsonApi.FILTER_QUERY_PARAM),
