@@ -31,6 +31,18 @@ inputs:
   service_directory:
     description: 'The directory holding the microservice'
     required: true
+  lambda_build:
+    description: 'Whether to build the lambda executable or not'
+    required: true
+    default: true
+  postman_build:
+    description: 'Whether to build the postman test'
+    required: true
+    default: true
+  liquibase_build:
+    description: 'Whether to build the liquibase packages'
+    required: true
+    default: true
 
 runs:
   using: "composite"
@@ -333,7 +345,8 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
-    - name: Build and deploy serverless package
+    - name: Build serverless package
+      if: ${{ inputs.lambda_build }}
       run: |
         # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
         ./mvnw \
@@ -348,6 +361,7 @@ runs:
       working-directory: java/${{ inputs.service_directory }}
 
     - name: Deploy serverless package
+      if: ${{ inputs.lambda_build }}
       run: |
         mvn deploy:deploy-file \
           --batch-mode \
@@ -362,6 +376,7 @@ runs:
 
     # The database migration scripts are packaged as a separate file
     - name: Build Postman package
+      if: ${{ inputs.postman_build }}
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
@@ -376,7 +391,8 @@ runs:
       shell: bash
       working-directory: java
 
-    - name: Deploy liquidbase package
+    - name: Deploy liquibase package
+      if: ${{ inputs.liquibase_build }}
       run: |
         if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" ]]
         then
