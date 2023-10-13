@@ -13,6 +13,7 @@ import com.octopus.products.domain.handlers.ResourceHandlerGetAll;
 import com.octopus.products.domain.handlers.ResourceHandlerGetOne;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import org.apache.commons.io.IOUtils;
 
 import java.io.Writer;
@@ -43,6 +44,7 @@ public class GoogleCloudFunction implements HttpFunction {
   HealthHandler healthHandler;
 
   @Override
+  @Transactional
   public void service(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
     if ("GET".equalsIgnoreCase(httpRequest.getMethod())) {
       serviceGet(httpRequest, httpResponse);
