@@ -177,6 +177,7 @@ runs:
       working-directory: java
 
     - name: Test Backend
+      if: ${{ inputs.run_tests }}
       run: ./mvnw --batch-mode test
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
