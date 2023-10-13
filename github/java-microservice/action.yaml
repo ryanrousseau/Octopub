@@ -43,6 +43,14 @@ inputs:
     description: 'Whether to build the liquibase packages'
     required: true
     default: true
+  docker_build:
+    description: 'Whether to build the docker images'
+    required: true
+    default: true
+  systemd_build:
+    description: 'Whether to build the systemd packages'
+    required: true
+    default: true
 
 runs:
   using: "composite"
@@ -236,6 +244,7 @@ runs:
 
     # Integration tests are performed with Postman using an exported collection.
     - name: Build Postman package
+      if: ${{ inputs.postman_build }}
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
@@ -253,6 +262,7 @@ runs:
 
     # The Postman package is pushed to the maven repo.
     - name: Push Postman Package
+      if: ${{ inputs.postman_build }}
       run: |
         if [[ -f "java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" ]]
         then
@@ -289,6 +299,7 @@ runs:
       shell: bash
 
     - name: Deploy systemd package
+      if: ${{ inputs.systemd_build }}
       run: |
         zip ${{ inputs.service_directory }}-systemd.zip *.service
         mvn deploy:deploy-file \
@@ -305,6 +316,7 @@ runs:
 
     # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build }}
       run: |
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
@@ -337,6 +349,7 @@ runs:
 
     # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build }}
       run: |
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
@@ -375,8 +388,8 @@ runs:
       shell: bash
 
     # The database migration scripts are packaged as a separate file
-    - name: Build Postman package
-      if: ${{ inputs.postman_build }}
+    - name: Build Liquibase package
+      if: ${{ inputs.liquibase_build }}
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
