@@ -46,6 +46,8 @@ public class GoogleCloudFunction implements HttpFunction {
   @Override
   @Transactional
   public void service(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
+    acceptHeaderVerifier.checkAcceptHeader(getHeaderList(httpRequest, HttpHeaders.ACCEPT));
+
     if ("GET".equalsIgnoreCase(httpRequest.getMethod())) {
       serviceGet(httpRequest, httpResponse);
     }
@@ -56,8 +58,6 @@ public class GoogleCloudFunction implements HttpFunction {
   }
 
   private void servicePost(final HttpRequest httpRequest, final HttpResponse httpResponse) throws Exception {
-    acceptHeaderVerifier.checkAcceptHeader(getHeaderList(httpRequest, HttpHeaders.ACCEPT));
-
     final Writer writer = httpResponse.getWriter();
 
     if (Paths.API_ENDPOINT.equals(httpRequest.getPath())) {
