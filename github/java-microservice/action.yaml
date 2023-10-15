@@ -327,6 +327,8 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       run: |
+        ls -la
+        ls -la target
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
         docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}:latest
