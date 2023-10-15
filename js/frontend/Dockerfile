@@ -18,6 +18,6 @@ RUN chmod +x /opt/udl
 COPY --from=build /usr/src/app/build /usr/share/nginx/html/
 RUN chown -R nginx:nginx /usr/share/nginx/html
 COPY --from=build /bom.json /bom.json
-USER nginx
+USER 101
 ENTRYPOINT []
 CMD [  "/opt/udl", "nginx", "-g", "daemon off;" ]

@@ -1,5 +1,7 @@
 package com.octopus.products.application;
 
+import java.util.regex.Pattern;
+
 /**
  * The paths used for tests. Update these to reflect the paths exposed by the application.
  *
@@ -18,5 +20,7 @@ package com.octopus.products.application;
  */
 public final class Paths {
   public static final String API_ENDPOINT = "/api/products";
+  public static final Pattern API_ENDPOINT_INDIVIDUAL = Pattern.compile("/api/products/(?<id>.?+)");
   public static final String HEALTH_ENDPOINT = "/health/products";
+  public static final Pattern HEALTH_ENDPOINT_INDIVIDUAL = Pattern.compile("/health/products/(?<id>.?+)/(?<method>.?+)");
 }

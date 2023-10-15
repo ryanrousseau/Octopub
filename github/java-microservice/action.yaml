@@ -31,6 +31,30 @@ inputs:
   service_directory:
     description: 'The directory holding the microservice'
     required: true
+  lambda_build:
+    description: 'Whether to build the lambda executable or not'
+    required: true
+    default: true
+  postman_build:
+    description: 'Whether to build the postman test'
+    required: true
+    default: true
+  liquibase_build:
+    description: 'Whether to build the liquibase packages'
+    required: true
+    default: true
+  docker_build:
+    description: 'Whether to build the docker images'
+    required: true
+    default: true
+  systemd_build:
+    description: 'Whether to build the systemd packages'
+    required: true
+    default: true
+  run_tests:
+    description: 'Whether to run tests'
+    required: true
+    default: true
 
 runs:
   using: "composite"
@@ -66,6 +90,7 @@ runs:
         cache: 'maven'
 
     - name: Login to DockerHub
+      if: ${{ inputs.docker_build == 'true' }}
       uses: docker/login-action@v2
       with:
         username: ${{ inputs.dockerhub_username }}
@@ -137,7 +162,7 @@ runs:
       working-directory: java
 
     - name: Update version
-      run: ./mvnw versions:set -DnewVersion=${{ steps.determine_version.outputs.semVer }}
+      run: ./mvnw versions:set -DnewVersion=${{ steps.determine_version.outputs.semVer }} --batch-mode
       shell: bash
       working-directory: java/rsql-jpa
 
@@ -152,16 +177,19 @@ runs:
       working-directory: java
 
     - name: Test Backend
+      if: ${{ inputs.run_tests == 'true' }}
       run: ./mvnw --batch-mode test
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
     - name: Test Shared Library
+      if: ${{ inputs.run_tests == 'true' }}
       run: ./mvnw --batch-mode test
       shell: bash
       working-directory: java/microservice-utils
 
     - name: Generate JaCoCo Badges
+      if: ${{ inputs.run_tests == 'true' }}
       uses: cicirello/jacoco-badge-generator@v2
       with:
         generate-branches-badge: true
@@ -170,6 +198,7 @@ runs:
         branches-badge-filename: ${{ inputs.service_directory }}-branches.svg
 
     - name: Generate JaCoCo Badges for Shared Library
+      if: ${{ inputs.run_tests == 'true' }}
       uses: cicirello/jacoco-badge-generator@v2
       with:
         generate-branches-badge: true
@@ -178,7 +207,7 @@ runs:
         branches-badge-filename: microservice-utils-branches.svg
 
     - name: Update resources
-      if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
+      if: ${{ inputs.run_tests == 'true' && steps.branch-name.outputs.current_branch == 'main' }}
       uses: test-room-7/action-update-file@v1.6.0
       with:
         file-path: |
@@ -224,6 +253,7 @@ runs:
 
     # Integration tests are performed with Postman using an exported collection.
     - name: Build Postman package
+      if: ${{ inputs.postman_build == 'true' }}
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
@@ -241,6 +271,7 @@ runs:
 
     # The Postman package is pushed to the maven repo.
     - name: Push Postman Package
+      if: ${{ inputs.postman_build == 'true' }}
       run: |
         if [[ -f "java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" ]]
         then
@@ -277,6 +308,7 @@ runs:
       shell: bash
 
     - name: Deploy systemd package
+      if: ${{ inputs.systemd_build == 'true' }}
       run: |
         zip ${{ inputs.service_directory }}-systemd.zip *.service
         mvn deploy:deploy-file \
@@ -293,7 +325,10 @@ runs:
 
     # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build == 'true' }}
       run: |
+        ls -la
+        ls -la target
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
         docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}:latest
@@ -325,6 +360,7 @@ runs:
 
     # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build == 'true' }}
       run: |
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
@@ -333,7 +369,8 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
-    - name: Build and deploy serverless package
+    - name: Build serverless package
+      if: ${{ inputs.lambda_build == 'true' }}
       run: |
         # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
         ./mvnw \
@@ -347,7 +384,13 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
+    - name: Add SBOM to serverless package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
+      shell: bash
+
     - name: Deploy serverless package
+      if: ${{ inputs.lambda_build == 'true' }}
       run: |
         mvn deploy:deploy-file \
           --batch-mode \
@@ -361,7 +404,8 @@ runs:
       shell: bash
 
     # The database migration scripts are packaged as a separate file
-    - name: Build Postman package
+    - name: Build Liquibase package
+      if: ${{ inputs.liquibase_build == 'true' }}
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
@@ -376,7 +420,8 @@ runs:
       shell: bash
       working-directory: java
 
-    - name: Deploy liquidbase package
+    - name: Deploy liquibase package
+      if: ${{ inputs.liquibase_build == 'true' }}
       run: |
         if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" ]]
         then

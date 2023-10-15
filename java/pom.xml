@@ -16,6 +16,7 @@
 
   <modules>
     <module>products-microservice</module>
+    <module>products-microservice-gcf</module>
     <module>audit-microservice</module>
     <module>microservice-utils</module>
     <module>rsql-jpa</module>

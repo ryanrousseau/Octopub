@@ -9,6 +9,8 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:octopub-frontend` - The static frontend website
 * `com.octopus:octopub-frontend-sbom` - The static frontend website SBOM
 * `com.octopus:products-microservice-lambda` - The product microservice AWS Lambda
+* `com.octopus:products-microservice-gcf-jar` - The product microservice Google Cloud Function artifact
+* `com.octopus:products-microservice-windows` - The product microservice as a Windows executable
 * `com.octopus:products-microservice-jar` - The product microservice uber jar
 * `com.octopus:products-microservice-systemd` - The product microservice systemd service file
 * `com.octopus:products-microservice-mysql-jar` - The product microservice uber jar with MySQL
@@ -21,6 +23,23 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts. The changelog file is called `changeLog.xml`.
 * `com.octopus:audit-microservice-sbom` - The audit microservice SBOM
 
+## Downloading files locally
+
+You can download Zip Maven artifacts locally with a command like:
+
+```
+mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get "-DremoteRepositories=https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot/" -Dartifact=com.octopus:products-microservice-lambda:LATEST:zip
+```
+
+Jar files are downloaded with a command like:
+
+```
+mvn org.apache.maven.plugins:maven-dependency-plugin:3.6.0:get "-DremoteRepositories=https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot/" -Dartifact=com.octopus:products-microservice-gcf-jar:LATEST:jar
+```
+
+
+Replace `com.octopus:products-microservice-lambda` with the artifact ID listed in the previous section.
+
 ## Docker images
 
 The following images are built:
@@ -32,7 +51,7 @@ The following images are built:
 | octopussamples/octopub-audit-microservice          | The backend audits service with embedded database                         | 10000 | 1001    | 1001     | true                             |
 | octopussamples/octopub-audit-microservice-mysql    | The backend audits service configured to use an external MySQL database   | 10000 | 1001    | 1001     | true                             |
 | octopussamples/octopub-frontend                    | The frontend web UI                                                       | 8080  | 101     | 101      | true                             |
-| octopussamples/octopub-selfcontained               | A self contained image with the frontend and backend services             | 80    | 101     | 101      | true                             |
+| octopussamples/octopub-selfcontained               | A self contained image with the frontend and backend services             | 8080  | 101     | 101      | true                             |
 | octopussamples/postman-worker-image                | A worker image that includes Postman                                      |       |         |          |                                  |
 | octopussamples/cypress-worker-image                | A worker image that includes Cypress                                      |       |         |          |                                  |
 
