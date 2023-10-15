@@ -382,6 +382,11 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
+    - name: Add SBOM to serverless package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
+      shell: bash
+
     - name: Deploy serverless package
       if: ${{ inputs.lambda_build == 'true' }}
       run: |
