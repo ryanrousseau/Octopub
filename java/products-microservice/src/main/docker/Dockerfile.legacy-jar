@@ -47,6 +47,9 @@ ENV JAVA_OPTIONS="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jb
 # This assumes uberjar: https://quarkus.io/guides/maven-tooling#uber-jar-maven
 COPY target/*-runner.jar /deployments/app.jar
 
+# Copy the SBOM
+COPY target/bom.json /bom.json
+
 EXPOSE 8083
 USER 1001
 
