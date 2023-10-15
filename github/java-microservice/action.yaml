@@ -326,6 +326,8 @@ runs:
     # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
+      env:
+        DOCKER_BUILDKIT: 0
       run: |
         ls -la
         ls -la target
@@ -361,6 +363,8 @@ runs:
     # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
+      env:
+        DOCKER_BUILDKIT: 0
       run: |
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
         docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
