@@ -327,6 +327,7 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       env:
+        # Fixes https://github.com/docker/build-push-action/issues/558
         DOCKER_BUILDKIT: 0
       run: |
         ls -la
@@ -364,6 +365,7 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       env:
+        # Fixes https://github.com/docker/build-push-action/issues/558
         DOCKER_BUILDKIT: 0
       run: |
         docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
