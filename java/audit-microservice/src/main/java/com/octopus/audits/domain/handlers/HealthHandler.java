@@ -27,6 +27,11 @@ public class HealthHandler {
   @ConfigProperty(name = "app.version")
   String appVersion;
 
+  /**
+   * Returns a response when the root health endpoint has been accessed.
+   * @return HTTP OK with the app version
+   * @throws DocumentSerializationException
+   */
   public String getHealth()
       throws DocumentSerializationException {
 
