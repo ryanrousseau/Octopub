@@ -27,6 +27,19 @@ public class HealthHandler {
   @ConfigProperty(name = "app.version")
   String appVersion;
 
+  public String getHealth()
+      throws DocumentSerializationException {
+
+    // Query for an empty set of results. This validates a connection to the database.
+    auditRepository.findAll(List.of(Constants.DEFAULT_PARTITION), null, "0", "0");
+
+    return respondWithHealth(
+        Health.builder()
+            .status("OK")
+            .version(appVersion)
+            .build());
+  }
+
   /**
    * Get the health check response content.
    *
