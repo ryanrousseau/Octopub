@@ -29,6 +29,7 @@ public class HealthHandler {
 
   /**
    * Returns a response when the root health endpoint has been accessed.
+   *
    * @return HTTP OK with the app version
    * @throws DocumentSerializationException If the response can not be converted to JSONAPI
    */
