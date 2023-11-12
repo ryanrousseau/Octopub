@@ -6,7 +6,9 @@ import com.github.jasminb.jsonapi.exceptions.DocumentSerializationException;
 import com.octopus.audits.domain.Constants;
 import com.octopus.audits.domain.entities.Health;
 import com.octopus.audits.infrastructure.repositories.AuditRepository;
+
 import java.util.List;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NonNull;
@@ -26,6 +28,25 @@ public class HealthHandler {
 
   @ConfigProperty(name = "app.version")
   String appVersion;
+
+  /**
+   * Returns a response when the root health endpoint has been accessed.
+   *
+   * @return HTTP OK with the app version
+   * @throws DocumentSerializationException If the response can not be converted to JSONAPI
+   */
+  public String getHealth()
+      throws DocumentSerializationException {
+
+    // Query for an empty set of results. This validates a connection to the database.
+    auditRepository.findAll(List.of(Constants.DEFAULT_PARTITION), null, "0", "0");
+
+    return respondWithHealth(
+        Health.builder()
+            .status("OK")
+            .version(appVersion)
+            .build());
+  }
 
   /**
    * Get the health check response content.
