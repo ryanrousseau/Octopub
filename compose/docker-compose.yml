@@ -21,15 +21,15 @@ services:
     ports:
       - "8081:8080"
     environment:
-      UDL_SETVALUE_1: "[/usr/share/nginx/html/config.json][productEndpoint]http://localhost:8083/api/products"
-      UDL_SETVALUE_2: "[/usr/share/nginx/html/config.json][productHealthEndpoint]http://localhost:8083/health/products"
-      UDL_SETVALUE_3: "[/usr/share/nginx/html/config.json][auditEndpoint]http://localhost:10000/api/audits"
-      UDL_SETVALUE_4: "[/usr/share/nginx/html/config.json][auditHealthEndpoint]http://localhost:10000/health/audits"
-      UDL_SETVALUE_5: "[/usr/share/nginx/html/config.json][customPrimaryColor]"
-      UDL_SETVALUE_6: "[/usr/share/nginx/html/config.json][customSecondaryColor]"
-      UDL_SETVALUE_7: "[/usr/share/nginx/html/config.json][customBackgroundColor]"
-      UDL_SETVALUE_8: "[/usr/share/nginx/html/config.json][customPaperColor]"
-      UDL_SETVALUE_9: "[/usr/share/nginx/html/config.json][overrideTheme]"
+      UDL_SKIPEMPTY_SETVALUE_1: "[/usr/share/nginx/html/config.json][productEndpoint]http://localhost:8083/api/products"
+      UDL_SKIPEMPTY_SETVALUE_2: "[/usr/share/nginx/html/config.json][productHealthEndpoint]http://localhost:8083/health/products"
+      UDL_SKIPEMPTY_SETVALUE_3: "[/usr/share/nginx/html/config.json][auditEndpoint]http://localhost:10000/api/audits"
+      UDL_SKIPEMPTY_SETVALUE_4: "[/usr/share/nginx/html/config.json][auditHealthEndpoint]http://localhost:10000/health/audits"
+      UDL_SKIPEMPTY_SETVALUE_5: "[/usr/share/nginx/html/config.json][customPrimaryColor]"
+      UDL_SKIPEMPTY_SETVALUE_6: "[/usr/share/nginx/html/config.json][customSecondaryColor]"
+      UDL_SKIPEMPTY_SETVALUE_7: "[/usr/share/nginx/html/config.json][customBackgroundColor]"
+      UDL_SKIPEMPTY_SETVALUE_8: "[/usr/share/nginx/html/config.json][customPaperColor]"
+      UDL_SKIPEMPTY_SETVALUE_9: "[/usr/share/nginx/html/config.json][overrideTheme]"
   db:
     image: mysql:5.7
     restart: always

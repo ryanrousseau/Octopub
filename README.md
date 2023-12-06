@@ -120,7 +120,7 @@ Option 2 is achieved using the [Ultimate Docker Launcher](https://github.com/mca
 is baked into the Docker images. UDL modifies data files, like config files, based on environment variables. A common
 set of environment variables is:
 
-* `UDL_SETVALUE_1` = `[/usr/share/nginx/html/config.json][productEndpoint]/#{ProductsMicroserviceBaseUrl}/api/products`
-* `UDL_SETVALUE_2` = `[/usr/share/nginx/html/config.json][productHealthEndpoint]/#{ProductsMicroserviceBaseUrl}/health/products`
-* `UDL_SETVALUE_3` = `[/usr/share/nginx/html/config.json][auditEndpoint]/#{ProductsMicroserviceBaseUrl}/api/audits`
-* `UDL_SETVALUE_4` = `[/usr/share/nginx/html/config.json][auditHealthEndpoint]/#{ProductsMicroserviceBaseUrl}/health/audits`
+* `UDL_SKIPEMPTY_SETVALUE_1` = `[/usr/share/nginx/html/config.json][productEndpoint]/#{ProductsMicroserviceBaseUrl}/api/products`
+* `UDL_SKIPEMPTY_SETVALUE_2` = `[/usr/share/nginx/html/config.json][productHealthEndpoint]/#{ProductsMicroserviceBaseUrl}/health/products`
+* `UDL_SKIPEMPTY_SETVALUE_3` = `[/usr/share/nginx/html/config.json][auditEndpoint]/#{ProductsMicroserviceBaseUrl}/api/audits`
+* `UDL_SKIPEMPTY_SETVALUE_4` = `[/usr/share/nginx/html/config.json][auditHealthEndpoint]/#{ProductsMicroserviceBaseUrl}/health/audits`
