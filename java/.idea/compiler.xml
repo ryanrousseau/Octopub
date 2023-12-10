@@ -9,11 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="products-microservice" />
         <module name="products-microservice-gcf" />
-        <module name="rsql-jpa" />
         <module name="audit-service" />
         <module name="microservice-utils" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="rsql-jpa" target="11" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
