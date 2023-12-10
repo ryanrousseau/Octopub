@@ -117,11 +117,6 @@ runs:
       shell: powershell
       working-directory: java
 
-    - name: Install RSQL JPA
-      run: ./mvnw --batch-mode install -DskipTests
-      shell: powershell
-      working-directory: java/rsql-jpa
-
     - name: Install modules
       run: ./mvnw --batch-mode install -DskipTests
       shell: powershell
