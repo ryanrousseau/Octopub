@@ -106,3 +106,21 @@ docker run -e INSTALL_MYSQL=true --rm -v ${PWD}:/liquibase/changelog liquibase/l
   "--url=jdbc:mysql://#{Database.Hostname}:3306/product?createDatabaseIfNotExist=true" \
   update
 ```
+
+## Configuration Options
+
+### Frontend App
+
+The configuration of the frontend web app is done by modifying the `config.json` file. This can be done two ways:
+
+1. Modify the JSON directly when the static web app is uploaded directly to a hosting platform
+2. Configure the Docker image to modify the JSON when the container is started
+
+Option 2 is achieved using the [Ultimate Docker Launcher](https://github.com/mcasperson/UltimateDockerLauncher) (UDL), which
+is baked into the Docker images. UDL modifies data files, like config files, based on environment variables. A common
+set of environment variables is:
+
+* `UDL_SKIPEMPTY_SETVALUE_1` = `[/usr/share/nginx/html/config.json][productEndpoint]/#{ProductsMicroserviceBaseUrl}/api/products`
+* `UDL_SKIPEMPTY_SETVALUE_2` = `[/usr/share/nginx/html/config.json][productHealthEndpoint]/#{ProductsMicroserviceBaseUrl}/health/products`
+* `UDL_SKIPEMPTY_SETVALUE_3` = `[/usr/share/nginx/html/config.json][auditEndpoint]/#{ProductsMicroserviceBaseUrl}/api/audits`
+* `UDL_SKIPEMPTY_SETVALUE_4` = `[/usr/share/nginx/html/config.json][auditHealthEndpoint]/#{ProductsMicroserviceBaseUrl}/health/audits`

@@ -1,6 +1,7 @@
 package com.octopus.audits.infrastructure.repositories;
 
 import com.github.tennaito.rsql.jpa.JpaPredicateVisitor;
+import com.github.tennaito.rsql.misc.EntityManagerAdapter;
 import com.octopus.Constants;
 import com.octopus.audits.GlobalConstants;
 import com.octopus.audits.domain.entities.Audit;
@@ -150,12 +151,13 @@ public class AuditRepository {
     if (!StringUtils.isNullOrEmpty(filter)) {
       /*
         Makes use of RSQL queries to filter any responses:
-        https://github.com/jirutka/rsql-parser
+        https://github.com/TriloBitSystems/rsql-jpa
       */
-      final RSQLVisitor<Predicate, EntityManager> visitor =
-          new JpaPredicateVisitor<Audit>().defineRoot(root);
+      final EntityManagerAdapter adapter = new EntityManagerAdapter(em);
+      final RSQLVisitor<Predicate, EntityManagerAdapter> visitor =
+              new JpaPredicateVisitor<Audit>().defineRoot(root);
       final Node rootNode = new RSQLParser().parse(filter);
-      final Predicate filterPredicate = rootNode.accept(visitor, em);
+      final Predicate filterPredicate = rootNode.accept(visitor, adapter);
 
       // combine with the filter rules
       final Predicate combinedPredicate = builder.and(partitionPredicate, filterPredicate);

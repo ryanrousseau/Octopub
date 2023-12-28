@@ -161,16 +161,6 @@ runs:
       shell: bash
       working-directory: java
 
-    - name: Update version
-      run: ./mvnw versions:set -DnewVersion=${{ steps.determine_version.outputs.semVer }} --batch-mode
-      shell: bash
-      working-directory: java/rsql-jpa
-
-    - name: Install RSQL JPA
-      run: ./mvnw --batch-mode install -DskipTests
-      shell: bash
-      working-directory: java/rsql-jpa
-
     - name: Install modules
       run: ./mvnw --batch-mode install -DskipTests
       shell: bash

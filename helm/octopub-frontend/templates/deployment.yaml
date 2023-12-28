@@ -36,39 +36,39 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           env:
             {{- if .Values.overrideTheme }}
-            - name: UDL_SETVALUE_0
+            - name: UDL_SKIPEMPTY_SETVALUE_0
               value: "[/usr/share/nginx/html/config.json][overrideTheme]{{ .Values.overrideTheme }}"
             {{- end }}
             {{- if .Values.productEndpointOverride }}
-            - name: UDL_SETVALUE_1
+            - name: UDL_SKIPEMPTY_SETVALUE_1
               value: "[/usr/share/nginx/html/config.json][productEndpoint]{{ .Values.productEndpointOverride }}"
             {{- end }}
             {{- if .Values.productHealthEndpointOverride }}
-            - name: UDL_SETVALUE_2
+            - name: UDL_SKIPEMPTY_SETVALUE_2
               value: "[/usr/share/nginx/html/config.json][productHealthEndpoint]{{ .Values.productHealthEndpointOverride }}"
             {{- end }}
             {{- if .Values.auditsEndpointOverride }}
-            - name: UDL_SETVALUE_3
+            - name: UDL_SKIPEMPTY_SETVALUE_3
               value: "[/usr/share/nginx/html/config.json][auditEndpoint]{{ .Values.auditsEndpointOverride }}"
             {{- end }}
             {{- if .Values.auditsHealthEndpointOverride }}
-            - name: UDL_SETVALUE_4
+            - name: UDL_SKIPEMPTY_SETVALUE_4
               value: "[/usr/share/nginx/html/config.json][auditHealthEndpoint]{{ .Values.auditsHealthEndpointOverride }}"
             {{- end }}
             {{- if .Values.customPrimaryColor }}
-            - name: UDL_SETVALUE_5
+            - name: UDL_SKIPEMPTY_SETVALUE_5
               value: "[/usr/share/nginx/html/config.json][customPrimaryColor]{{ .Values.customPrimaryColor }}"
             {{- end }}
             {{- if .Values.customSecondaryColor }}
-            - name: UDL_SETVALUE_6
+            - name: UDL_SKIPEMPTY_SETVALUE_6
               value: "[/usr/share/nginx/html/config.json][customSecondaryColor]{{ .Values.customSecondaryColor }}"
             {{- end }}
             {{- if .Values.customBackgroundColor }}
-            - name: UDL_SETVALUE_7
+            - name: UDL_SKIPEMPTY_SETVALUE_7
               value: "[/usr/share/nginx/html/config.json][customBackgroundColor]{{ .Values.customBackgroundColor }}"
             {{- end }}
             {{- if .Values.customPaperColor }}
-            - name: UDL_SETVALUE_8
+            - name: UDL_SKIPEMPTY_SETVALUE_8
               value: "[/usr/share/nginx/html/config.json][customPaperColor]{{ .Values.customPaperColor }}"
             {{- end }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}

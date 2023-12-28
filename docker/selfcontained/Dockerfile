@@ -1,6 +1,6 @@
 # Run from the root directory with
 # docker build -f docker/selfcontained/Dockerfile .
-FROM eclipse-temurin:11 AS builder
+FROM eclipse-temurin:17 AS builder
 
 # add pom.xml and source code
 ADD java /java
