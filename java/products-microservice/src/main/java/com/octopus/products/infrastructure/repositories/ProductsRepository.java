@@ -104,7 +104,7 @@ public class ProductsRepository {
 
   /**
    * See <a href="https://hibernate.atlassian.net/browse/HHH-17410">HHH-17410</a> and
-   * <a href="https://github.com/hibernate/hibernate-orm/blob/main/hibernate-core/src/test/java/org/hibernate/orm/test/query/criteria/CountQueryTests.java">this test</a>
+   * <a href="https://github.com/hibernate/hibernate-orm/blob/main/hibernate-core/src/test/java/org/hibernate/orm/test/query/criteria/CountQueryTests.java">this test</a>.
    *
    * @param query The query whose results you wish to count
    * @return The number of results
