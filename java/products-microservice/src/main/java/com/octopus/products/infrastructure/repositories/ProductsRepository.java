@@ -30,6 +30,7 @@ import lombok.NonNull;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.h2.util.StringUtils;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
+import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.hibernate.query.sqm.tree.SqmCopyContext;
 import org.hibernate.query.sqm.tree.select.SqmQuerySpec;
 import org.hibernate.query.sqm.tree.select.SqmSelectStatement;
@@ -102,38 +103,22 @@ public class ProductsRepository {
   }
 
   /**
-   * This function is lifted from <a href="https://hibernate.atlassian.net/browse/HHH-15434">here</a>.
+   * See <a href="https://hibernate.atlassian.net/browse/HHH-17410">HHH-17410</a> and
+   * <a href="https://github.com/hibernate/hibernate-orm/blob/main/hibernate-core/src/test/java/org/hibernate/orm/test/query/criteria/CountQueryTests.java">this test</a>
    *
    * @param query The query whose results you wish to count
    * @return The number of results
    */
-  private Long countResults(final CriteriaQuery<Tuple> query) {
-    final HibernateCriteriaBuilder builder = (HibernateCriteriaBuilder) em.getCriteriaBuilder();
-
-    final var countQuery = builder.createQuery(Long.class);
-    final var subQuery = countQuery.subquery(Tuple.class);
-
-    final SqmSubQuery<Tuple> sqmSubQuery = (SqmSubQuery<Tuple>) subQuery;
-    final var sqmOriginalQuery = (SqmSelectStatement<Tuple>) query;
-    final var sqmOriginalQuerySpec = sqmOriginalQuery.getQuerySpec();
-    final SqmQuerySpec<Tuple> sqmSubQuerySpec = sqmOriginalQuerySpec.copy(SqmCopyContext.simpleContext());
-
-    sqmSubQuery.setQueryPart(sqmSubQuerySpec);
-    final Root<?> subQuerySelectRoot = subQuery.getRoots().iterator().next();
-    sqmSubQuery.multiselect(subQuerySelectRoot.get("id").alias("id"));
-
-    countQuery.from(sqmSubQuery);
-    countQuery.select(builder.count(builder.literal(1)));
-
-    return em.createQuery(countQuery).getSingleResult();
+  private Long countResults(final JpaCriteriaQuery<Tuple> query) {
+    return em.createQuery(query.createCountQuery()).getSingleResult();
   }
 
-  private <T> CriteriaQuery<T> createQuery(@NonNull final List<String> partitions,
+  private <T> JpaCriteriaQuery<T> createQuery(@NonNull final List<String> partitions,
                                            final String filter,
                                            Class<T> clazz) {
     final HibernateCriteriaBuilder builder = (HibernateCriteriaBuilder) em.getCriteriaBuilder();
 
-    final CriteriaQuery<T> criteria = builder.createQuery(clazz);
+    final JpaCriteriaQuery<T> criteria = builder.createQuery(clazz);
     final Root<Product> root = criteria.from(Product.class);
     criteria.orderBy(builder.desc(root.get("id")));
 
