@@ -5,7 +5,7 @@ CREATE TABLE `product` (
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-INSERT INTO `octopub`.`product`
+INSERT INTO `product`
 (`dataPartition`,
 `name`)
 VALUES
