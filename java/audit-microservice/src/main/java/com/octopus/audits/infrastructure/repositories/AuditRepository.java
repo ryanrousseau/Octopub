@@ -3,26 +3,19 @@ package com.octopus.audits.infrastructure.repositories;
 import com.github.tennaito.rsql.jpa.JpaPredicateVisitor;
 import com.github.tennaito.rsql.misc.EntityManagerAdapter;
 import com.octopus.Constants;
-import com.octopus.audits.GlobalConstants;
 import com.octopus.audits.domain.entities.Audit;
 import com.octopus.audits.domain.exceptions.InvalidInput;
 import com.octopus.audits.domain.wrappers.FilteredResultWrapper;
 import cz.jirutka.rsql.parser.RSQLParser;
 import cz.jirutka.rsql.parser.ast.Node;
 import cz.jirutka.rsql.parser.ast.RSQLVisitor;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import io.vavr.control.Try;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.validation.ConstraintViolation;
@@ -33,10 +26,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.h2.util.StringUtils;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.hibernate.query.criteria.JpaCriteriaQuery;
-import org.hibernate.query.sqm.tree.SqmCopyContext;
-import org.hibernate.query.sqm.tree.select.SqmQuerySpec;
-import org.hibernate.query.sqm.tree.select.SqmSelectStatement;
-import org.hibernate.query.sqm.tree.select.SqmSubQuery;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Repositories are the interface between the application and the data store. They don't contain any
