@@ -14,6 +14,9 @@ services:
         condition: service_healthy
   audits:
     image: "octopussamples/octopub-audit-microservice"
+    environment:
+      COGNITO_DISABLE_AUTH: true
+      MIGRATE_AT_START: true
     ports:
       - "10000:10000"
   web:
