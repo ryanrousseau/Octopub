@@ -47,9 +47,10 @@ services:
     volumes:
       - my-db:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "--user", "root", "--password", "Password01!", "-h", "localhost" ]
-      timeout: 20s
-      retries: 10
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost", "-pPassword01!" ]
+      timeout: 5s
+      start_period: 5s
+      retries: 5
 volumes:
   my-db:
 
