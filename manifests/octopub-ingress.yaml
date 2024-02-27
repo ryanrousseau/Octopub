@@ -1,9 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: minimal-ingress
+  name: octopub-ingress
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
@@ -15,18 +14,32 @@ spec:
           service:
             name: octopub-audit-cluster-ip
             port:
-              number: 10000
+              name: http-audit
+      - path: /health/audits
+        pathType: Prefix
+        backend:
+          service:
+            name: octopub-audit-cluster-ip
+            port:
+              name: http-audit
       - path: /api/products
         pathType: Prefix
         backend:
           service:
             name: octopub-productservice-cluster-ip
             port:
-              number: 8083
+              name: http-product
+      - path: /health/products
+        pathType: Prefix
+        backend:
+          service:
+            name: octopub-productservice-cluster-ip
+            port:
+              name: http-product
       - path: /
         pathType: Prefix
         backend:
           service:
             name:  octopub-frontend-cluster-ip
             port:
-              number: 8080
+              name: http-web
