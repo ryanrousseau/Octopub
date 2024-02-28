@@ -23,7 +23,15 @@ patches:
   - target:
       kind: Deployment
       name: octopub-products-service
-    path: octpoub-products-service-mysql.yaml
+    path: octopub-products-service-mysql.yaml
+  - target:
+      kind: Service
+      name: octopub-productservice-cluster-ip
+    path: octopub-frontend-service.yaml
+  - target:
+      kind: Deployment
+      name: octopub-frontend-deployment
+    path: octopub-frontend-deployment.yaml
 
 images:
 - name: octopussamples/octopub-audit-microservice-mysql
