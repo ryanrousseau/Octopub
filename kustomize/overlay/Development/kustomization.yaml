@@ -35,11 +35,11 @@ patches:
 
 images:
 - name: octopussamples/octopub-audit-microservice-mysql
-  newTag: "#{Octopus.Action.Package[octopussamples/octopub-audit-microservice].PackageVersion}"
-  newName: "#{Octopus.Action.Package[octopussamples/octopub-audit-microservice].Image}"
+  newTag: "#{Octopus.Action.Package['octopussamples/octopub-audit-microservice'].PackageVersion}"
+  newName: "#{Octopus.Action.Package['octopussamples/octopub-audit-microservice'].Image}"
 - name: octopussamples/octopub-products-microservice-mysql
-  newTag: "#{Octopus.Action.Package[octopussamples/octopub-products-microservice].PackageVersion}"
-  newName: "#{Octopus.Action.Package[octopussamples/octopub-products-microservice].Image}"
+  newTag: "#{Octopus.Action.Package['octopussamples/octopub-products-microservice'].PackageVersion}"
+  newName: "#{Octopus.Action.Package['octopussamples/octopub-products-microservice'].Image}"
 - name: octopussamples/octopub-frontend
-  newTag: "#{Octopus.Action.Package[octopussamples/octopub-frontend].PackageVersion}"
-  newName: "#{Octopus.Action.Package[octopussamples/octopub-frontend].Image}"
+  newTag: "#{Octopus.Action.Package['octopussamples/octopub-frontend'].PackageVersion}"
+  newName: "#{Octopus.Action.Package['octopussamples/octopub-frontend'].Image}"
