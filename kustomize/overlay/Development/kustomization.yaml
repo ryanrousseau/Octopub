@@ -33,3 +33,13 @@ patches:
       name: octopub-frontend-deployment
     path: octopub-frontend-deployment.yaml
 
+secretGenerator:
+  - name: database-credentials
+    behavior: merge
+    envs:
+    - secrets.properties
+
+configMapGenerator:
+  - name: service-env-vars
+    behavior: merge
+    env: variables.properties
