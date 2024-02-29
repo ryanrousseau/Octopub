@@ -9,7 +9,7 @@ spec:
   ports:
     - port: 8080
       targetPort: 8080
-      name: http-port
+      name: http-web
 ---
 apiVersion: apps/v1
 kind: Deployment
