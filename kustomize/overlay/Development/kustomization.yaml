@@ -26,8 +26,7 @@ patches:
     path: octopub-products-service-mysql.yaml
   - target:
       kind: Service
-      name: octopub-productservice-cluster-ip
-      labelSelector: component=productservice
+      name: octopub-frontend-cluster-ip
     path: octopub-frontend-service.yaml
   - target:
       kind: Deployment
