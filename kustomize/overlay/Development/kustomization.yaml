@@ -8,28 +8,3 @@ patches:
       kind: Deployment
       name: octopub-audit-deployment
     path: octopub-audits-deployment-mysql.yaml
-  - target:
-      kind: Service
-      name: octopub-audit-cluster-ip
-    path: octopub-audits-service-mysql.yaml
-  - target: 
-      kind: Ingress
-      name: octopub-ingress
-    path: octopub-ingress.yaml
-  - target:
-      kind: Service
-      name: octopub-products-deployment
-    path: octopub-products-deployment-mysql.yaml
-  - target:
-      kind: Deployment
-      name: octopub-products-service
-    path: octopub-products-service-mysql.yaml
-  - target:
-      kind: Service
-      name: octopub-productservice-cluster-ip
-    path: octopub-frontend-service.yaml
-  - target:
-      kind: Deployment
-      name: octopub-frontend-deployment
-    path: octopub-frontend-deployment.yaml
-
