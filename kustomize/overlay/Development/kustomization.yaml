@@ -27,6 +27,7 @@ patches:
   - target:
       kind: Service
       name: octopub-productservice-cluster-ip
+      labelSelector: component=productservice
     path: octopub-frontend-service.yaml
   - target:
       kind: Deployment
