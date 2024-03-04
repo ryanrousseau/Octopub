@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: octopub-frontend-cluster-ip
+spec:
+  type: ClusterIP
+  selector:
+    component: web
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http-port
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: octopub-frontend-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: web
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: web
+          image: octopussamples/octopub-frontend
+          ports:
+            - containerPort: 8080
+              name: http-port
+          env:
+            - name: UDL_SKIPEMPTY_SETVALUE_1
+              value: "[/usr/share/nginx/html/config.json][productEndpoint]http://octopub-productservice-cluster-ip:8083/api/products"
+            - name: UDL_SKIPEMPTY_SETVALUE_2
+              value: "[/usr/share/nginx/html/config.json][productHealthEndpoint]http://octopub-productservice-cluster-ip:8083/health/products"
+            - name: UDL_SKIPEMPTY_SETVALUE_3
+              value: "[/usr/share/nginx/html/config.json][auditEndpoint]http://octopub-audit-cluster-ip:10000/api/audits"
+            - name: UDL_SKIPEMPTY_SETVALUE_4
+              value: "[/usr/share/nginx/html/config.json][auditHealthEndpoint]http://octopub-audit-cluster-ip:10000/health/audits"
+            - name: UDL_SKIPEMPTY_SETVALUE_5
+              value: "[/usr/share/nginx/html/config.json][customPrimaryColor]"
+            - name: UDL_SKIPEMPTY_SETVALUE_6
+              value: "[/usr/share/nginx/html/config.json][customSecondaryColor]"
+            - name: UDL_SKIPEMPTY_SETVALUE_7
+              value: "[/usr/share/nginx/html/config.json][customBackgroundColor]"
+            - name: UDL_SKIPEMPTY_SETVALUE_8
+              value: "[/usr/share/nginx/html/config.json][customPaperColor]"
+            - name: UDL_SKIPEMPTY_SETVALUE_9
+              value: "[/usr/share/nginx/html/config.json][overrideTheme]"
