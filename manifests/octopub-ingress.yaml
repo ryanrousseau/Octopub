@@ -2,11 +2,10 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: octopub-ingress
-  annotations:
 spec:
   ingressClassName: nginx
   rules:
-  - host: octopub.development.octopusdemos.com
+  - host: ""
     http:
       paths:
       - path: /api/audits
