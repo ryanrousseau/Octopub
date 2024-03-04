@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: ""
+  - host: octopub.development.octopusdemos.com
     http:
       paths:
       - path: /api/audits
