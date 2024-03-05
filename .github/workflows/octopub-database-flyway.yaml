@@ -1,1 +1,4 @@
 name: Build Flyway Migrationss
+
+'on':
+  workflow_dispatch: {}
