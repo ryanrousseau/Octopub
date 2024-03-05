@@ -27,5 +27,5 @@ jobs:
      - name: Push package to Octopus Deplo
        uses: OctopusDeploy/push-package-action@v3.0.4
        with:
-          packages: ./packaging/Octopub.Database.1.0.0
+          packages: ./Octopub/packaging/Octopub.Database.1.0.0
           
