@@ -27,9 +27,13 @@ jobs:
           files: |
             **/*.*
           
-     - name: Push package to Octopus Deplo
+     - name: Push package to Octopus Deploy
        uses: OctopusDeploy/push-package-action@v3.0.4
        with:
           packages: |
             ${{ github.workspace }}/artifacts/Octopub.Database.${{ env.PACKAGE_VERSION }}.zip
-          
+     
+     - name: Create OctoPetShop release
+       uses: OctopusDeploy/create-release-action@v2
+       with:
+          project: Octopub Metaverse
