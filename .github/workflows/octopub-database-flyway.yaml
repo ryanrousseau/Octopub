@@ -19,7 +19,7 @@ jobs:
        with:
           package_id: Octopub.Database
           version: 1.0.0
-          output_folder: "$GITHUB_WORKSPACE/artifacts"
+          output_folder: "${{ github.workspace }}/artifacts"
           base_path: ./flyway/Octo-MySQL/migrations
           files: |
             **/*.*
@@ -28,5 +28,5 @@ jobs:
        uses: OctopusDeploy/push-package-action@v3.0.4
        with:
           packages: |
-            artifacts/Octopub.Database.1.0.0.zip
+            ${{ github.workspace }}/artifacts/Octopub.Database.1.0.0.zip
           
