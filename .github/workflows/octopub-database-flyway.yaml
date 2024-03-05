@@ -15,6 +15,6 @@ jobs:
           package_id: Octopub.Database
           version: 1.0.0
           output_folder: ${GITHUB_WORKSPACE}
-          base_path: ./flyway/OctoMySQL/migrations
+          base_path: ./flyway/migrations
           files: test.txt
           
