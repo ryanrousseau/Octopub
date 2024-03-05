@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
      - uses: actions/checkout@v3
-       with:
-         fetch-depth: 1
 
      - name: Create Zip Package for Octopus Deploy
        uses: OctopusDeploy/create-zip-package-action@v3.0.2
@@ -17,6 +15,6 @@ jobs:
           package_id: Octopub.Database
           version: 1.0.0
           output_folder: ${GITHUB_WORKSPACE}
-          base_path: flyway/migrations
+          base_path: flyway/Octo-MySQL/migrations
           files: test.txt
           
