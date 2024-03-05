@@ -1,0 +1,74 @@
+table "sakila"."store" {
+  columns = (
+    column "store_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "manager_staff_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "address_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      store_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."store"."fk_store_address" {
+  columns = [
+    "address_id"
+  ]
+  referencedTable = "sakila"."address"
+  referencedColumns = [
+    "address_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "sakila"."store"."fk_store_staff" {
+  columns = [
+    "manager_staff_id"
+  ]
+  referencedTable = "sakila"."staff"
+  referencedColumns = [
+    "staff_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."store"."idx_fk_address_id" {
+  columns = <
+    {
+      name = address_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."store"."idx_unique_manager" {
+  columns = <
+    {
+      name = manager_staff_id
+    }
+
+  >
+  type = BTREE
+  unique = UNIQUE
+}
+

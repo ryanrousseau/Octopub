@@ -1,0 +1,19 @@
+table "octopub_shadow"."revinfo" {
+  columns = (
+    column "REV" {
+      type = int
+      null = NOT NULL
+    }
+    column "REVTSTMP" {
+      type = bigint
+    }
+  )
+  primaryKey = {
+    columns = [
+      REV
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+

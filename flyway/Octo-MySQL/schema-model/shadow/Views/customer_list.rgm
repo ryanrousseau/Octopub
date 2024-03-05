@@ -1,0 +1,4 @@
+view "shadow"."customer_list" {
+  text = select `cu`.`customer_id` AS `ID`,concat(`cu`.`first_name`,' ',`cu`.`last_name`) AS `name`,`a`.`address` AS `address`,`a`.`postal_code` AS `zip code`,`a`.`phone` AS `phone`,`shadow`.`city`.`city` AS `city`,`shadow`.`country`.`country` AS `country`,if(`cu`.`active`,'active','') AS `notes`,`cu`.`store_id` AS `SID` from (((`shadow`.`customer` `cu` join `shadow`.`address` `a` on((`cu`.`address_id` = `a`.`address_id`))) join `shadow`.`city` on((`a`.`city_id` = `shadow`.`city`.`city_id`))) join `shadow`.`country` on((`shadow`.`city`.`country_id` = `shadow`.`country`.`country_id`)))
+}
+

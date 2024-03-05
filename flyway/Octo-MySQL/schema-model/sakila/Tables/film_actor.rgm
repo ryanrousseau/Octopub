@@ -1,0 +1,60 @@
+table "sakila"."film_actor" {
+  columns = (
+    column "actor_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "film_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      actor_id
+      film_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."film_actor"."fk_film_actor_actor" {
+  columns = [
+    "actor_id"
+  ]
+  referencedTable = "sakila"."actor"
+  referencedColumns = [
+    "actor_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "sakila"."film_actor"."fk_film_actor_film" {
+  columns = [
+    "film_id"
+  ]
+  referencedTable = "sakila"."film"
+  referencedColumns = [
+    "film_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."film_actor"."idx_fk_film_id" {
+  columns = <
+    {
+      name = film_id
+    }
+
+  >
+  type = BTREE
+}
+

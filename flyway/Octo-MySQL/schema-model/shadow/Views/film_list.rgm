@@ -1,0 +1,4 @@
+view "shadow"."film_list" {
+  text = select `shadow`.`film`.`film_id` AS `FID`,`shadow`.`film`.`title` AS `title`,`shadow`.`film`.`description` AS `description`,`shadow`.`category`.`name` AS `category`,`shadow`.`film`.`rental_rate` AS `price`,`shadow`.`film`.`length` AS `length`,`shadow`.`film`.`rating` AS `rating`,group_concat(concat(`shadow`.`actor`.`first_name`,' ',`shadow`.`actor`.`last_name`) separator ', ') AS `actors` from ((((`shadow`.`film` left join `shadow`.`film_category` on((`shadow`.`film_category`.`film_id` = `shadow`.`film`.`film_id`))) left join `shadow`.`category` on((`shadow`.`category`.`category_id` = `shadow`.`film_category`.`category_id`))) left join `shadow`.`film_actor` on((`shadow`.`film`.`film_id` = `shadow`.`film_actor`.`film_id`))) left join `shadow`.`actor` on((`shadow`.`film_actor`.`actor_id` = `shadow`.`actor`.`actor_id`))) group by `shadow`.`film`.`film_id`,`shadow`.`category`.`name`
+}
+

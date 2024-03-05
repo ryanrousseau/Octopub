@@ -1,0 +1,4 @@
+view "sakila-prod-01"."staff_list" {
+  text = select `s`.`staff_id` AS `ID`,concat(`s`.`first_name`,' ',`s`.`last_name`) AS `name`,`a`.`address` AS `address`,`a`.`postal_code` AS `zip code`,`a`.`phone` AS `phone`,`sakila-prod-01`.`city`.`city` AS `city`,`sakila-prod-01`.`country`.`country` AS `country`,`s`.`store_id` AS `SID` from (((`sakila-prod-01`.`staff` `s` join `sakila-prod-01`.`address` `a` on((`s`.`address_id` = `a`.`address_id`))) join `sakila-prod-01`.`city` on((`a`.`city_id` = `sakila-prod-01`.`city`.`city_id`))) join `sakila-prod-01`.`country` on((`sakila-prod-01`.`city`.`country_id` = `sakila-prod-01`.`country`.`country_id`)))
+}
+

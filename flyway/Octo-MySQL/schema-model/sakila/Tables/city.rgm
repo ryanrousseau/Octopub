@@ -1,0 +1,51 @@
+table "sakila"."city" {
+  columns = (
+    column "city_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "city" {
+      type = varchar(50)
+      null = NOT NULL
+    }
+    column "country_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      city_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."city"."fk_city_country" {
+  columns = [
+    "country_id"
+  ]
+  referencedTable = "sakila"."country"
+  referencedColumns = [
+    "country_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."city"."idx_fk_country_id" {
+  columns = <
+    {
+      name = country_id
+    }
+
+  >
+  type = BTREE
+}
+

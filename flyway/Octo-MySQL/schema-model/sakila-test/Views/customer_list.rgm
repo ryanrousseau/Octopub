@@ -1,0 +1,4 @@
+view "sakila-test"."customer_list" {
+  text = select `cu`.`customer_id` AS `ID`,concat(`cu`.`first_name`,' ',`cu`.`last_name`) AS `name`,`a`.`address` AS `address`,`a`.`postal_code` AS `zip code`,`a`.`phone` AS `phone`,`sakila-test`.`city`.`city` AS `city`,`sakila-test`.`country`.`country` AS `country`,if(`cu`.`active`,'active','') AS `notes`,`cu`.`store_id` AS `SID` from (((`sakila-test`.`customer` `cu` join `sakila-test`.`address` `a` on((`cu`.`address_id` = `a`.`address_id`))) join `sakila-test`.`city` on((`a`.`city_id` = `sakila-test`.`city`.`city_id`))) join `sakila-test`.`country` on((`sakila-test`.`city`.`country_id` = `sakila-test`.`country`.`country_id`)))
+}
+

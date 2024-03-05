@@ -1,0 +1,77 @@
+table "sakila"."inventory" {
+  columns = (
+    column "inventory_id" {
+      type = mediumint unsigned
+      null = NOT NULL
+    }
+    column "film_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "store_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      inventory_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."inventory"."fk_inventory_film" {
+  columns = [
+    "film_id"
+  ]
+  referencedTable = "sakila"."film"
+  referencedColumns = [
+    "film_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "sakila"."inventory"."fk_inventory_store" {
+  columns = [
+    "store_id"
+  ]
+  referencedTable = "sakila"."store"
+  referencedColumns = [
+    "store_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."inventory"."idx_fk_film_id" {
+  columns = <
+    {
+      name = film_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."inventory"."idx_store_id_film_id" {
+  columns = <
+    {
+      name = store_id
+    }
+
+    {
+      name = film_id
+    }
+
+  >
+  type = BTREE
+}
+

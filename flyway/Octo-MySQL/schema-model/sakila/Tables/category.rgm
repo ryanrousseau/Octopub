@@ -1,0 +1,25 @@
+table "sakila"."category" {
+  columns = (
+    column "category_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "name" {
+      type = varchar(25)
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      category_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+

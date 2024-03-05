@@ -1,0 +1,61 @@
+table "sakila-prod-01"."flyway_schema_history" {
+  columns = (
+    column "installed_rank" {
+      type = int
+      null = NOT NULL
+    }
+    column "version" {
+      type = varchar(50)
+    }
+    column "description" {
+      type = varchar(200)
+      null = NOT NULL
+    }
+    column "type" {
+      type = varchar(20)
+      null = NOT NULL
+    }
+    column "script" {
+      type = varchar(1000)
+      null = NOT NULL
+    }
+    column "checksum" {
+      type = int
+    }
+    column "installed_by" {
+      type = varchar(100)
+      null = NOT NULL
+    }
+    column "installed_on" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+    column "execution_time" {
+      type = int
+      null = NOT NULL
+    }
+    column "success" {
+      type = tinyint(1)
+      null = NOT NULL
+    }
+  )
+  primaryKey = {
+    columns = [
+      installed_rank
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+index "sakila-prod-01"."flyway_schema_history"."flyway_schema_history_s_idx" {
+  columns = <
+    {
+      name = success
+    }
+
+  >
+  type = BTREE
+}
+

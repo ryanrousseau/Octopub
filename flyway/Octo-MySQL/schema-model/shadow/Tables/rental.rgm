@@ -1,0 +1,133 @@
+table "shadow"."rental" {
+  columns = (
+    column "rental_id" {
+      type = int
+      null = NOT NULL
+    }
+    column "rental_date" {
+      type = datetime
+      null = NOT NULL
+    }
+    column "inventory_id" {
+      type = mediumint unsigned
+      null = NOT NULL
+    }
+    column "customer_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "return_date" {
+      type = datetime
+    }
+    column "staff_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      rental_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "shadow"."rental"."fk_rental_customer" {
+  columns = [
+    "customer_id"
+  ]
+  referencedTable = "shadow"."customer"
+  referencedColumns = [
+    "customer_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "shadow"."rental"."fk_rental_inventory" {
+  columns = [
+    "inventory_id"
+  ]
+  referencedTable = "shadow"."inventory"
+  referencedColumns = [
+    "inventory_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "shadow"."rental"."fk_rental_staff" {
+  columns = [
+    "staff_id"
+  ]
+  referencedTable = "shadow"."staff"
+  referencedColumns = [
+    "staff_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "shadow"."rental"."idx_fk_customer_id" {
+  columns = <
+    {
+      name = customer_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "shadow"."rental"."idx_fk_inventory_id" {
+  columns = <
+    {
+      name = inventory_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "shadow"."rental"."idx_fk_staff_id" {
+  columns = <
+    {
+      name = staff_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "shadow"."rental"."rental_date" {
+  columns = <
+    {
+      name = rental_date
+    }
+
+    {
+      name = inventory_id
+    }
+
+    {
+      name = customer_id
+    }
+
+  >
+  type = BTREE
+  unique = UNIQUE
+}
+
+trigger "shadow"."rental_date" {
+  table = rental
+  actionTiming = BEFORE
+  action = INSERT
+  actionOrientation = ROW
+  actionStatement = SET NEW.rental_date = NOW()
+}
+

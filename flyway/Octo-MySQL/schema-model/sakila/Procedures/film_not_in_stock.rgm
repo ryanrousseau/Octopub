@@ -1,0 +1,40 @@
+procedure "sakila"."film_not_in_stock" {
+  parameters = <
+    {
+      name = p_film_id
+      datatype = int
+      mode = IN
+    }
+
+    {
+      name = p_store_id
+      datatype = int
+      mode = IN
+    }
+
+    {
+      name = p_film_count
+      datatype = int
+      mode = OUT
+    }
+
+  >
+  text = """-
+BEGIN
+     SELECT inventory_id
+     FROM inventory
+     WHERE film_id = p_film_id
+     AND store_id = p_store_id
+     AND NOT inventory_in_stock(inventory_id);
+
+     SELECT COUNT(*)
+     FROM inventory
+     WHERE film_id = p_film_id
+     AND store_id = p_store_id
+     AND NOT inventory_in_stock(inventory_id)
+     INTO p_film_count;
+END
+"""
+  dataAccess = READS SQL DATA
+}
+

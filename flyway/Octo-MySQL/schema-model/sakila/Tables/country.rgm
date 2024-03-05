@@ -1,0 +1,25 @@
+table "sakila"."country" {
+  columns = (
+    column "country_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "country" {
+      type = varchar(50)
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      country_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+

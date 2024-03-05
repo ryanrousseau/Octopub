@@ -1,0 +1,11 @@
+table "octopubdev"."product_orders" {
+  columns = (
+    column "order_id" {
+      type = bigint
+    }
+    column "buyer_id" {
+      type = bigint
+    }
+  )
+}
+

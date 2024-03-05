@@ -1,0 +1,42 @@
+table "shadow"."actor" {
+  columns = (
+    column "actor_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "first_name" {
+      type = varchar(45)
+      null = NOT NULL
+    }
+    column "last_name" {
+      type = varchar(45)
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+    column "wat" {
+      type = int
+    }
+  )
+  primaryKey = {
+    columns = [
+      actor_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+index "shadow"."actor"."idx_actor_last_name" {
+  columns = <
+    {
+      name = last_name
+    }
+
+  >
+  type = BTREE
+}
+

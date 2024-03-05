@@ -16,6 +16,9 @@ developmentEnvironment = "development"
 schemaModel = "schema-model"
 shadowEnvironment = "shadow"
 
+  [flywayDesktop.generate]
+  undoScripts = true
+
 [redgateCompare]
 filterFile = "filter.rgf"
 
@@ -23,6 +26,12 @@ filterFile = "filter.rgf"
 ignoreNewlinesInTextObjects = "off"
 
 [environments.development]
-url = "jdbc:mysql://localhost:3306/sakila?allowPublicKeyRetrieval=true"
+url = "jdbc:mysql://localhost:3306/octopubdev?allowPublicKeyRetrieval=true"
 schemas = [ "octopubdev" ]
 displayName = "Development database"
+
+[environments.shadow]
+url = "jdbc:mysql://localhost:3306/octopub_shadow?allowPublicKeyRetrieval=true"
+schemas = [ "octopub_shadow" ]
+displayName = "Shadow database"
+provisioner = "clean"

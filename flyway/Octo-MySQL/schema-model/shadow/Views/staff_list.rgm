@@ -1,0 +1,4 @@
+view "shadow"."staff_list" {
+  text = select `s`.`staff_id` AS `ID`,concat(`s`.`first_name`,' ',`s`.`last_name`) AS `name`,`a`.`address` AS `address`,`a`.`postal_code` AS `zip code`,`a`.`phone` AS `phone`,`shadow`.`city`.`city` AS `city`,`shadow`.`country`.`country` AS `country`,`s`.`store_id` AS `SID` from (((`shadow`.`staff` `s` join `shadow`.`address` `a` on((`s`.`address_id` = `a`.`address_id`))) join `shadow`.`city` on((`a`.`city_id` = `shadow`.`city`.`city_id`))) join `shadow`.`country` on((`shadow`.`city`.`country_id` = `shadow`.`country`.`country_id`)))
+}
+

@@ -1,0 +1,161 @@
+table "sakila"."film" {
+  columns = (
+    column "film_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "title" {
+      type = varchar(128)
+      null = NOT NULL
+    }
+    column "description" {
+      type = text
+    }
+    column "release_year" {
+      type = year
+    }
+    column "language_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "original_language_id" {
+      type = tinyint unsigned
+    }
+    column "rental_duration" {
+      type = tinyint unsigned
+      null = NOT NULL
+      default = 3
+    }
+    column "rental_rate" {
+      type = decimal(4,2)
+      null = NOT NULL
+      default = 4.99
+    }
+    column "length" {
+      type = smallint unsigned
+    }
+    column "replacement_cost" {
+      type = decimal(5,2)
+      null = NOT NULL
+      default = 19.99
+    }
+    column "rating" {
+      type = enum('G','PG','PG-13','R','NC-17')
+      default = 'G'
+    }
+    column "special_features" {
+      type = set('Trailers','Commentaries','Deleted Scenes','Behind the Scenes')
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      film_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."film"."fk_film_language" {
+  columns = [
+    "language_id"
+  ]
+  referencedTable = "sakila"."language"
+  referencedColumns = [
+    "language_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "sakila"."film"."fk_film_language_original" {
+  columns = [
+    "original_language_id"
+  ]
+  referencedTable = "sakila"."language"
+  referencedColumns = [
+    "language_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."film"."idx_fk_language_id" {
+  columns = <
+    {
+      name = language_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."film"."idx_fk_original_language_id" {
+  columns = <
+    {
+      name = original_language_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."film"."idx_title" {
+  columns = <
+    {
+      name = title
+    }
+
+  >
+  type = BTREE
+}
+
+trigger "sakila"."del_film" {
+  table = film
+  actionTiming = AFTER
+  action = DELETE
+  actionOrientation = ROW
+  actionStatement = """-
+BEGIN
+    DELETE FROM film_text WHERE film_id = old.film_id;
+  END
+"""
+}
+
+trigger "sakila"."ins_film" {
+  table = film
+  actionTiming = AFTER
+  action = INSERT
+  actionOrientation = ROW
+  actionStatement = """-
+BEGIN
+    INSERT INTO film_text (film_id, title, description)
+        VALUES (new.film_id, new.title, new.description);
+  END
+"""
+}
+
+trigger "sakila"."upd_film" {
+  table = film
+  actionTiming = AFTER
+  action = UPDATE
+  actionOrientation = ROW
+  actionStatement = """-
+BEGIN
+    IF (old.title != new.title) OR (old.description != new.description) OR (old.film_id != new.film_id)
+    THEN
+        UPDATE film_text
+            SET title=new.title,
+                description=new.description,
+                film_id=new.film_id
+        WHERE film_id=old.film_id;
+    END IF;
+  END
+"""
+}
+

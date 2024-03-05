@@ -1,0 +1,60 @@
+table "sakila"."film_category" {
+  columns = (
+    column "film_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "category_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      film_id
+      category_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."film_category"."fk_film_category_category" {
+  columns = [
+    "category_id"
+  ]
+  referencedTable = "sakila"."category"
+  referencedColumns = [
+    "category_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "sakila"."film_category"."fk_film_category_film" {
+  columns = [
+    "film_id"
+  ]
+  referencedTable = "sakila"."film"
+  referencedColumns = [
+    "film_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."film_category"."fk_film_category_category" {
+  columns = <
+    {
+      name = category_id
+    }
+
+  >
+  type = BTREE
+}
+

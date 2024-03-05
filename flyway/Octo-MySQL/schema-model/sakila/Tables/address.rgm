@@ -1,0 +1,79 @@
+table "sakila"."address" {
+  columns = (
+    column "address_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "address" {
+      type = varchar(50)
+      null = NOT NULL
+    }
+    column "address2" {
+      type = varchar(50)
+    }
+    column "district" {
+      type = varchar(20)
+      null = NOT NULL
+    }
+    column "city_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "postal_code" {
+      type = varchar(10)
+    }
+    column "phone" {
+      type = varchar(20)
+      null = NOT NULL
+    }
+    column "location" {
+      type = geometry
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      address_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."address"."fk_address_city" {
+  columns = [
+    "city_id"
+  ]
+  referencedTable = "sakila"."city"
+  referencedColumns = [
+    "city_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."address"."idx_fk_city_id" {
+  columns = <
+    {
+      name = city_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."address"."idx_location" {
+  columns = <
+    {
+      name = location
+    }
+
+  >
+  type = SPATIAL
+}
+

@@ -1,0 +1,47 @@
+table "octopubdev"."product_aud" {
+  columns = (
+    column "REV" {
+      type = int
+      null = NOT NULL
+    }
+    column "REVTYPE" {
+      type = tinyint
+    }
+    column "id" {
+      type = int
+      null = NOT NULL
+    }
+    column "dataPartition" {
+      type = varchar(255)
+      null = NOT NULL
+    }
+    column "name" {
+      type = varchar(255)
+      null = NOT NULL
+    }
+    column "pdf" {
+      type = varchar(255)
+    }
+    column "epub" {
+      type = varchar(255)
+    }
+    column "image" {
+      type = varchar(255)
+    }
+    column "web" {
+      type = varchar(255)
+    }
+    column "description" {
+      type = longtext
+    }
+  )
+  primaryKey = {
+    columns = [
+      REV
+      id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+

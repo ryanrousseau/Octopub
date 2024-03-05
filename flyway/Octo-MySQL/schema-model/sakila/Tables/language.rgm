@@ -1,0 +1,25 @@
+table "sakila"."language" {
+  columns = (
+    column "language_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "name" {
+      type = char(20)
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      language_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+

@@ -1,0 +1,37 @@
+table "shadow"."film_text" {
+  columns = (
+    column "film_id" {
+      type = smallint
+      null = NOT NULL
+    }
+    column "title" {
+      type = varchar(255)
+      null = NOT NULL
+    }
+    column "description" {
+      type = text
+    }
+  )
+  primaryKey = {
+    columns = [
+      film_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+index "shadow"."film_text"."idx_title_description" {
+  columns = <
+    {
+      name = title
+    }
+
+    {
+      name = description
+    }
+
+  >
+  type = FULLTEXT
+}
+

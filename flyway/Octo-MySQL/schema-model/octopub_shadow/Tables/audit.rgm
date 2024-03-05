@@ -1,0 +1,44 @@
+table "octopub_shadow"."audit" {
+  columns = (
+    column "id" {
+      type = int
+      null = NOT NULL
+    }
+    column "dataPartition" {
+      type = varchar(255)
+      null = NOT NULL
+    }
+    column "subject" {
+      type = varchar(255)
+      null = NOT NULL
+    }
+    column "object" {
+      type = varchar(255)
+      null = NOT NULL
+    }
+    column "action" {
+      type = varchar(255)
+      null = NOT NULL
+    }
+    column "encryptedSubject" {
+      type = tinyint(1)
+      null = NOT NULL
+    }
+    column "encryptedObject" {
+      type = tinyint(1)
+      null = NOT NULL
+    }
+    column "time" {
+      type = timestamp
+      null = NOT NULL
+    }
+  )
+  primaryKey = {
+    columns = [
+      id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+

@@ -1,0 +1,113 @@
+table "sakila"."payment" {
+  columns = (
+    column "payment_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "customer_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "staff_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "rental_id" {
+      type = int
+    }
+    column "amount" {
+      type = decimal(5,2)
+      null = NOT NULL
+    }
+    column "payment_date" {
+      type = datetime
+      null = NOT NULL
+    }
+    column "last_update" {
+      type = timestamp
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      payment_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."payment"."fk_payment_customer" {
+  columns = [
+    "customer_id"
+  ]
+  referencedTable = "sakila"."customer"
+  referencedColumns = [
+    "customer_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "sakila"."payment"."fk_payment_rental" {
+  columns = [
+    "rental_id"
+  ]
+  referencedTable = "sakila"."rental"
+  referencedColumns = [
+    "rental_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = SET NULL
+}
+
+foreignKey "sakila"."payment"."fk_payment_staff" {
+  columns = [
+    "staff_id"
+  ]
+  referencedTable = "sakila"."staff"
+  referencedColumns = [
+    "staff_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."payment"."fk_payment_rental" {
+  columns = <
+    {
+      name = rental_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."payment"."idx_fk_customer_id" {
+  columns = <
+    {
+      name = customer_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."payment"."idx_fk_staff_id" {
+  columns = <
+    {
+      name = staff_id
+    }
+
+  >
+  type = BTREE
+}
+
+trigger "sakila"."payment_date" {
+  table = payment
+  actionTiming = BEFORE
+  action = INSERT
+  actionOrientation = ROW
+  actionStatement = SET NEW.payment_date = NOW()
+}
+

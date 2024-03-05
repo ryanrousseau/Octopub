@@ -1,0 +1,99 @@
+table "sakila"."staff" {
+  columns = (
+    column "staff_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "first_name" {
+      type = varchar(45)
+      null = NOT NULL
+    }
+    column "last_name" {
+      type = varchar(45)
+      null = NOT NULL
+    }
+    column "address_id" {
+      type = smallint unsigned
+      null = NOT NULL
+    }
+    column "picture" {
+      type = blob
+    }
+    column "email" {
+      type = varchar(50)
+    }
+    column "store_id" {
+      type = tinyint unsigned
+      null = NOT NULL
+    }
+    column "active" {
+      type = tinyint(1)
+      null = NOT NULL
+      default = 1
+    }
+    column "username" {
+      type = varchar(16)
+      null = NOT NULL
+    }
+    column "password" {
+      type = varchar(40)
+    }
+    column "last_update" {
+      type = timestamp
+      null = NOT NULL
+      default = CURRENT_TIMESTAMP
+    }
+  )
+  primaryKey = {
+    columns = [
+      staff_id
+    ]
+    name = "PRIMARY"
+    objectType = primaryKey
+  }
+}
+
+foreignKey "sakila"."staff"."fk_staff_address" {
+  columns = [
+    "address_id"
+  ]
+  referencedTable = "sakila"."address"
+  referencedColumns = [
+    "address_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+foreignKey "sakila"."staff"."fk_staff_store" {
+  columns = [
+    "store_id"
+  ]
+  referencedTable = "sakila"."store"
+  referencedColumns = [
+    "store_id"
+  ]
+  onUpdate = CASCADE
+  onDelete = RESTRICT
+}
+
+index "sakila"."staff"."idx_fk_address_id" {
+  columns = <
+    {
+      name = address_id
+    }
+
+  >
+  type = BTREE
+}
+
+index "sakila"."staff"."idx_fk_store_id" {
+  columns = <
+    {
+      name = store_id
+    }
+
+  >
+  type = BTREE
+}
+
