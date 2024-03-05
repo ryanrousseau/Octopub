@@ -2,7 +2,12 @@ name: Build Flyway Migrations
 
 'on':
   workflow_dispatch: {}
-
+  
+env:
+  OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+  OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+  OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,4 +23,9 @@ jobs:
           base_path: ./flyway/Octo-MySQL/migrations
           files: |
             **/*.*
+          
+     - name: Push package to Octopus Deplo
+       uses: OctopusDeploy/push-package-action@v3.0.4
+       with:
+          packages: ./packaging/Octopub.Database.1.0.0
           
