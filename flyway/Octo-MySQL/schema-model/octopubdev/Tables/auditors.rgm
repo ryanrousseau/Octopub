@@ -1,0 +1,11 @@
+table "octopubdev"."auditors" {
+  columns = (
+    column "id" {
+      type = int
+    }
+    column "first_name" {
+      type = varchar(100)
+    }
+  )
+}
+
