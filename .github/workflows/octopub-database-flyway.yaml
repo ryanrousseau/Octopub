@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps: 
      - uses: actions/checkout@v3
+       with:
+         fetch-depth: 0
 
      - name: Create Zip Package for Octopus Deploy
        uses: OctopusDeploy/create-zip-package-action@v3.0.2
