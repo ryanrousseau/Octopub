@@ -1,4 +1,4 @@
-name: Build Flyway Migrationss
+name: Build Flyway Migrations
 
 'on':
   workflow_dispatch: {}
@@ -10,16 +10,11 @@ jobs:
      - uses: actions/checkout@v3
 
      - name: Create Zip Package for Octopus Deploy
-  # You may pin to the exact commit or the version.
-  # uses: OctopusDeploy/create-zip-package-action@4e6bb23129c1cc5e337d1f74a200abba63de4b62
        uses: OctopusDeploy/create-zip-package-action@v3.0.2
        with:
-    # Package Id.
           package_id: Octopub.Database
-    # Package version.
           version: 1.0.0
-    # The folder to put the resulting package in, relative to the current working directory; not the base path.
           output_folder: ${GITHUB_WORKSPACE}
-    # The base path for the input files.
           base_path: ./flyway/OctoMySQL/migrations
+          files: test.txt
           
