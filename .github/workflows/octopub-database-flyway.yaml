@@ -44,5 +44,4 @@ jobs:
           project: Octopub Database
           release_number: ${{ env.PACKAGE_VERSION }}
           channel: defaut
-          git_ref: main 
      
