@@ -2,6 +2,9 @@ name: Build Flyway Migrations
 
 'on':
   workflow_dispatch: {}
+  push:
+    branches:
+    - main
   
 env:
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
@@ -25,7 +28,10 @@ jobs:
           output_folder: "${{ github.workspace }}/artifacts"
           base_path: ./flyway/Octo-MySQL/migrations
           files: |
-            **/*.*
+              **/*.*
+  Deploy: 
+    runs-on: ubuntu-latest
+    steps:
           
      - name: Push package to Octopus Deploy🐙
        uses: OctopusDeploy/push-package-action@v3.0.4
