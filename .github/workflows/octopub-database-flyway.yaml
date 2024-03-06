@@ -33,7 +33,19 @@ jobs:
           packages: |
             ${{ github.workspace }}/artifacts/Octopub.Database.${{ env.PACKAGE_VERSION }}.zip
      
-     - name: Create OctoPetShop release
+     - name: Push build information
+       uses: OctopusDeploy/push-build-information-action@v1
+       with:
+          packages: |
+            ${{ github.workspace }}/artifacts/Octopub.Database
+          version: ${{ env.PACKAGE_VERSION }}
+    
+     - name: Install Octopus CLI
+       uses: OctopusDeploy/install-octopus-cli-action@v1
+       with:
+        version: latest
+     
+     - name: Create Octopub release
        uses: OctopusDeploy/create-release-action@v2
        with:
           project: Octopub Metaverse
