@@ -27,19 +27,20 @@ jobs:
           files: |
             **/*.*
           
-     - name: Push package to Octopus Deploy
+     - name: Push package to Octopus Deploy🐙
        uses: OctopusDeploy/push-package-action@v3.0.4
        with:
           packages: |
             ${{ github.workspace }}/artifacts/Octopub.Database.${{ env.PACKAGE_VERSION }}.zip
 
-     - name: Push Build Information
+     - name: Push Build Information 🐙
        uses: OctopusDeploy/push-build-information-action@v3.0.1
        with: 
          packages: |
-           Octopub.Database.${{ env.PACKAGE_VERSION }}.zip
+           Octopub.Database
+         version: ${{ env.PACKAGE_VERSION }}
 
-     - name: Create Octopus Release
+     - name: Create Octopus Release 🐙
        uses: OctopusDeploy/create-release-action@v3
        with: 
           project: Octopub Database
