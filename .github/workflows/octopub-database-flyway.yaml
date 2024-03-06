@@ -33,12 +33,12 @@ jobs:
           packages: |
             ${{ github.workspace }}/artifacts/Octopub.Database.${{ env.PACKAGE_VERSION }}.zip
      
-     - name: Push build information
-       uses: OctopusDeploy/push-build-information-action@v1
-       with:
-          packages: |
-            ${{ github.workspace }}/artifacts/Octopub.Database
-          version: ${{ env.PACKAGE_VERSION }}
+     #- name: Push build information
+     #  uses: OctopusDeploy/push-build-information-action@v1
+     #  with:
+     #     packages: |
+     #       ${{ github.workspace }}/artifacts/Octopub.Database
+     #     version: ${{ env.PACKAGE_VERSION }}
     
      - name: Install Octopus CLI
        uses: OctopusDeploy/install-octopus-cli-action@v1
