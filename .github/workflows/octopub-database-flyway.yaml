@@ -29,10 +29,7 @@ jobs:
           base_path: ./flyway/Octo-MySQL/migrations
           files: |
               **/*.*
-  Deploy: 
-    runs-on: ubuntu-latest
-    steps:
-          
+
      - name: Push package to Octopus Deploy🐙
        uses: OctopusDeploy/push-package-action@v3.0.4
        with:
