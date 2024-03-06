@@ -1,0 +1,8 @@
+table "octopubdev"."order_history" {
+  columns = (
+    column "order_id" {
+      type = int
+    }
+  )
+}
+
