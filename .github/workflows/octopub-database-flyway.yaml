@@ -36,6 +36,8 @@ jobs:
      - name: Push Build Information
        uses: OctopusDeploy/push-build-information-action@v3.0.1
        with: 
+         packages: |
+           Octopub.Database.${{ env.PACKAGE_VERSION }}.zip
          verison: ${{ env.PACKAGE_VERSION }}
 
      - name: Create Octopus Release
