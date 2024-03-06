@@ -52,5 +52,5 @@ jobs:
        with: 
            project: Octopub Database
            release_number: ${{ env.PACKAGE_VERSION }}
-           environment: Development
+           environments: Development
      
