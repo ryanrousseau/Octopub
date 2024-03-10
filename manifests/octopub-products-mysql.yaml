@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: octopub-productservice-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: productservice
+  template:
+    metadata:
+      labels:
+        component: productservice
+    spec:
+      containers:
+        - name: productservice
+          image: octopussamples/octopub-products-microservice-mysql
+          ports:
+            - name: http-product
+              containerPort: 8083
+          env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: database-password
+            - name: DATABASE_HOSTNAME
+              value: "192.168.1.64"
+            - name: DATABASE_PORT
+              value: "30000"
+            - name: DATABASE_NAME
+              value: "octopub_Development"
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: database-credentials
+                  key: database-user
+            - name: MIGRATE_AT_START
+              value: "false"
+            - name: COGNITO_DISABLE_AUTH
+              value: "true"
