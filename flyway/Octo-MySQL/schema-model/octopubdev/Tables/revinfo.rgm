@@ -7,6 +7,9 @@ table "octopubdev"."revinfo" {
     column "REVTSTMP" {
       type = bigint
     }
+    column "foo" {
+      type = varchar(100)
+    }
   )
   primaryKey = {
     columns = [
