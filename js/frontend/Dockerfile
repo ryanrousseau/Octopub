@@ -7,6 +7,7 @@ RUN yarn build
 RUN npm install --global @cyclonedx/cyclonedx-npm
 RUN cyclonedx-npm --ignore-npm-errors --output-file /bom.json
 
+
 FROM nginxinc/nginx-unprivileged:latest
 USER root
 RUN apt-get update; apt-get install -y jq curl

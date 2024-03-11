@@ -11,6 +11,23 @@ permissions:
       - '!README.md'
 
 jobs:
+  
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      myssql: ${{ steps.changes.outputs.mysql }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          mysql:
+            - './mysql/**'
+
+  
+  
   build:
     runs-on: ubuntu-latest
     steps:
@@ -27,3 +44,27 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           script_directory: octopub-log-scanner
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+       - name: Create Octopus Release
+         uses: OctopusDeploy/create-release-action@v3
+         with: 
+            project: Octopub Database
+            release_number: 1.0.0
+            channel: defaut
+            git_ref: main
+            
+       - name: Deploy Octopus Release
+         uses: OctopusDeploy/deploy-release-action@v3.0.3
+         with: 
+             project: Octopub Database
+             release_number: 1.0.0
+             environment: Development
+        
+    
+    
+
+    
