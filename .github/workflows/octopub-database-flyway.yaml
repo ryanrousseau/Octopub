@@ -1,10 +1,13 @@
-name: Build Flyway Migrations
+name: Build Flyway Migrations Dev
 
 'on':
   workflow_dispatch: {}
   push:
-    branches:
-    - main
+    branches:    
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - '!main'   # excludes master
   
 env:
   OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
