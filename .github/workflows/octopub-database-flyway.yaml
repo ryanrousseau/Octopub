@@ -1,4 +1,4 @@
-name: Build Flyway Migrations Dev
+name: Build Flyway Migrations Main
 
 'on':
   workflow_dispatch: {}
