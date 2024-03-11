@@ -1,0 +1,54 @@
+name: Build Flyway Migrations Dev
+
+'on':
+  workflow_dispatch: {}
+  push:
+    branches:    
+      - 'main'  
+  
+env:
+  OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+  OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+  OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps: 
+     - uses: actions/checkout@v3
+
+     - name: Set Version
+       run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+
+     - name: Create Zip Package for Octopus Deploy
+       uses: OctopusDeploy/create-zip-package-action@v3.0.2
+       with:
+          package_id: Octopub.Database
+          version: ${{ env.PACKAGE_VERSION }}
+          output_folder: "${{ github.workspace }}/artifacts"
+          base_path: ./flyway/Octo-MySQL/migrations
+          files: |
+              **/*.*
+
+     - name: Push package to Octopus Deploy🐙
+       uses: OctopusDeploy/push-package-action@v3.0.4
+       with:
+          packages: |
+            ${{ github.workspace }}/artifacts/Octopub.Database.${{ env.PACKAGE_VERSION }}.zip
+
+     - name: Push Build Information 🐙
+       uses: OctopusDeploy/push-build-information-action@v3.0.1
+       with: 
+         packages: |
+           Octopub.Database
+         version: ${{ env.PACKAGE_VERSION }}
+
+     - name: Create Octopus Release 🐙
+       uses: OctopusDeploy/create-release-action@v3
+       with: 
+          project: Octopub Database
+          release_number: ${{ env.PACKAGE_VERSION }}
+          channel: Main
+
+
+     
