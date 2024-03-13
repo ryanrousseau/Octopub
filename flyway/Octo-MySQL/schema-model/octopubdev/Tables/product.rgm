@@ -27,7 +27,7 @@ table "octopubdev"."product" {
     column "description" {
       type = longtext
     }
-    column "foo" {
+    column "new_product" {
       type = varchar(100)
     }
   )
