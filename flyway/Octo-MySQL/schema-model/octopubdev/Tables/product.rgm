@@ -27,6 +27,9 @@ table "octopubdev"."product" {
     column "description" {
       type = longtext
     }
+    column "new_product" {
+      type = varchar(100)
+    }
   )
   primaryKey = {
     columns = [
