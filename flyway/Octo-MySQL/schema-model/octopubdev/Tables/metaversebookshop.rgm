@@ -1,0 +1,11 @@
+table "octopubdev"."metaversebookshop" {
+  columns = (
+    column "Book" {
+      type = varchar(100)
+    }
+    column "Author" {
+      type = varchar(100)
+    }
+  )
+}
+
