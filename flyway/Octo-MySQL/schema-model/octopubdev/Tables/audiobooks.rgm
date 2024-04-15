@@ -1,0 +1,14 @@
+table "octopubdev"."audiobooks" {
+  columns = (
+    column "Author" {
+      type = varchar(100)
+    }
+    column "Book" {
+      type = varchar(100)
+    }
+    column "Price" {
+      type = varchar(100)
+    }
+  )
+}
+
