@@ -6,6 +6,9 @@ table "octopubdev"."auditors" {
     column "first_name" {
       type = varchar(100)
     }
+    column "Test" {
+      type = varchar(100)
+    }
   )
 }
 
