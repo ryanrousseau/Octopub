@@ -1,0 +1,14 @@
+table "octopubdev"."addressbook" {
+  columns = (
+    column "FirstName" {
+      type = varchar(100)
+    }
+    column "LastName" {
+      type = varchar(100)
+    }
+    column "StreetAddress" {
+      type = varchar(100)
+    }
+  )
+}
+
