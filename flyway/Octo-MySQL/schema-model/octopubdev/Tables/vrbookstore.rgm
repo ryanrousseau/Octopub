@@ -1,0 +1,14 @@
+table "octopubdev"."vrbookstore" {
+  columns = (
+    column "Author" {
+      type = varchar(100)
+    }
+    column "BookName" {
+      type = varchar(100)
+    }
+    column "Price" {
+      type = varchar(100)
+    }
+  )
+}
+

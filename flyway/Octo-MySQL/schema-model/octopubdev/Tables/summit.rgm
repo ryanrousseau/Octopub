@@ -1,0 +1,11 @@
+table "octopubdev"."summit" {
+  columns = (
+    column "Speakers" {
+      type = varchar(100)
+    }
+    column "Attendees" {
+      type = varchar(100)
+    }
+  )
+}
+
