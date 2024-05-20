@@ -48,7 +48,7 @@ jobs:
        with: 
           project: Octopub Database
           release_number: ${{ env.PACKAGE_VERSION }}
-          channel: Default
+          channel: Prod
 
      - name: Deploy Octopus Release 🐙
        uses: OctopusDeploy/deploy-release-action@v3.0.3
