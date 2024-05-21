@@ -14,13 +14,13 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:products-microservice-jar` - The product microservice uber jar
 * `com.octopus:products-microservice-systemd` - The product microservice systemd service file
 * `com.octopus:products-microservice-mysql-jar` - The product microservice uber jar with MySQL
-* `com.octopus:products-microservice-liquidbase` - The product microservice Liquidbase database migration scripts. The changelog file is called `changeLog.xml`.
+* `com.octopus:products-microservice-liquidbase` - The product microservice Liquidbase database migration scripts. The changelog file is called `product-changeLog.xml`.
 * `com.octopus:products-microservice-sbom` - The product microservice SBOM
 * `com.octopus:audit-microservice-lambda` - The audit microservice AWS Lambda
 * `com.octopus:audit-microservice-jar` - The audit microservice uber jar
 * `com.octopus:audit-microservice-systemd` - The audit microservice systemd service file
 * `com.octopus:audit-microservice-mysql-jar` - The audit microservice uber jar with MySQL
-* `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts. The changelog file is called `changeLog.xml`.
+* `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts. The changelog file is called `audit-changeLog.xml`.
 * `com.octopus:audit-microservice-sbom` - The audit microservice SBOM
 
 ## Downloading files locally
@@ -100,7 +100,7 @@ echo "##octopus[stdout-default]"
 cd products-microservice-liquidbase
 
 docker run -e INSTALL_MYSQL=true --rm -v ${PWD}:/liquibase/changelog liquibase/liquibase \
-  "--changeLogFile=changeLog.xml" \
+  "--changeLogFile=product-changeLog.xml" \
   "--username=#{Database.Username}" \
   "--password=#{Database.Password}" \
   "--url=jdbc:mysql://#{Database.Hostname}:3306/product?createDatabaseIfNotExist=true" \

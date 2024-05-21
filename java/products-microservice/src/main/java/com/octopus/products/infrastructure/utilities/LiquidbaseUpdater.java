@@ -31,7 +31,7 @@ public class LiquidbaseUpdater {
           DatabaseFactory.getInstance()
               .findCorrectDatabaseImplementation(new JdbcConnection(connection));
       final Liquibase liquibase =
-          new Liquibase("db/changeLog.xml", new ClassLoaderResourceAccessor(), database);
+          new Liquibase("db/product-changeLog.xml", new ClassLoaderResourceAccessor(), database);
       liquibase.update(new Contexts(), new LabelExpression());
     }
   }
