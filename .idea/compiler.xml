@@ -16,8 +16,8 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="audit-service" options="-parameters" />
-      <module name="products-microservice" options="-parameters" />
+      <module name="audit-service" options="" />
+      <module name="products-microservice" options="" />
     </option>
   </component>
 </project>

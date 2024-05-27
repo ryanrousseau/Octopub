@@ -393,6 +393,36 @@ runs:
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
+    - name: Package the SAM template
+      if: ${{ inputs.lambda_build == 'true' }}
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+      run: |
+          octopus package zip create \
+          --id ${{ inputs.service_directory }}-awssam \
+          --version ${{ steps.determine_version.outputs.semVer }} \
+          --base-path ${{ inputs.service_directory }}/target \
+          --include sam.*.yaml
+      shell: bash
+
+    - name: Deploy SAM template package
+      if: ${{ inputs.liquibase_build == 'true' }}
+      run: |
+        if [[ -f "java/${{ inputs.service_directory }}-awssam.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            --batch-mode \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-awssam" \
+            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-awssam.${{ steps.determine_version.outputs.semVer }}.zip" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
+      shell: bash
+
     # The database migration scripts are packaged as a separate file
     - name: Build Liquibase package
       if: ${{ inputs.liquibase_build == 'true' }}
