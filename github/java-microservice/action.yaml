@@ -405,6 +405,7 @@ runs:
           --base-path ${{ inputs.service_directory }}/target \
           --include sam.*.yaml
       shell: bash
+      working-directory: java
 
     - name: Deploy SAM template package
       if: ${{ inputs.liquibase_build == 'true' }}
