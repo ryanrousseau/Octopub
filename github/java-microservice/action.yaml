@@ -393,6 +393,41 @@ runs:
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
+    - name: Build serverless jvm package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: |
+        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+        ./mvnw \
+          --batch-mode \
+          package \
+          -P "lambda" \
+          -DskipTests \
+          -Dquarkus.profile=faas \
+          -Dquarkus.native.container-build=true \
+          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Add SBOM to serverless jvm package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
+      shell: bash
+
+    - name: Deploy serverless jvm package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: |
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-lambda-jvm" \
+          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+
     - name: Package the SAM template
       if: ${{ inputs.lambda_build == 'true' }}
       env:
