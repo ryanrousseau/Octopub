@@ -4,8 +4,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
+import com.octopus.jwt.impl.JoseJwtInspector;
 import com.octopus.lambda.ProxyResponseBuilder;
 import java.util.Optional;
+import java.util.logging.Logger;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -20,6 +23,8 @@ import lombok.NonNull;
 @ApplicationScoped
 public class LambdaRequestEntryPoint implements
     RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+
+  private static Logger LOGGER = Logger.getLogger(LambdaRequestEntryPoint.class.getName());
 
   @Inject
   ProxyResponseBuilder proxyResponseBuilder;
@@ -38,6 +43,8 @@ public class LambdaRequestEntryPoint implements
   @Transactional
   public APIGatewayProxyResponseEvent handleRequest(
       @NonNull final APIGatewayProxyRequestEvent input, @NonNull final Context context) {
+
+    LOGGER.info(input.toString());
 
     /*
      Lambdas don't enjoy the same middleware and framework support as web servers (although

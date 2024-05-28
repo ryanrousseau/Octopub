@@ -16,6 +16,7 @@ import com.octopus.lambda.LambdaHttpValueExtractor;
 import cz.jirutka.rsql.parser.RSQLParserException;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -28,6 +29,8 @@ import org.apache.commons.lang3.ObjectUtils;
 @Named("Audits")
 @ApplicationScoped
 public class AuditApi implements RequestHandler<APIGatewayProxyRequestEvent, ProxyResponse> {
+
+  private static Logger LOGGER = Logger.getLogger(AuditApi.class.getName());
 
   /** A regular expression matching the collection of entities. */
   public static final Pattern ROOT_RE = Pattern.compile("/api/audits/?");
@@ -60,6 +63,8 @@ public class AuditApi implements RequestHandler<APIGatewayProxyRequestEvent, Pro
   @Transactional
   public ProxyResponse handleRequest(
       @NonNull final APIGatewayProxyRequestEvent input, @NonNull final Context context) {
+
+    LOGGER.info(input.toString());
 
     /*
      Lambdas don't enjoy the same middleware and framework support as web servers, so we are
