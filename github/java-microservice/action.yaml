@@ -431,13 +431,13 @@ runs:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
         OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
       run: |
-          echo "        FunctionUrlConfig:
-                    AuthType: NONE
-                    InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.jvm.yaml
+          echo "      FunctionUrlConfig:
+                  AuthType: NONE
+                  InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.jvm.yaml
 
-          echo "        FunctionUrlConfig:
-                    AuthType: NONE
-                    InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.native.yaml
+          echo "      FunctionUrlConfig:
+                  AuthType: NONE
+                  InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.native.yaml
 
           octopus package zip create \
           --id ${{ inputs.service_directory }}-awssam \
