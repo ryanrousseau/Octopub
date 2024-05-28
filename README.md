@@ -8,7 +8,9 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 
 * `com.octopus:octopub-frontend` - The static frontend website
 * `com.octopus:octopub-frontend-sbom` - The static frontend website SBOM
-* `com.octopus:products-microservice-lambda` - The product microservice AWS Lambda
+* `com.octopus:products-microservice-lambda` - The product microservice native AWS Lambda (requires an external MySQL database)
+* `com.octopus:products-microservice-lambda-jvm` - The product microservice JVM AWS Lambda with built in H2 database
+* `com.octopus:products-microservice-awssam` - The product microservice SAM templates (`sam.jvm.yaml` and `sam.native.yaml`)
 * `com.octopus:products-microservice-gcf-jar` - The product microservice Google Cloud Function artifact
 * `com.octopus:products-microservice-windows` - The product microservice as a Windows executable
 * `com.octopus:products-microservice-jar` - The product microservice uber jar
@@ -16,7 +18,9 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:products-microservice-mysql-jar` - The product microservice uber jar with MySQL
 * `com.octopus:products-microservice-liquidbase` - The product microservice Liquidbase database migration scripts. The changelog file is called `product-changeLog.xml`.
 * `com.octopus:products-microservice-sbom` - The product microservice SBOM
-* `com.octopus:audit-microservice-lambda` - The audit microservice AWS Lambda
+* `com.octopus:audit-microservice-lambda` - The audit microservice native AWS Lambda (requires an external MySQL database)
+* `com.octopus:audit-microservice-lambda-jvm` - The audit microservice JVM AWS Lambda with built in H2 database
+* `com.octopus:audit-microservice-awssam` - The audit microservice SAM templates (`sam.jvm.yaml` and `sam.native.yaml`)
 * `com.octopus:audit-microservice-jar` - The audit microservice uber jar
 * `com.octopus:audit-microservice-systemd` - The audit microservice systemd service file
 * `com.octopus:audit-microservice-mysql-jar` - The audit microservice uber jar with MySQL
