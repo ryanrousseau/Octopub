@@ -44,3 +44,14 @@ configMapGenerator:
   - name: service-env-vars
     behavior: merge
     env: variables.properties
+
+images:
+  - name: octopussamples/octopub-audit-microservice-mysql
+    newName: #{Octopus.Action.Package[octopub-audit-microservice-mysql].PackageId}
+    newTag: #{Octopus.Action.Package[octopub-audit-microservice-mysql].PackageVersion}
+  - name: octopussamples/octopub-products-microservice-mysql
+    newName: #{Octopus.Action.Package[octopub-products-microservice-mysql].PackageId}
+    newTag: #{Octopus.Action.Package[octopub-products-microservice-mysql].PackageVersion}
+  - name: octopussamples/octopub-frontend
+    newName: #{Octopus.Action.Package[octopub-frontend].PackageId}
+    newTag: #{Octopus.Action.Package[octopub-frontend].PackageVersion}
