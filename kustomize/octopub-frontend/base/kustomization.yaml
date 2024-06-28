@@ -5,14 +5,5 @@ resources:
 - octopub-frontend.yaml
 - octopub-ingress.yaml
 
-secretGenerator:
-  - name: database-credentials
-    envs:
-    - secrets.properties
-
-configMapGenerator:
-  - name: service-env-vars
-    env: variables.properties
-
 generatorOptions:
   disableNameSuffixHash: true
