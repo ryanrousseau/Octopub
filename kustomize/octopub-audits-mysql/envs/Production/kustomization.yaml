@@ -18,12 +18,6 @@ patches:
       name: octopub-ingress
     path: octopub-ingress.yaml
 
-secretGenerator:
-  - name: database-credentials
-    behavior: merge
-    envs:
-    - secrets.properties
-
 configMapGenerator:
   - name: service-env-vars
     behavior: merge
