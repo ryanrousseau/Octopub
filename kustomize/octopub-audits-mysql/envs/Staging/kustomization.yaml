@@ -15,7 +15,7 @@ patches:
     path: octopub-audits-service-mysql.yaml
   - target: 
       kind: Ingress
-      name: octopub-ingress
+      name: octopub-ingress-audits
     path: octopub-ingress.yaml
 
 

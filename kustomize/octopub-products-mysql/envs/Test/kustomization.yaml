@@ -7,7 +7,7 @@ resources:
 patches:
   - target: 
       kind: Ingress
-      name: octopub-ingress
+      name: octopub-ingress-products
     path: octopub-ingress.yaml
   - target:
       kind: Service
