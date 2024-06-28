@@ -6,7 +6,7 @@ resources:
 - octopub-ingress.yaml
 
 configMapGenerator:
-  - name: service-env-vars
+  - name: audit-service-env-vars
     env: variables.properties
 
 generatorOptions:

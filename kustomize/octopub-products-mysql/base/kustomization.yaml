@@ -6,7 +6,7 @@ resources:
 - octopub-products-mysql.yaml
 
 configMapGenerator:
-  - name: service-env-vars
+  - name: product-service-env-vars
     env: variables.properties
 
 generatorOptions:
