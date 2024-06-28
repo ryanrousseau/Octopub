@@ -19,7 +19,7 @@ patches:
     path: octopub-products-service-mysql.yaml
 
 configMapGenerator:
-  - name: service-env-vars
+  - name: product-service-env-vars
     behavior: merge
     env: variables.properties
 

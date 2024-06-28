@@ -20,7 +20,7 @@ patches:
 
 
 configMapGenerator:
-  - name: service-env-vars
+  - name: audit-service-env-vars
     behavior: merge
     env: variables.properties
 
