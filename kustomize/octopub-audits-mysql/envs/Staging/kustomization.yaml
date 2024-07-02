@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: #{Octopub.Kustomize.Cluster.Namespace}
+resources:
+- ../../base
+
+patches:
+  - target:
+      kind: Deployment
+      name: octopub-audit-deployment
+    path: octopub-audits-deployment-mysql.yaml
+  - target:
+      kind: Service
+      name: octopub-audit-cluster-ip
+    path: octopub-audits-service-mysql.yaml
+  - target: 
+      kind: Ingress
+      name: octopub-ingress-audits
+    path: octopub-ingress.yaml
+
+
+configMapGenerator:
+  - name: audit-service-env-vars
+    behavior: merge
+    env: variables.properties
+
+images:
+  - name: octopussamples/octopub-audit-microservice-mysql
+    newName: #{Octopus.Action.Package[octopub-audit-microservice-mysql].PackageId}
+    newTag: #{Octopus.Action.Package[octopub-audit-microservice-mysql].PackageVersion}

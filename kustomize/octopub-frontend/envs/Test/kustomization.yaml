@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: #{Octopub.Kustomize.Cluster.Namespace}
+resources:
+- ../../base
+
+patches:
+  - target: 
+      kind: Ingress
+      name: octopub-ingress-frontend
+    path: octopub-ingress.yaml
+  - target:
+      kind: Service
+      name: octopub-frontend-cluster-ip
+    path: octopub-frontend-service.yaml
+  - target:
+      kind: Deployment
+      name: octopub-frontend-deployment
+    path: octopub-frontend-deployment.yaml
+
+images:
+  - name: octopussamples/octopub-frontend
+    newName: #{Octopus.Action.Package[octopub-frontend].PackageId}
+    newTag: #{Octopus.Action.Package[octopub-frontend].PackageVersion}
