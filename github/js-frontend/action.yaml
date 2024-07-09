@@ -187,6 +187,23 @@ runs:
       shell: bash
       working-directory: js/frontend
 
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: https://ghcr.io
+        username: ${{ inputs.github_actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Build, tag, and push image to Dockerhub
+      run: |
+        docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-frontend:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:latest
+      shell: bash
+      working-directory: js/frontend
+
+
     - name: Build and push static web package
       run: |
         pushd js/frontend/build
@@ -236,18 +253,3 @@ runs:
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
 
-    - name: Login to GHCR
-      uses: docker/login-action@v3
-      with:
-        registry: https://ghcr.io
-        username: ${{ inputs.github_actor }}
-        password: ${{ inputs.github_token }}
-
-    - name: Build, tag, and push image to Dockerhub
-      run: |
-        docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
-        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
-        docker tag  ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-frontend:latest
-        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:latest
-      shell: bash
-      working-directory: js/frontend
