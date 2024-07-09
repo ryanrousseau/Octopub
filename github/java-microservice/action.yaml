@@ -538,6 +538,7 @@ runs:
         #docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
         #docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
         docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
+        #docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
