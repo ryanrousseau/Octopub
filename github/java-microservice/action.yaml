@@ -362,6 +362,33 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: https://ghcr.io
+        username: ${{ inputs.github_actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Build, tag, and push image to GHCR
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        ls -la
+        ls -la target
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest      
+
     - name: Build serverless package
       if: ${{ inputs.lambda_build == 'true' }}
       run: |
@@ -512,34 +539,6 @@ runs:
         version: ${{ steps.determine_version.outputs.semVer }}
         overwrite_mode: OverwriteExisting
 
-    - name: Login to GHCR
-      uses: docker/login-action@v3
-      with:
-        registry: https://ghcr.io
-        username: ${{ inputs.github_actor }}
-        password: ${{ inputs.github_token }}
 
-    - name: Build, tag, and push image to GHCR
-      if: ${{ inputs.docker_build == 'true' }}
-      run: |
-        ls -la
-        ls -la target
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
-        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
-
-    - name: Build, tag, and push image to Dockerhub
-      if: ${{ inputs.docker_build == 'true' }}
-      run: |
-        #docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
-        #docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
-        #docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
-        #docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
-        #docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
-        docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
