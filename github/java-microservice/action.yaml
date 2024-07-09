@@ -387,7 +387,9 @@ runs:
         docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
         docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
         docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest      
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
 
     - name: Build serverless package
       if: ${{ inputs.lambda_build == 'true' }}
@@ -540,5 +542,3 @@ runs:
         overwrite_mode: OverwriteExisting
 
 
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
