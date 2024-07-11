@@ -374,7 +374,7 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       run: |
-        docker buildx -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} --platform=linux/amd64,linux/arm64 .
+        docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} --platform=linux/amd64,linux/arm64 .
         docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
         docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
         docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
