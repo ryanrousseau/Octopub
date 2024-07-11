@@ -20,5 +20,5 @@ patches:
 
 images:
   - name: octopussamples/octopub-frontend
-    newName: #{Octopus.Action.Package[octopub-frontend].PackageId}
+    newName: ghcr.io/#{Octopus.Action.Package[octopub-frontend].PackageId}
     newTag: #{Octopus.Action.Package[octopub-frontend].PackageVersion}

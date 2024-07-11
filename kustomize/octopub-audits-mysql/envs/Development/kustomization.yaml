@@ -25,5 +25,5 @@ configMapGenerator:
 
 images:
   - name: octopussamples/octopub-audit-microservice-mysql
-    newName: #{Octopus.Action.Package[octopub-audit-microservice-mysql].PackageId}
+    newName: ghcr.io/#{Octopus.Action.Package[octopub-audit-microservice-mysql].PackageId}
     newTag: #{Octopus.Action.Package[octopub-audit-microservice-mysql].PackageVersion}
