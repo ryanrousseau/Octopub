@@ -370,7 +370,7 @@ runs:
     #   shell: bash
     #   working-directory: java/${{ inputs.service_directory }}
 
-    The MySQL Docker image is built and pushed.
+    # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       run: |
