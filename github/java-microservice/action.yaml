@@ -378,7 +378,7 @@ runs:
         tags: |
           octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
           octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
-        context: ./java/${{ inputs.service_directory }}/src/main/docker/Dockerfile.legacy-jar
+        context: $GITHUB_WORKSPACE/java/${{ inputs.service_directory }}/src/main/docker/Dockerfile.legacy-jar
 
     - name: Login to GHCR
       uses: docker/login-action@v3
