@@ -360,14 +360,24 @@ runs:
       shell: bash
 
     # The MySQL Docker image is built and pushed.
-    - name: Build, tag, and push image to Dockerhub
-      if: ${{ inputs.docker_build == 'true' }}
-      run: |
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
-        docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
-        docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
-        docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
-      shell: bash
+    # - name: Build, tag, and push image to Dockerhub
+    #   if: ${{ inputs.docker_build == 'true' }}
+    #   run: |
+    #     docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
+    #     docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
+    #     docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+    #     docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
+
+    - name: Build and push Dockerhub
+      uses: docker/build-push-action@v6
+      with:
+        platform: linux/amd64,linux/arm64
+        push: true
+        tags: |
+          octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
+          octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
       working-directory: java/${{ inputs.service_directory }}
 
     - name: Login to GHCR
