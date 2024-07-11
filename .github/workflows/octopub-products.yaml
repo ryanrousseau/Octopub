@@ -25,6 +25,7 @@ jobs:
           run_number: ${{ github.run_number }}
           github_repo: ${{ github.repository }}
           github_token: ${{ github.token }}
+          github_actor: ${{ github.actor }}
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           service_directory: products-microservice
@@ -41,6 +42,7 @@ jobs:
           run_number: ${{ github.run_number }}
           github_repo: ${{ github.repository }}
           github_token: ${{ github.token }}
+          github_actor: ${{ github.actor }}
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -67,6 +69,7 @@ jobs:
           run_number: ${{ github.run_number }}
           github_repo: ${{ github.repository }}
           github_token: ${{ github.token }}
+          github_actor: ${{ github.actor }}
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
           octopus_url: ${{ secrets.DSC_OCTOPUS_URL }}
