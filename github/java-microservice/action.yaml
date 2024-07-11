@@ -370,16 +370,28 @@ runs:
     #   shell: bash
     #   working-directory: java/${{ inputs.service_directory }}
 
-    - name: Build and push Dockerhub
-      uses: docker/build-push-action@v6
-      with:
-        platform: linux/amd64,linux/arm64
-        push: true
-        tags: |
-          octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
-          octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
-        context: .
-        file: java/${{ inputs.service_directory }}/src/main/docker/Dockerfile.legacy-jar
+    The MySQL Docker image is built and pushed.
+    - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        docker buildx -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} --platform=linux/amd64,linux/arm64 .
+        docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
+        docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+        docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+
+    # - name: Build and push Dockerhub
+    #   uses: docker/build-push-action@v6
+    #   with:
+    #     platform: linux/amd64,linux/arm64
+    #     push: true
+    #     tags: |
+    #       octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
+    #       octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+    #     context: .
+    #     file: java/${{ inputs.service_directory }}/src/main/docker/Dockerfile.legacy-jar
 
     - name: Login to GHCR
       uses: docker/login-action@v3
