@@ -1,6 +1,8 @@
 FROM node as build
 WORKDIR /usr/src/app
 COPY package.json ./
+# Suggested fix from https://github.com/nodejs/docker-node/issues/1335 for ARM64
+RUN yarn config set network-timeout 300000
 RUN yarn install
 COPY . .
 RUN yarn build
