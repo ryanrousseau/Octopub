@@ -198,7 +198,7 @@ runs:
     # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       run: |
-        docker buildx build -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
+        docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
       shell: bash
       working-directory: js/frontend
 
