@@ -1,5 +1,5 @@
 FROM node as build
-ARG ARCH=amd64
+ARG ARCH="amd64"
 WORKDIR /usr/src/app
 COPY package.json ./
 # Suggested fix from https://github.com/nodejs/docker-node/issues/1335 for ARM64
