@@ -199,8 +199,6 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       run: |
         docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
-        #docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} --platform=linux/amd64 --push .
-        #docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} --platform=linux/arm64 --push --build-arg ARCH="arm64" .
       shell: bash
       working-directory: js/frontend
 
