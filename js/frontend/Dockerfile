@@ -13,14 +13,18 @@ RUN cyclonedx-npm --ignore-npm-errors --output-file /bom.json
 FROM nginxinc/nginx-unprivileged:latest
 USER root
 RUN apt-get update; apt-get install -y jq curl
+
+RUN echo "Building $TARGETARCH"
+
 # Download the latest version of udl
 RUN if [ "$TARGETARCH" = "amd64" ] ; then \
-    echo "Building amd64" ; \
+    echo "Downloading UDL for amd64" ; \
     curl -s https://api.github.com/repos/mcasperson/UltimateDockerLauncher/releases/latest ; \
     jq '.assets[] | select(.name|match("udl$")) | .browser_download_url' | xargs -I {} curl -L -o /opt/udl {} ;\
    fi
 
 RUN if [ "$TARGETARCH" = "arm64" ] ; then \
+    echo "Downloading UDL for arm64" ; \
     curl -s https://api.github.com/repos/mcasperson/UltimateDockerLauncher/releases/latest | \
     jq '.assets[] | select(.name|match("udl_linux_arm64$")) | .browser_download_url' | xargs -I {} curl -L -o /opt/udl {} ; \
   fi
