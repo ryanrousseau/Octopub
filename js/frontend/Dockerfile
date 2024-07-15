@@ -30,6 +30,7 @@ RUN chmod +x /opt/udl
 FROM nginxinc/nginx-unprivileged:latest
 USER root
 
+COPY --from=final /opt/udl /opt/udl
 COPY --from=final /usr/src/app/build /usr/share/nginx/html/
 RUN chown -R nginx:nginx /usr/share/nginx/html
 COPY --from=build /bom.json /bom.json
