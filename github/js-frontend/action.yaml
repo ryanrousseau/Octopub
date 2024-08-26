@@ -150,7 +150,8 @@ runs:
           #"-Dversion=${{ steps.determine_version.outputs.semVer }}" \
           "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
-          "-Dfile=js/frontend/javascript-frontend-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+          #"-Dfile=js/frontend/javascript-frontend-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=js/frontend/javascript-frontend-sbom.${{ env.PACKAGE_VERSION }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
