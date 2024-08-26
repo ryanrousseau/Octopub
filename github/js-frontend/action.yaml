@@ -100,11 +100,14 @@ runs:
       with:
         versionSpec: 5.x
 
-    - id: determine_version
-      name: Determine Version
-      uses: gittools/actions/gitversion/execute@v0.9.15
-      with:
-        additionalArguments: /overrideconfig mode=Mainline
+#    - id: determine_version
+#      name: Determine Version
+#      uses: gittools/actions/gitversion/execute@v0.9.15
+#      with:
+#        additionalArguments: /overrideconfig mode=Mainline
+
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
 
     - name: Install modules
       run: yarn install
@@ -130,7 +133,8 @@ runs:
       run: >
         octopus package zip create
         --id javascript-frontend-sbom
-        --version ${{ steps.determine_version.outputs.semVer }}
+        #--version ${{ steps.determine_version.outputs.semVer }}
+        --version ${{ env.PACKAGE_VERSION }}
         --include **/bom.json
       shell: bash
       working-directory: js/frontend
@@ -142,7 +146,8 @@ runs:
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=octopub-frontend-sbom" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          #"-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
           "-Dfile=js/frontend/javascript-frontend-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
@@ -151,7 +156,8 @@ runs:
 
     - name: Set version
       run: |
-        jq '.frontendVersion = "v${{ steps.determine_version.outputs.semVer }}"' config.json > /tmp/config.json
+        #jq '.frontendVersion = "v${{ steps.determine_version.outputs.semVer }}"' config.json > /tmp/config.json
+        jq '.frontendVersion = "v${{ env.PACKAGE_VERSION }}"' config.json > /tmp/config.json
         mv /tmp/config.json config.json
       shell: bash
       working-directory: js/frontend/public
@@ -164,15 +170,18 @@ runs:
     - name: Build and deploy serverless package
       run: |
         pushd js/frontend
-        zip -r octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml build public/config.json.dot
+        #zip -r octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip serverless.yaml build public/config.json.dot
+        zip -r octopub-frontend.${{ env.PACKAGE_VERSION }}.zip serverless.yaml build public/config.json.dot
         popd
         mvn deploy:deploy-file \
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=octopub-frontend-serverless" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          #"-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
-          "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+          #"-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=js/frontend/octopub-frontend.${{ env.PACKAGE_VERSION }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
@@ -198,7 +207,8 @@ runs:
     # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       run: |
-        docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
+        #docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
+        docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
       shell: bash
       working-directory: js/frontend
 
@@ -212,9 +222,10 @@ runs:
 
     - name: Build, tag, and push image to Dockerhub
       run: |
-        docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
-        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
-        docker tag  ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-frontend:latest
+        #docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
+        docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-frontend:latest
         docker push ghcr.io/octopussolutionsengineering/octopub-frontend:latest
       shell: bash
       working-directory: js/frontend
@@ -223,16 +234,19 @@ runs:
     - name: Build and push static web package
       run: |
         pushd js/frontend/build
-        zip -r ../octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip .
+        #zip -r ../octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip .
+        zip -r ../octopub-frontend.${{ env.PACKAGE_VERSION }}.zip .
         popd
         
         mvn deploy:deploy-file \
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=octopub-frontend" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          #"-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
-          "-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+          #"-Dfile=js/frontend/octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=js/frontend/octopub-frontend.${{ env.PACKAGE_VERSION }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
@@ -250,7 +264,8 @@ runs:
       run: >
         octopus package zip create
         --id octopub-frontend-cypress
-        --version ${{ steps.determine_version.outputs.semVer }}
+        #--version ${{ steps.determine_version.outputs.semVer }}
+        --version ${{ env.PACKAGE_VERSION }}
         --out-folder ..
       shell: bash
       working-directory: js/cypress-frontend
@@ -262,9 +277,11 @@ runs:
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=octopub-frontend-cypress" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          #"-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
-          "-Dfile=js/octopub-frontend-cypress.${{ steps.determine_version.outputs.semVer }}.zip" \
+          #"-Dfile=js/octopub-frontend-cypress.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=js/octopub-frontend-cypress.${{ env.PACKAGE_VERSION }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
