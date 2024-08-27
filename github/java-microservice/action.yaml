@@ -79,11 +79,15 @@ runs:
       with:
         versionSpec: 5.x
 
-    - id: determine_version
-      name: Determine Version
-      uses: gittools/actions/gitversion/execute@v0.9.15
-      with:
-        additionalArguments: /overrideconfig mode=Mainline
+    # - id: determine_version
+    #   name: Determine Version
+    #   uses: gittools/actions/gitversion/execute@v0.9.15
+    #   with:
+    #     additionalArguments: /overrideconfig mode=Mainline
+
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      shell: bash
 
     - name: Set up JDK 1.17
       uses: actions/setup-java@v3
@@ -232,7 +236,7 @@ runs:
       run: >
         octopus package zip create
         --id ${{ inputs.service_directory }}-sbom
-        --version ${{ steps.determine_version.outputs.semVer }}
+        --version ${{ env.PACKAGE_VERSION }}
         --include **/bom.xml
         --include **/bom.json
       shell: bash
@@ -245,9 +249,9 @@ runs:
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-sbom" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}-sbom.${{ steps.determine_version.outputs.semVer }}.zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}-sbom.${{ env.PACKAGE_VERSION }}.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
@@ -263,7 +267,7 @@ runs:
         then
           octopus package zip create \
           --id ${{ inputs.service_directory }}-postman \
-          --version ${{ steps.determine_version.outputs.semVer }} \
+          --version ${{ env.PACKAGE_VERSION }} \
           --include test.json \
           --base-path ${{ inputs.service_directory }}-postman
         fi
@@ -274,15 +278,15 @@ runs:
     - name: Push Postman Package
       if: ${{ inputs.postman_build == 'true' }}
       run: |
-        if [[ -f "java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        if [[ -f "java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" ]]
         then
           mvn deploy:deploy-file \
             --batch-mode \
             "-DgroupId=com.octopus" \
             "-DartifactId=${{ inputs.service_directory }}-postman" \
-            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
             "-Dpackaging=zip" \
-            "-Dfile=java/${{ inputs.service_directory }}-postman.${{ steps.determine_version.outputs.semVer }}.zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" \
             "-DrepositoryId=octopus-sales-public-snapshot" \
             "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
         fi
@@ -301,7 +305,7 @@ runs:
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-jar" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=jar" \
           "-Dfile=${files[0]}" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
@@ -316,7 +320,7 @@ runs:
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-systemd" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
           "-Dfile=${{ inputs.service_directory }}-systemd.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
@@ -330,9 +334,9 @@ runs:
       run: |
         ls -la
         ls -la target
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
-        docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
-        docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}:latest
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
+        docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
+        docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} octopussamples/octopub-${{ inputs.service_directory }}:latest
         docker push octopussamples/octopub-${{ inputs.service_directory }}:latest
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
@@ -345,13 +349,13 @@ runs:
 
     - name: Deploy MySQL JAR package
       run: |
-        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
         then
           mvn deploy:deploy-file \
             --batch-mode \
             "-DgroupId=com.octopus" \
             "-DartifactId=${{ inputs.service_directory }}-mysql-jar" \
-            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
             "-Dpackaging=zip" \
             "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
             "-DrepositoryId=octopus-sales-public-snapshot" \
@@ -363,9 +367,9 @@ runs:
     # - name: Build, tag, and push image to Dockerhub
     #   if: ${{ inputs.docker_build == 'true' }}
     #   run: |
-    #     docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
-    #     docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
-    #     docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+    #     docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} .
+    #     docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }}
+    #     docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
     #     docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
     #   shell: bash
     #   working-directory: java/${{ inputs.service_directory }}
@@ -374,7 +378,7 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       run: |
-        docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest --platform=linux/amd64,linux/arm64 --push .
+        docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest --platform=linux/amd64,linux/arm64 --push .
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
@@ -385,7 +389,7 @@ runs:
     #     platform: linux/amd64,linux/arm64
     #     push: true
     #     tags: |
-    #       octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
+    #       octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }}
     #       octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
     #     context: .
     #     file: java/${{ inputs.service_directory }}/src/main/docker/Dockerfile.legacy-jar
@@ -402,9 +406,9 @@ runs:
       run: |
         ls -la
         ls -la target
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} .
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }}
-        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
         docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
@@ -412,9 +416,9 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       run: |
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} .
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }}
-        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
         docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
@@ -446,7 +450,7 @@ runs:
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-lambda" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
           "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
@@ -477,7 +481,7 @@ runs:
           --batch-mode \
           "-DgroupId=com.octopus" \
           "-DartifactId=${{ inputs.service_directory }}-lambda-jvm" \
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
           "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
@@ -501,7 +505,7 @@ runs:
 
           octopus package zip create \
           --id ${{ inputs.service_directory }}-awssam \
-          --version ${{ steps.determine_version.outputs.semVer }} \
+          --version ${{ env.PACKAGE_VERSION }} \
           --base-path ${{ inputs.service_directory }}/target \
           --include sam.*.yaml
       shell: bash
@@ -510,15 +514,15 @@ runs:
     - name: Deploy SAM template package
       if: ${{ inputs.liquibase_build == 'true' }}
       run: |
-        if [[ -f "java/${{ inputs.service_directory }}-awssam.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        if [[ -f "java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" ]]
         then
           mvn deploy:deploy-file \
             --batch-mode \
             "-DgroupId=com.octopus" \
             "-DartifactId=${{ inputs.service_directory }}-awssam" \
-            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
             "-Dpackaging=zip" \
-            "-Dfile=java/${{ inputs.service_directory }}-awssam.${{ steps.determine_version.outputs.semVer }}.zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" \
             "-DrepositoryId=octopus-sales-public-snapshot" \
             "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
         fi
@@ -535,7 +539,7 @@ runs:
         then
           octopus package zip create \
           --id ${{ inputs.service_directory }}-liquidbase \
-          --version ${{ steps.determine_version.outputs.semVer }} \
+          --version ${{ env.PACKAGE_VERSION }} \
           --base-path ${{ inputs.service_directory }}/src/main/resources/db
         fi
       shell: bash
@@ -544,15 +548,15 @@ runs:
     - name: Deploy liquibase package
       if: ${{ inputs.liquibase_build == 'true' }}
       run: |
-        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" ]]
+        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
         then
           mvn deploy:deploy-file \
             --batch-mode \
             "-DgroupId=com.octopus" \
             "-DartifactId=${{ inputs.service_directory }}-liquidbase" \
-            "-Dversion=${{ steps.determine_version.outputs.semVer }}" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
             "-Dpackaging=zip" \
-            "-Dfile=java/${{ inputs.service_directory }}-liquidbase.${{ steps.determine_version.outputs.semVer }}.zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" \
             "-DrepositoryId=octopus-sales-public-snapshot" \
             "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
         fi
@@ -566,7 +570,7 @@ runs:
         OCTOPUS_SPACE: Matthew Casperson
       with:
         packages: com.octopus:${{ inputs.service_directory }}-lambda
-        version: ${{ steps.determine_version.outputs.semVer }}
+        version: ${{ env.PACKAGE_VERSION }}
         overwrite_mode: OverwriteExisting
 
 

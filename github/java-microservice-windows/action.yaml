@@ -41,6 +41,10 @@ runs:
       with:
         additionalArguments: /overrideconfig mode=Mainline
 
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      shell: bash
+
     - name: Set up JDK 1.17
       uses: actions/setup-java@v3
       with:
@@ -130,14 +134,14 @@ runs:
     - name: Push SBOM Package
       run: |
         $buildDir = Get-ChildItem target | ? {$_.Name.EndsWith("-native-image-source-jar")} | % {$_.Name}
-        Compress-Archive -Path target\$buildDir\* -DestinationPath ${{ inputs.service_directory }}-windows.${{ steps.determine_version.outputs.semVer }}.zip
+        Compress-Archive -Path target\$buildDir\* -DestinationPath ${{ inputs.service_directory }}-windows.${{ env.PACKAGE_VERSION }}.zip
         mvn deploy:deploy-file `
           --batch-mode `
           "-DgroupId=com.octopus" `
           "-DartifactId=${{ inputs.service_directory }}-windows" `
-          "-Dversion=${{ steps.determine_version.outputs.semVer }}" `
+          "-Dversion=${{ env.PACKAGE_VERSION }}" `
           "-Dpackaging=zip" `
-          "-Dfile=${{ inputs.service_directory }}-windows.${{ steps.determine_version.outputs.semVer }}.zip" `
+          "-Dfile=${{ inputs.service_directory }}-windows.${{ env.PACKAGE_VERSION }}.zip" `
           "-DrepositoryId=octopus-sales-public-snapshot" `
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: powershell
