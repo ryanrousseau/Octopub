@@ -12,31 +12,14 @@ permissions:
       - '!python/**/*'
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Build Products Windows
-        uses: ./github/java-microservice-windows
-        with:
-          run_number: ${{ github.run_number }}
-          github_repo: ${{ github.repository }}
-          github_token: ${{ github.token }}
-          github_actor: ${{ github.actor }}
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          service_directory: audit-microservice
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Build Audit Microservice
+      - name: Build Audit Microservice Kubecon
         uses: ./github/java-microservice
         with:
           run_number: ${{ github.run_number }}
