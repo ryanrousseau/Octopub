@@ -35,7 +35,7 @@ jobs:
           service_directory: audit-microservice
 
       - name: Build Audits Helm Chart
-        uses: ./github/helm
+        uses: ./github/helm 
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
