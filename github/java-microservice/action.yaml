@@ -292,11 +292,11 @@ runs:
     #     fi
     #   shell: bash
 
-    # # Build the self-contained H2 backed version of the app.
-    # - name: Build with Maven
-    #   run: ./mvnw --batch-mode package --file pom.xml -DskipTests
-    #   shell: bash
-    #   working-directory: java/${{ inputs.service_directory }}
+    # Build the self-contained H2 backed version of the app.
+    - name: Build with Maven
+      run: ./mvnw --batch-mode package --file pom.xml -DskipTests
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
 
     # - name: Deploy JAR package
     #   run: |
