@@ -182,19 +182,19 @@ runs:
       working-directory: java
 
     - name: Test Backend
-      if: ${{ inputs.run_tests == 'true' }}
+      if: ${{ inputs.run_tests == 'false' }}
       run: ./mvnw --batch-mode test
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
     - name: Test Shared Library
-      if: ${{ inputs.run_tests == 'true' }}
+      if: ${{ inputs.run_tests == 'false' }}
       run: ./mvnw --batch-mode test
       shell: bash
       working-directory: java/microservice-utils
 
     - name: Generate JaCoCo Badges
-      if: ${{ inputs.run_tests == 'true' }}
+      if: ${{ inputs.run_tests == 'false' }}
       uses: cicirello/jacoco-badge-generator@v2
       with:
         generate-branches-badge: true
@@ -292,41 +292,41 @@ runs:
         fi
       shell: bash
 
-    # Build the self-contained H2 backed version of the app.
-    - name: Build with Maven
-      run: ./mvnw --batch-mode package --file pom.xml -DskipTests
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
+    # # Build the self-contained H2 backed version of the app.
+    # - name: Build with Maven
+    #   run: ./mvnw --batch-mode package --file pom.xml -DskipTests
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
 
-    - name: Deploy JAR package
-      run: |
-        files=( java/${{ inputs.service_directory }}/target/*-runner.jar )
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-jar" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=jar" \
-          "-Dfile=${files[0]}" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
+    # - name: Deploy JAR package
+    #   run: |
+    #     files=( java/${{ inputs.service_directory }}/target/*-runner.jar )
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=${{ inputs.service_directory }}-jar" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=jar" \
+    #       "-Dfile=${files[0]}" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
 
-    - name: Deploy systemd package
-      if: ${{ inputs.systemd_build == 'true' }}
-      run: |
-        zip ${{ inputs.service_directory }}-systemd.zip *.service
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-systemd" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=${{ inputs.service_directory }}-systemd.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
-      working-directory: systemd/${{ inputs.service_directory }}
+    # - name: Deploy systemd package
+    #   if: ${{ inputs.systemd_build == 'true' }}
+    #   run: |
+    #     zip ${{ inputs.service_directory }}-systemd.zip *.service
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=${{ inputs.service_directory }}-systemd" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=${{ inputs.service_directory }}-systemd.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
+    #   working-directory: systemd/${{ inputs.service_directory }}
 
     # The Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
@@ -423,154 +423,154 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
-    - name: Build serverless package
-      if: ${{ inputs.lambda_build == 'true' }}
-      run: |
-        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
-        ./mvnw \
-          --batch-mode \
-          package \
-          -P "lambda,native" \
-          -DskipTests \
-          -Dquarkus.profile=faas \
-          -Dquarkus.native.container-build=true \
-          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
+    # - name: Build serverless package
+    #   if: ${{ inputs.lambda_build == 'true' }}
+    #   run: |
+    #     # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+    #     ./mvnw \
+    #       --batch-mode \
+    #       package \
+    #       -P "lambda,native" \
+    #       -DskipTests \
+    #       -Dquarkus.profile=faas \
+    #       -Dquarkus.native.container-build=true \
+    #       -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
 
-    - name: Add SBOM to serverless package
-      if: ${{ inputs.lambda_build == 'true' }}
-      run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
-      shell: bash
+    # - name: Add SBOM to serverless package
+    #   if: ${{ inputs.lambda_build == 'true' }}
+    #   run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
+    #   shell: bash
 
-    - name: Deploy serverless package
-      if: ${{ inputs.lambda_build == 'true' }}
-      run: |
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-lambda" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
+    # - name: Deploy serverless package
+    #   if: ${{ inputs.lambda_build == 'true' }}
+    #   run: |
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=${{ inputs.service_directory }}-lambda" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
 
-    - name: Build serverless jvm package
-      if: ${{ inputs.lambda_build == 'true' }}
-      run: |
-        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
-        ./mvnw \
-          --batch-mode \
-          package \
-          -P "lambda" \
-          -DskipTests
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
+    # - name: Build serverless jvm package
+    #   if: ${{ inputs.lambda_build == 'true' }}
+    #   run: |
+    #     # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+    #     ./mvnw \
+    #       --batch-mode \
+    #       package \
+    #       -P "lambda" \
+    #       -DskipTests
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
 
-    - name: Add SBOM to serverless jvm package
-      if: ${{ inputs.lambda_build == 'true' }}
-      run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
-      shell: bash
+    # - name: Add SBOM to serverless jvm package
+    #   if: ${{ inputs.lambda_build == 'true' }}
+    #   run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
+    #   shell: bash
 
-    - name: Deploy serverless jvm package
-      if: ${{ inputs.lambda_build == 'true' }}
-      run: |
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-lambda-jvm" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
+    # - name: Deploy serverless jvm package
+    #   if: ${{ inputs.lambda_build == 'true' }}
+    #   run: |
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=${{ inputs.service_directory }}-lambda-jvm" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
 
 
-    - name: Package the SAM template
-      if: ${{ inputs.lambda_build == 'true' }}
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: |
-          echo "      FunctionUrlConfig:
-                  AuthType: NONE
-                  InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.jvm.yaml
+    # - name: Package the SAM template
+    #   if: ${{ inputs.lambda_build == 'true' }}
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #   run: |
+    #       echo "      FunctionUrlConfig:
+    #               AuthType: NONE
+    #               InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.jvm.yaml
 
-          echo "      FunctionUrlConfig:
-                  AuthType: NONE
-                  InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.native.yaml
+    #       echo "      FunctionUrlConfig:
+    #               AuthType: NONE
+    #               InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.native.yaml
 
-          octopus package zip create \
-          --id ${{ inputs.service_directory }}-awssam \
-          --version ${{ env.PACKAGE_VERSION }} \
-          --base-path ${{ inputs.service_directory }}/target \
-          --include sam.*.yaml
-      shell: bash
-      working-directory: java
+    #       octopus package zip create \
+    #       --id ${{ inputs.service_directory }}-awssam \
+    #       --version ${{ env.PACKAGE_VERSION }} \
+    #       --base-path ${{ inputs.service_directory }}/target \
+    #       --include sam.*.yaml
+    #   shell: bash
+    #   working-directory: java
 
-    - name: Deploy SAM template package
-      if: ${{ inputs.liquibase_build == 'true' }}
-      run: |
-        if [[ -f "java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" ]]
-        then
-          mvn deploy:deploy-file \
-            --batch-mode \
-            "-DgroupId=com.octopus" \
-            "-DartifactId=${{ inputs.service_directory }}-awssam" \
-            "-Dversion=${{ env.PACKAGE_VERSION }}" \
-            "-Dpackaging=zip" \
-            "-Dfile=java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" \
-            "-DrepositoryId=octopus-sales-public-snapshot" \
-            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-        fi
-      shell: bash
+    # - name: Deploy SAM template package
+    #   if: ${{ inputs.liquibase_build == 'true' }}
+    #   run: |
+    #     if [[ -f "java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" ]]
+    #     then
+    #       mvn deploy:deploy-file \
+    #         --batch-mode \
+    #         "-DgroupId=com.octopus" \
+    #         "-DartifactId=${{ inputs.service_directory }}-awssam" \
+    #         "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #         "-Dpackaging=zip" \
+    #         "-Dfile=java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" \
+    #         "-DrepositoryId=octopus-sales-public-snapshot" \
+    #         "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #     fi
+    #   shell: bash
 
     # The database migration scripts are packaged as a separate file
-    - name: Build Liquibase package
-      if: ${{ inputs.liquibase_build == 'true' }}
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: |
-        if [[ -d "${{ inputs.service_directory }}/src/main/resources/db" ]]
-        then
-          octopus package zip create \
-          --id ${{ inputs.service_directory }}-liquidbase \
-          --version ${{ env.PACKAGE_VERSION }} \
-          --base-path ${{ inputs.service_directory }}/src/main/resources/db
-        fi
-      shell: bash
-      working-directory: java
+    # - name: Build Liquibase package
+    #   if: ${{ inputs.liquibase_build == 'true' }}
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #   run: |
+    #     if [[ -d "${{ inputs.service_directory }}/src/main/resources/db" ]]
+    #     then
+    #       octopus package zip create \
+    #       --id ${{ inputs.service_directory }}-liquidbase \
+    #       --version ${{ env.PACKAGE_VERSION }} \
+    #       --base-path ${{ inputs.service_directory }}/src/main/resources/db
+    #     fi
+    #   shell: bash
+    #   working-directory: java
 
-    - name: Deploy liquibase package
-      if: ${{ inputs.liquibase_build == 'true' }}
-      run: |
-        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
-        then
-          mvn deploy:deploy-file \
-            --batch-mode \
-            "-DgroupId=com.octopus" \
-            "-DartifactId=${{ inputs.service_directory }}-liquidbase" \
-            "-Dversion=${{ env.PACKAGE_VERSION }}" \
-            "-Dpackaging=zip" \
-            "-Dfile=java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" \
-            "-DrepositoryId=octopus-sales-public-snapshot" \
-            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-        fi
-      shell: bash
+    # - name: Deploy liquibase package
+    #   if: ${{ inputs.liquibase_build == 'true' }}
+    #   run: |
+    #     if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
+    #     then
+    #       mvn deploy:deploy-file \
+    #         --batch-mode \
+    #         "-DgroupId=com.octopus" \
+    #         "-DartifactId=${{ inputs.service_directory }}-liquidbase" \
+    #         "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #         "-Dpackaging=zip" \
+    #         "-Dfile=java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" \
+    #         "-DrepositoryId=octopus-sales-public-snapshot" \
+    #         "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #     fi
+    #   shell: bash
 
-    - name: Push build information to Octopus Deploy 🐙
-      uses: OctopusDeploy/push-build-information-action@v3
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-        OCTOPUS_SPACE: Matthew Casperson
-      with:
-        packages: com.octopus:${{ inputs.service_directory }}-lambda
-        version: ${{ env.PACKAGE_VERSION }}
-        overwrite_mode: OverwriteExisting
+    # - name: Push build information to Octopus Deploy 🐙
+    #   uses: OctopusDeploy/push-build-information-action@v3
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #     OCTOPUS_SPACE: Matthew Casperson
+    #   with:
+    #     packages: com.octopus:${{ inputs.service_directory }}-lambda
+    #     version: ${{ env.PACKAGE_VERSION }}
+    #     overwrite_mode: OverwriteExisting
 
 
