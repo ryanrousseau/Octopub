@@ -1,4 +1,4 @@
-name: Build Audits
+name: Build Audits  Kubecon
 permissions:
   contents: write
   packages: write
@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build Audit Microservice Kubecon
+      - name: Build Audit Microservice
         uses: ./github/java-microservice
         with:
           run_number: ${{ github.run_number }}
