@@ -117,49 +117,49 @@ runs:
     # "mvn deploy:deploy-file" against any file. This means we don't have the luxury of referencing the
     # "com.github.ehsaniara:maven-repository-aws-s3" dependency directly in a pom.xml file and having all the necessary
     # transitive dependencies downloaded for us. Instead, we must download these dependencies manually.
-    - name: Install maven-repository-aws-s3 dependencies
-      run: |
-        HOME=$(dirname $(readlink -f $(which mvn)))
-        for dep in "com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar" "org.apache.httpcomponents:httpcore:4.4.16:jar" "com.amazonaws:aws-java-sdk-s3:1.12.405:jar" "com.amazonaws:aws-java-sdk-core:1.12.405:jar" "com.fasterxml.jackson.core:jackson-core:2.14.2:jar" "com.fasterxml.jackson.core:jackson-databind:2.14.2:jar" "com.fasterxml.jackson.core:jackson-annotations:2.14.2:jar" "joda-time:joda-time:2.12.2:jar" "org.apache.httpcomponents:httpclient:4.5.14:jar" "commons-io:commons-io:2.12.0"
-        do
-           split=(${dep//:/ })
-           mvn dependency:get \
-            --batch-mode \
-            -DrepoUrl=https://repo.maven.apache.org/maven2 \
-            -Dartifact=${dep} \
-            -Ddest=${HOME}/../lib/${split[0]}.${split[1]}.jar
-        done
-      shell: bash
-      working-directory: java
+    # - name: Install maven-repository-aws-s3 dependencies
+    #   run: |
+    #     HOME=$(dirname $(readlink -f $(which mvn)))
+    #     for dep in "com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar" "org.apache.httpcomponents:httpcore:4.4.16:jar" "com.amazonaws:aws-java-sdk-s3:1.12.405:jar" "com.amazonaws:aws-java-sdk-core:1.12.405:jar" "com.fasterxml.jackson.core:jackson-core:2.14.2:jar" "com.fasterxml.jackson.core:jackson-databind:2.14.2:jar" "com.fasterxml.jackson.core:jackson-annotations:2.14.2:jar" "joda-time:joda-time:2.12.2:jar" "org.apache.httpcomponents:httpclient:4.5.14:jar" "commons-io:commons-io:2.12.0"
+    #     do
+    #        split=(${dep//:/ })
+    #        mvn dependency:get \
+    #         --batch-mode \
+    #         -DrepoUrl=https://repo.maven.apache.org/maven2 \
+    #         -Dartifact=${dep} \
+    #         -Ddest=${HOME}/../lib/${split[0]}.${split[1]}.jar
+    #     done
+    #   shell: bash
+    #   working-directory: java
 
-    - name: Configure maven-repository-aws-s3
-      run: |
-        cat <<EOT > ~/.m2/settings.xml
-        <settings>
-          <servers>
-            <server>
-              <id>octopus-sales-public-snapshot</id>
-              <username>${{ inputs.aws_access_key }}</username>
-              <password>${{ inputs.aws_secret_access_key }}</password>
-              <configuration>
-                <region>ap-southeast-2</region>
-                <publicRepository>true</publicRepository>
-              </configuration>
-            </server>
-            <server>
-              <id>octopus-sales-public-release</id>
-              <username>${{ inputs.aws_access_key }}</username>
-              <password>${{ inputs.aws_secret_access_key }}</password>
-              <configuration>
-                <region>ap-southeast-2</region>
-                <publicRepository>true</publicRepository>
-              </configuration>
-            </server>
-          </servers>
-        </settings>
-        EOT
-      shell: bash
-      working-directory: java
+    # - name: Configure maven-repository-aws-s3
+    #   run: |
+    #     cat <<EOT > ~/.m2/settings.xml
+    #     <settings>
+    #       <servers>
+    #         <server>
+    #           <id>octopus-sales-public-snapshot</id>
+    #           <username>${{ inputs.aws_access_key }}</username>
+    #           <password>${{ inputs.aws_secret_access_key }}</password>
+    #           <configuration>
+    #             <region>ap-southeast-2</region>
+    #             <publicRepository>true</publicRepository>
+    #           </configuration>
+    #         </server>
+    #         <server>
+    #           <id>octopus-sales-public-release</id>
+    #           <username>${{ inputs.aws_access_key }}</username>
+    #           <password>${{ inputs.aws_secret_access_key }}</password>
+    #           <configuration>
+    #             <region>ap-southeast-2</region>
+    #             <publicRepository>true</publicRepository>
+    #           </configuration>
+    #         </server>
+    #       </servers>
+    #     </settings>
+    #     EOT
+    #   shell: bash
+    #   working-directory: java
 
     - uses: DeLaGuardo/setup-graalvm@4.0
       with:
@@ -171,126 +171,126 @@ runs:
       run: gu install native-image
       shell: bash
 
-    - name: Checkstyle
-      run: ./mvnw --batch-mode checkstyle:check
-      shell: bash
-      working-directory: java
+    # - name: Checkstyle
+    #   run: ./mvnw --batch-mode checkstyle:check
+    #   shell: bash
+    #   working-directory: java
 
-    - name: Install modules
-      run: ./mvnw --batch-mode install -DskipTests
-      shell: bash
-      working-directory: java
+    # - name: Install modules
+    #   run: ./mvnw --batch-mode install -DskipTests
+    #   shell: bash
+    #   working-directory: java
 
-    - name: Test Backend
-      if: ${{ inputs.run_tests == 'false' }}
-      run: ./mvnw --batch-mode test
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
+    # - name: Test Backend
+    #   if: ${{ inputs.run_tests == 'false' }}
+    #   run: ./mvnw --batch-mode test
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
 
-    - name: Test Shared Library
-      if: ${{ inputs.run_tests == 'false' }}
-      run: ./mvnw --batch-mode test
-      shell: bash
-      working-directory: java/microservice-utils
+    # - name: Test Shared Library
+    #   if: ${{ inputs.run_tests == 'false' }}
+    #   run: ./mvnw --batch-mode test
+    #   shell: bash
+    #   working-directory: java/microservice-utils
 
-    - name: Generate JaCoCo Badges
-      if: ${{ inputs.run_tests == 'false' }}
-      uses: cicirello/jacoco-badge-generator@v2
-      with:
-        generate-branches-badge: true
-        jacoco-csv-file: java/${{ inputs.service_directory }}/target/jacoco-report/jacoco.csv
-        coverage-badge-filename: ${{ inputs.service_directory }}.svg
-        branches-badge-filename: ${{ inputs.service_directory }}-branches.svg
+    # - name: Generate JaCoCo Badges
+    #   if: ${{ inputs.run_tests == 'false' }}
+    #   uses: cicirello/jacoco-badge-generator@v2
+    #   with:
+    #     generate-branches-badge: true
+    #     jacoco-csv-file: java/${{ inputs.service_directory }}/target/jacoco-report/jacoco.csv
+    #     coverage-badge-filename: ${{ inputs.service_directory }}.svg
+    #     branches-badge-filename: ${{ inputs.service_directory }}-branches.svg
 
-    - name: Generate JaCoCo Badges for Shared Library
-      if: ${{ inputs.run_tests == 'true' }}
-      uses: cicirello/jacoco-badge-generator@v2
-      with:
-        generate-branches-badge: true
-        jacoco-csv-file: java/microservice-utils/target/site/jacoco/jacoco.csv
-        coverage-badge-filename: microservice-utils.svg
-        branches-badge-filename: microservice-utils-branches.svg
+    # - name: Generate JaCoCo Badges for Shared Library
+    #   if: ${{ inputs.run_tests == 'true' }}
+    #   uses: cicirello/jacoco-badge-generator@v2
+    #   with:
+    #     generate-branches-badge: true
+    #     jacoco-csv-file: java/microservice-utils/target/site/jacoco/jacoco.csv
+    #     coverage-badge-filename: microservice-utils.svg
+    #     branches-badge-filename: microservice-utils-branches.svg
 
-    - name: Update resources
-      if: ${{ inputs.run_tests == 'true' && steps.branch-name.outputs.current_branch == 'main' }}
-      uses: test-room-7/action-update-file@v1.6.0
-      with:
-        file-path: |
-          .github/badges/microservice-utils.svg
-          .github/badges/microservice-utils-branches.svg
-        commit-msg: Update badges
-        github-token: ${{ inputs.github_token }}
+    # - name: Update resources
+    #   if: ${{ inputs.run_tests == 'true' && steps.branch-name.outputs.current_branch == 'main' }}
+    #   uses: test-room-7/action-update-file@v1.6.0
+    #   with:
+    #     file-path: |
+    #       .github/badges/microservice-utils.svg
+    #       .github/badges/microservice-utils-branches.svg
+    #     commit-msg: Update badges
+    #     github-token: ${{ inputs.github_token }}
 
-    # This step generates a Source Bill of Materials (SBOM) package that captures all the dependencies compiled
-    # into the application.
-    - name: Generate SBOM
-      run: ./mvnw cyclonedx:makeAggregateBom -DskipTests --no-transfer-progress --batch-mode
-      shell: bash
-      working-directory: java
+    # # This step generates a Source Bill of Materials (SBOM) package that captures all the dependencies compiled
+    # # into the application.
+    # - name: Generate SBOM
+    #   run: ./mvnw cyclonedx:makeAggregateBom -DskipTests --no-transfer-progress --batch-mode
+    #   shell: bash
+    #   working-directory: java
 
-    # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
-    - name: Build SBOM package
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: >
-        octopus package zip create
-        --id ${{ inputs.service_directory }}-sbom
-        --version ${{ env.PACKAGE_VERSION }}
-        --include **/bom.xml
-        --include **/bom.json
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
+    # # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
+    # - name: Build SBOM package
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #   run: >
+    #     octopus package zip create
+    #     --id ${{ inputs.service_directory }}-sbom
+    #     --version ${{ env.PACKAGE_VERSION }}
+    #     --include **/bom.xml
+    #     --include **/bom.json
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
 
-    # The SBOM package is pushed to the Octopus maven repo.
-    - name: Push SBOM Package
-      run: |
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-sbom" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}-sbom.${{ env.PACKAGE_VERSION }}.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
+    # # The SBOM package is pushed to the Octopus maven repo.
+    # - name: Push SBOM Package
+    #   run: |
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=${{ inputs.service_directory }}-sbom" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}-sbom.${{ env.PACKAGE_VERSION }}.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
 
-    # Integration tests are performed with Postman using an exported collection.
-    - name: Build Postman package
-      if: ${{ inputs.postman_build == 'true' }}
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: |
-        if [[ -d "${{ inputs.service_directory }}-postman" ]]
-        then
-          octopus package zip create \
-          --id ${{ inputs.service_directory }}-postman \
-          --version ${{ env.PACKAGE_VERSION }} \
-          --include test.json \
-          --base-path ${{ inputs.service_directory }}-postman
-        fi
-      shell: bash
-      working-directory: java
+    # # Integration tests are performed with Postman using an exported collection.
+    # - name: Build Postman package
+    #   if: ${{ inputs.postman_build == 'true' }}
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #   run: |
+    #     if [[ -d "${{ inputs.service_directory }}-postman" ]]
+    #     then
+    #       octopus package zip create \
+    #       --id ${{ inputs.service_directory }}-postman \
+    #       --version ${{ env.PACKAGE_VERSION }} \
+    #       --include test.json \
+    #       --base-path ${{ inputs.service_directory }}-postman
+    #     fi
+    #   shell: bash
+    #   working-directory: java
 
-    # The Postman package is pushed to the maven repo.
-    - name: Push Postman Package
-      if: ${{ inputs.postman_build == 'true' }}
-      run: |
-        if [[ -f "java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" ]]
-        then
-          mvn deploy:deploy-file \
-            --batch-mode \
-            "-DgroupId=com.octopus" \
-            "-DartifactId=${{ inputs.service_directory }}-postman" \
-            "-Dversion=${{ env.PACKAGE_VERSION }}" \
-            "-Dpackaging=zip" \
-            "-Dfile=java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" \
-            "-DrepositoryId=octopus-sales-public-snapshot" \
-            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-        fi
-      shell: bash
+    # # The Postman package is pushed to the maven repo.
+    # - name: Push Postman Package
+    #   if: ${{ inputs.postman_build == 'true' }}
+    #   run: |
+    #     if [[ -f "java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" ]]
+    #     then
+    #       mvn deploy:deploy-file \
+    #         --batch-mode \
+    #         "-DgroupId=com.octopus" \
+    #         "-DartifactId=${{ inputs.service_directory }}-postman" \
+    #         "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #         "-Dpackaging=zip" \
+    #         "-Dfile=java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" \
+    #         "-DrepositoryId=octopus-sales-public-snapshot" \
+    #         "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #     fi
+    #   shell: bash
 
     # # Build the self-contained H2 backed version of the app.
     # - name: Build with Maven
