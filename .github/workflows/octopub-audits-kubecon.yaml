@@ -1,4 +1,4 @@
-name: Build Audits  Kubecon
+name: Build Audits Kubecon
 permissions:
   contents: write
   packages: write
