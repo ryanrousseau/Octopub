@@ -99,7 +99,7 @@ runs:
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
       with:
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
@@ -347,21 +347,21 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
-    - name: Deploy MySQL JAR package
-      run: |
-        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
-        then
-          mvn deploy:deploy-file \
-            --batch-mode \
-            "-DgroupId=com.octopus" \
-            "-DartifactId=${{ inputs.service_directory }}-mysql-jar" \
-            "-Dversion=${{ env.PACKAGE_VERSION }}" \
-            "-Dpackaging=zip" \
-            "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
-            "-DrepositoryId=octopus-sales-public-snapshot" \
-            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-        fi
-      shell: bash
+    # - name: Deploy MySQL JAR package
+    #   run: |
+    #     if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
+    #     then
+    #       mvn deploy:deploy-file \
+    #         --batch-mode \
+    #         "-DgroupId=com.octopus" \
+    #         "-DartifactId=${{ inputs.service_directory }}-mysql-jar" \
+    #         "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #         "-Dpackaging=zip" \
+    #         "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
+    #         "-DrepositoryId=octopus-sales-public-snapshot" \
+    #         "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #     fi
+    #   shell: bash
 
     # The MySQL Docker image is built and pushed.
     # - name: Build, tag, and push image to Dockerhub
@@ -378,7 +378,7 @@ runs:
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
       run: |
-        docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest --platform=linux/amd64,linux/arm64 --push .
+        docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest --platform=linux/amd64 --push .
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
