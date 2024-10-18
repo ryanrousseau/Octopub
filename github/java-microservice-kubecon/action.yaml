@@ -430,7 +430,7 @@ runs:
       uses: OctopusDeploy/login@v1
       with:
         server: ${{ inputs.octopus_url }}
-        apiKey: ${{ inputs.octopus_apikey }}
+        api_Key: ${{ inputs.octopus_apikey }}
       
     - name: Create Release
       uses: OctopusDeploy/create-release-action@v3
