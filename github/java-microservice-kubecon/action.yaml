@@ -443,7 +443,7 @@ runs:
       with:
         project: ${{ inputs.octopus_project_name }}
         environment: 'Development'
-        space: 'Spaces-105'
+        space: 'Target - Kubernetes'
 
     # - name: Build serverless package
     #   if: ${{ inputs.lambda_build == 'true' }}
