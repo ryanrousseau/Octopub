@@ -224,6 +224,26 @@ runs:
       shell: bash
       working-directory: js/frontend
 
+    - name: Login to Octopus
+      uses: OctopusDeploy/login@v1
+      with:
+        server: ${{ inputs.octopus_url }}
+        api_Key: ${{ inputs.octopus_apikey }}
+      
+    - name: create-release
+      id: create-release
+      uses: OctopusDeploy/create-release-action@v3
+      with:
+        project: ${{ inputs.octopus_project_name }}
+        space: 'Target - Kubernetes'
+
+    - name: Deploy-Release
+      uses: OctopusDeploy/deploy-release-action@v3
+      with:
+        project: ${{ inputs.octopus_project_name }}
+        environments: 'Development'
+        space: 'Target - Kubernetes'
+        release_number: ${{ steps.create-release.outputs.release_number }}
 
     # - name: Build and push static web package
     #   run: |
