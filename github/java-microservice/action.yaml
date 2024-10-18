@@ -1,0 +1,575 @@
+name: Docker Build and Push
+description: Build the Java microservice
+inputs:
+  run_number:
+    required: true
+    description: The GitHub Actions Workflow run number
+  github_repo:
+    description: 'The github repo'
+    required: true
+  github_token:
+    description: 'The github token'
+    required: true
+  github_actor:
+    description: 'The github actor'
+    required: true
+  dockerhub_username:
+    description: 'The dockerhub username'
+    required: true
+  dockerhub_password:
+    description: 'The dockerhub password'
+    required: true
+  octopus_url:
+    description: 'The octopus server'
+    required: true
+  octopus_apikey:
+    description: 'The octopus apikey'
+    required: true
+  aws_access_key:
+    description: 'The aws access key'
+    required: true
+  aws_secret_access_key:
+    description: 'The aws secret access key'
+    required: true
+  service_directory:
+    description: 'The directory holding the microservice'
+    required: true
+  lambda_build:
+    description: 'Whether to build the lambda executable or not'
+    required: true
+    default: true
+  postman_build:
+    description: 'Whether to build the postman test'
+    required: true
+    default: true
+  liquibase_build:
+    description: 'Whether to build the liquibase packages'
+    required: true
+    default: true
+  docker_build:
+    description: 'Whether to build the docker images'
+    required: true
+    default: true
+  systemd_build:
+    description: 'Whether to build the systemd packages'
+    required: true
+    default: true
+  run_tests:
+    description: 'Whether to run tests'
+    required: true
+    default: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Clone code repo
+      uses: actions/checkout@v2
+
+    - name: Install Octopus CLI 🐙
+      uses: OctopusDeploy/install-octopus-cli-action@v3
+      with:
+        version: 'latest'
+
+    - name: Get branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v7
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.15
+      with:
+        versionSpec: 5.x
+
+    # - id: determine_version
+    #   name: Determine Version
+    #   uses: gittools/actions/gitversion/execute@v0.9.15
+    #   with:
+    #     additionalArguments: /overrideconfig mode=Mainline
+
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set up JDK 1.17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: adopt
+        cache: 'maven'
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: linux/amd64,linux/arm64
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to DockerHub
+      if: ${{ inputs.docker_build == 'true' }}
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub_username }}
+        password: ${{ inputs.dockerhub_password }}
+
+    # These are the dependencies that need to be manually installed to support https://github.com/ehsaniara/maven-repository-aws-s3
+    # Typically the deployment of artifacts is configured in a pom.xml file and executed as part of an application's build.
+    # However, because we are using the Maven feed to host arbitrary artifacts, it is nice to be able to call
+    # "mvn deploy:deploy-file" against any file. This means we don't have the luxury of referencing the
+    # "com.github.ehsaniara:maven-repository-aws-s3" dependency directly in a pom.xml file and having all the necessary
+    # transitive dependencies downloaded for us. Instead, we must download these dependencies manually.
+    - name: Install maven-repository-aws-s3 dependencies
+      run: |
+        HOME=$(dirname $(readlink -f $(which mvn)))
+        for dep in "com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar" "org.apache.httpcomponents:httpcore:4.4.16:jar" "com.amazonaws:aws-java-sdk-s3:1.12.405:jar" "com.amazonaws:aws-java-sdk-core:1.12.405:jar" "com.fasterxml.jackson.core:jackson-core:2.14.2:jar" "com.fasterxml.jackson.core:jackson-databind:2.14.2:jar" "com.fasterxml.jackson.core:jackson-annotations:2.14.2:jar" "joda-time:joda-time:2.12.2:jar" "org.apache.httpcomponents:httpclient:4.5.14:jar" "commons-io:commons-io:2.12.0"
+        do
+           split=(${dep//:/ })
+           mvn dependency:get \
+            --batch-mode \
+            -DrepoUrl=https://repo.maven.apache.org/maven2 \
+            -Dartifact=${dep} \
+            -Ddest=${HOME}/../lib/${split[0]}.${split[1]}.jar
+        done
+      shell: bash
+      working-directory: java
+
+    - name: Configure maven-repository-aws-s3
+      run: |
+        cat <<EOT > ~/.m2/settings.xml
+        <settings>
+          <servers>
+            <server>
+              <id>octopus-sales-public-snapshot</id>
+              <username>${{ inputs.aws_access_key }}</username>
+              <password>${{ inputs.aws_secret_access_key }}</password>
+              <configuration>
+                <region>ap-southeast-2</region>
+                <publicRepository>true</publicRepository>
+              </configuration>
+            </server>
+            <server>
+              <id>octopus-sales-public-release</id>
+              <username>${{ inputs.aws_access_key }}</username>
+              <password>${{ inputs.aws_secret_access_key }}</password>
+              <configuration>
+                <region>ap-southeast-2</region>
+                <publicRepository>true</publicRepository>
+              </configuration>
+            </server>
+          </servers>
+        </settings>
+        EOT
+      shell: bash
+      working-directory: java
+
+    - uses: DeLaGuardo/setup-graalvm@4.0
+      with:
+        graalvm: '22.3.2'
+        java: 'java17'
+        arch: 'amd64'
+
+    - name: Install native-image component
+      run: gu install native-image
+      shell: bash
+
+    - name: Checkstyle
+      run: ./mvnw --batch-mode checkstyle:check
+      shell: bash
+      working-directory: java
+
+    - name: Install modules
+      run: ./mvnw --batch-mode install -DskipTests
+      shell: bash
+      working-directory: java
+
+    - name: Test Backend
+      if: ${{ inputs.run_tests == 'true' }}
+      run: ./mvnw --batch-mode test
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Test Shared Library
+      if: ${{ inputs.run_tests == 'true' }}
+      run: ./mvnw --batch-mode test
+      shell: bash
+      working-directory: java/microservice-utils
+
+    - name: Generate JaCoCo Badges
+      if: ${{ inputs.run_tests == 'true' }}
+      uses: cicirello/jacoco-badge-generator@v2
+      with:
+        generate-branches-badge: true
+        jacoco-csv-file: java/${{ inputs.service_directory }}/target/jacoco-report/jacoco.csv
+        coverage-badge-filename: ${{ inputs.service_directory }}.svg
+        branches-badge-filename: ${{ inputs.service_directory }}-branches.svg
+
+    - name: Generate JaCoCo Badges for Shared Library
+      if: ${{ inputs.run_tests == 'true' }}
+      uses: cicirello/jacoco-badge-generator@v2
+      with:
+        generate-branches-badge: true
+        jacoco-csv-file: java/microservice-utils/target/site/jacoco/jacoco.csv
+        coverage-badge-filename: microservice-utils.svg
+        branches-badge-filename: microservice-utils-branches.svg
+
+    - name: Update resources
+      if: ${{ inputs.run_tests == 'true' && steps.branch-name.outputs.current_branch == 'main' }}
+      uses: test-room-7/action-update-file@v1.6.0
+      with:
+        file-path: |
+          .github/badges/microservice-utils.svg
+          .github/badges/microservice-utils-branches.svg
+        commit-msg: Update badges
+        github-token: ${{ inputs.github_token }}
+
+    # This step generates a Source Bill of Materials (SBOM) package that captures all the dependencies compiled
+    # into the application.
+    - name: Generate SBOM
+      run: ./mvnw cyclonedx:makeAggregateBom -DskipTests --no-transfer-progress --batch-mode
+      shell: bash
+      working-directory: java
+
+    # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
+    - name: Build SBOM package
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+      run: >
+        octopus package zip create
+        --id ${{ inputs.service_directory }}-sbom
+        --version ${{ env.PACKAGE_VERSION }}
+        --include **/bom.xml
+        --include **/bom.json
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    # The SBOM package is pushed to the Octopus maven repo.
+    - name: Push SBOM Package
+      run: |
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-sbom" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/${{ inputs.service_directory }}-sbom.${{ env.PACKAGE_VERSION }}.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+    # Integration tests are performed with Postman using an exported collection.
+    - name: Build Postman package
+      if: ${{ inputs.postman_build == 'true' }}
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+      run: |
+        if [[ -d "${{ inputs.service_directory }}-postman" ]]
+        then
+          octopus package zip create \
+          --id ${{ inputs.service_directory }}-postman \
+          --version ${{ env.PACKAGE_VERSION }} \
+          --include test.json \
+          --base-path ${{ inputs.service_directory }}-postman
+        fi
+      shell: bash
+      working-directory: java
+
+    # The Postman package is pushed to the maven repo.
+    - name: Push Postman Package
+      if: ${{ inputs.postman_build == 'true' }}
+      run: |
+        if [[ -f "java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            --batch-mode \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-postman" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-postman.${{ env.PACKAGE_VERSION }}.zip" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
+      shell: bash
+
+    # Build the self-contained H2 backed version of the app.
+    - name: Build with Maven
+      run: ./mvnw --batch-mode package --file pom.xml -DskipTests
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Deploy JAR package
+      run: |
+        files=( java/${{ inputs.service_directory }}/target/*-runner.jar )
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-jar" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
+          "-Dpackaging=jar" \
+          "-Dfile=${files[0]}" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+    - name: Deploy systemd package
+      if: ${{ inputs.systemd_build == 'true' }}
+      run: |
+        zip ${{ inputs.service_directory }}-systemd.zip *.service
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-systemd" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=${{ inputs.service_directory }}-systemd.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+      working-directory: systemd/${{ inputs.service_directory }}
+
+    # The Docker image is built and pushed.
+    - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        ls -la
+        ls -la target
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
+        docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
+        docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} octopussamples/octopub-${{ inputs.service_directory }}:latest
+        docker push octopussamples/octopub-${{ inputs.service_directory }}:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    # Rebuild the app to support a MySQL database
+    - name: Build MySQL version with Maven
+      run: ./mvnw --batch-mode package --file pom.xml -DskipTests -Dquarkus.profile=mysql
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Deploy MySQL JAR package
+      run: |
+        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            --batch-mode \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-mysql-jar" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-runner.jar" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
+      shell: bash
+
+    # The MySQL Docker image is built and pushed.
+    # - name: Build, tag, and push image to Dockerhub
+    #   if: ${{ inputs.docker_build == 'true' }}
+    #   run: |
+    #     docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} .
+    #     docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }}
+    #     docker tag  octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+    #     docker push octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
+
+    # The MySQL Docker image is built and pushed.
+    - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest --platform=linux/amd64,linux/arm64 --push .
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+
+    # - name: Build and push Dockerhub
+    #   uses: docker/build-push-action@v6
+    #   with:
+    #     platform: linux/amd64,linux/arm64
+    #     push: true
+    #     tags: |
+    #       octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }}
+    #       octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest
+    #     context: .
+    #     file: java/${{ inputs.service_directory }}/src/main/docker/Dockerfile.legacy-jar
+
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: https://ghcr.io
+        username: ${{ inputs.github_actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Build, tag, and push image to GHCR
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        ls -la
+        ls -la target
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Build, tag, and push image to Dockerhub
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Build serverless package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: |
+        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+        ./mvnw \
+          --batch-mode \
+          package \
+          -P "lambda,native" \
+          -DskipTests \
+          -Dquarkus.profile=faas \
+          -Dquarkus.native.container-build=true \
+          -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-mandrel-builder-image:22.3-java17
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Add SBOM to serverless package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
+      shell: bash
+
+    - name: Deploy serverless package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: |
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-lambda" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+    - name: Build serverless jvm package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: |
+        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+        ./mvnw \
+          --batch-mode \
+          package \
+          -P "lambda" \
+          -DskipTests
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Add SBOM to serverless jvm package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: zip java/${{ inputs.service_directory }}/target/function.zip java/${{ inputs.service_directory }}/target/bom.json
+      shell: bash
+
+    - name: Deploy serverless jvm package
+      if: ${{ inputs.lambda_build == 'true' }}
+      run: |
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-lambda-jvm" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+
+    - name: Package the SAM template
+      if: ${{ inputs.lambda_build == 'true' }}
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+      run: |
+          echo "      FunctionUrlConfig:
+                  AuthType: NONE
+                  InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.jvm.yaml
+
+          echo "      FunctionUrlConfig:
+                  AuthType: NONE
+                  InvokeMode: RESPONSE_STREAM" >> ${{ inputs.service_directory }}/target/sam.native.yaml
+
+          octopus package zip create \
+          --id ${{ inputs.service_directory }}-awssam \
+          --version ${{ env.PACKAGE_VERSION }} \
+          --base-path ${{ inputs.service_directory }}/target \
+          --include sam.*.yaml
+      shell: bash
+      working-directory: java
+
+    - name: Deploy SAM template package
+      if: ${{ inputs.liquibase_build == 'true' }}
+      run: |
+        if [[ -f "java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            --batch-mode \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-awssam" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-awssam.${{ env.PACKAGE_VERSION }}.zip" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
+      shell: bash
+
+    # The database migration scripts are packaged as a separate file
+    - name: Build Liquibase package
+      if: ${{ inputs.liquibase_build == 'true' }}
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+      run: |
+        if [[ -d "${{ inputs.service_directory }}/src/main/resources/db" ]]
+        then
+          octopus package zip create \
+          --id ${{ inputs.service_directory }}-liquidbase \
+          --version ${{ env.PACKAGE_VERSION }} \
+          --base-path ${{ inputs.service_directory }}/src/main/resources/db
+        fi
+      shell: bash
+      working-directory: java
+
+    - name: Deploy liquibase package
+      if: ${{ inputs.liquibase_build == 'true' }}
+      run: |
+        if [[ -f "java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" ]]
+        then
+          mvn deploy:deploy-file \
+            --batch-mode \
+            "-DgroupId=com.octopus" \
+            "-DartifactId=${{ inputs.service_directory }}-liquidbase" \
+            "-Dversion=${{ env.PACKAGE_VERSION }}" \
+            "-Dpackaging=zip" \
+            "-Dfile=java/${{ inputs.service_directory }}-liquidbase.${{ env.PACKAGE_VERSION }}.zip" \
+            "-DrepositoryId=octopus-sales-public-snapshot" \
+            "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+        fi
+      shell: bash
+
+    - name: Push build information to Octopus Deploy 🐙
+      uses: OctopusDeploy/push-build-information-action@v3
+      env:
+        OCTOPUS_URL: ${{ inputs.octopus_url }}
+        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+        OCTOPUS_SPACE: Matthew Casperson
+      with:
+        packages: com.octopus:${{ inputs.service_directory }}-lambda
+        version: ${{ env.PACKAGE_VERSION }}
+        overwrite_mode: OverwriteExisting
+

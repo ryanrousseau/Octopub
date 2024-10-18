@@ -3,15 +3,17 @@ permissions:
   contents: write
   packages: write
 'on':
-  workflow_dispatch: {}
-  push:
-    branches:
-      - kube-con
-    paths:
-      - '**/*'
-      - '!.github/badges/*'
-      - '!README.md'
-      - '!python/**/*'
+  # workflow_dispatch: {}
+  # push:
+  #   branches:
+  #     - kube-con
+  #   paths:
+  #     - '**/*'
+  #     - '!.github/badges/*'
+  #     - '!README.md'
+  #     - '!python/**/*'
+    schedule:
+    - cron: "*/5 * * * *"
 
 jobs:
   build:
