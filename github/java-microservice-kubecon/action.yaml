@@ -427,7 +427,7 @@ runs:
       working-directory: java/${{ inputs.service_directory }}
 
     - name: Login to Octopus
-      uses: OctopusDeploy/login-action@v1
+      uses: OctopusDeploy/login@v1
       with:
         server: ${{ inputs.octopus_url }}
         apiKey: ${{ inputs.octopus_apikey }}
