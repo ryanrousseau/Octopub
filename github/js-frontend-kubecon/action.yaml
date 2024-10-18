@@ -1,0 +1,277 @@
+name: Docker Build and Push
+description: Build the JavaScript frontend
+inputs:
+  run_number:
+    required: true
+    description: The GitHub Actions Workflow run number
+  aws_access_key:
+    description: 'The aws access key'
+    required: true
+  aws_secret_access_key:
+    description: 'The aws secret access key'
+    required: true
+  octopus_url:
+    description: 'The octopus server'
+    required: true
+  octopus_apikey:
+    description: 'The octopus apikey'
+    required: true
+  dockerhub_username:
+    description: 'The dockerhub username'
+    required: true
+  dockerhub_password:
+    description: 'The dockerhub password'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    # These are the dependencies that need to be manually installed to support https://github.com/ehsaniara/maven-repository-aws-s3
+    # - name: Install maven-repository-aws-s3 dependencies
+    #   run: |
+    #     HOME=$(dirname $(readlink -f $(which mvn)))
+    #     for dep in "com.github.ehsaniara:maven-repository-aws-s3:1.2.11:jar" "org.apache.httpcomponents:httpcore:4.4.16:jar" "com.amazonaws:aws-java-sdk-s3:1.12.405:jar" "com.amazonaws:aws-java-sdk-core:1.12.405:jar" "com.fasterxml.jackson.core:jackson-core:2.14.2:jar" "com.fasterxml.jackson.core:jackson-databind:2.14.2:jar" "com.fasterxml.jackson.core:jackson-annotations:2.14.2:jar" "joda-time:joda-time:2.12.2:jar" "org.apache.httpcomponents:httpclient:4.5.14:jar" "commons-io:commons-io:2.12.0"
+    #     do
+    #        split=(${dep//:/ })
+    #        mvn dependency:get \
+    #         --batch-mode \
+    #         -DrepoUrl=https://repo.maven.apache.org/maven2 \
+    #         -Dartifact=${dep} \
+    #         -Ddest=${HOME}/../lib/${split[0]}.${split[1]}.jar
+    #     done
+    #   shell: bash
+    #   working-directory: java
+
+    # - name: Configure maven-repository-aws-s3
+    #   run: |
+    #     cat <<EOT > ~/.m2/settings.xml
+    #     <settings>
+    #       <servers>
+    #         <server>
+    #           <id>octopus-sales-public-snapshot</id>
+    #           <username>${{ inputs.aws_access_key }}</username>
+    #           <password>${{ inputs.aws_secret_access_key }}</password>
+    #           <configuration>
+    #             <region>ap-southeast-2</region>
+    #             <publicRepository>true</publicRepository>
+    #           </configuration>
+    #         </server>
+    #         <server>
+    #           <id>octopus-sales-public-release</id>
+    #           <username>${{ inputs.aws_access_key }}</username>
+    #           <password>${{ inputs.aws_secret_access_key }}</password>
+    #           <configuration>
+    #             <region>ap-southeast-2</region>
+    #             <publicRepository>true</publicRepository>
+    #           </configuration>
+    #         </server>
+    #       </servers>
+    #     </settings>
+    #     EOT
+    #   shell: bash
+    #   working-directory: java
+
+    # - name: Login to DockerHub
+    #   uses: docker/login-action@v2
+    #   with:
+    #     username: ${{ inputs.dockerhub_username }}
+    #     password: ${{ inputs.dockerhub_password }}
+
+    - name: Clone code repo
+      uses: actions/checkout@v2
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 14
+        cache: 'npm'
+        cache-dependency-path: js/frontend/yarn.lock
+
+    # - name: Install Octopus CLI 🐙
+    #   uses: OctopusDeploy/install-octopus-cli-action@v3
+    #   with:
+    #     version: 'latest'
+
+    - name: Get branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v7
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.15
+      with:
+        versionSpec: 5.x
+
+#    - id: determine_version
+#      name: Determine Version
+#      uses: gittools/actions/gitversion/execute@v0.9.15
+#      with:
+#        additionalArguments: /overrideconfig mode=Mainline
+
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Install modules
+      run: yarn install
+      shell: bash
+      working-directory: js/frontend
+
+    - name: Install CycloneDX
+      run: npm install --global @cyclonedx/cyclonedx-npm
+      shell: bash
+
+    # This step generates a Source Bill of Materials (SBOM) package that captures all the dependencies compiled
+    # into the application.
+    # - name: Generate SBOM
+    #   run: cyclonedx-npm --ignore-npm-errors --output-file bom.json
+    #   shell: bash
+    #   working-directory: js/frontend
+
+    # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
+    # - name: Build SBOM package
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #   run: >
+    #     octopus package zip create
+    #     --id javascript-frontend-sbom
+    #     --version ${{ env.PACKAGE_VERSION }}
+    #     --include **/bom.json
+    #   shell: bash
+    #   working-directory: js/frontend
+
+    # # The SBOM package is pushed to the sales maven feed
+    # - name: Push SBOM Package
+    #   run: |       
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=octopub-frontend-sbom" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=js/frontend/javascript-frontend-sbom.${{ env.PACKAGE_VERSION }}.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
+
+    - name: Set version
+      run: |
+        jq '.frontendVersion = "v${{ env.PACKAGE_VERSION }}"' config.json > /tmp/config.json
+        mv /tmp/config.json config.json
+      shell: bash
+      working-directory: js/frontend/public
+
+    # - name: Build App
+    #   run: yarn run build
+    #   shell: bash
+    #   working-directory: js/frontend
+
+    # - name: Build and deploy serverless package
+    #   run: |
+    #     pushd js/frontend
+    #     zip -r octopub-frontend.${{ env.PACKAGE_VERSION }}.zip serverless.yaml build public/config.json.dot
+    #     popd
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=octopub-frontend-serverless" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=js/frontend/octopub-frontend.${{ env.PACKAGE_VERSION }}.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
+ 
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      with:
+        platforms: linux/amd64
+
+    # The Docker image is built and pushed.
+    # - name: Build, tag, and push image to Dockerhub
+    #   run: |
+    #     docker build -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
+    #     docker push octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
+    #     docker tag  octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-frontend:latest
+    #     docker push octopussamples/octopub-frontend:latest
+    #   shell: bash
+    #   working-directory: js/frontend
+
+    # The MySQL Docker image is built and pushed.
+    # - name: Build, tag, and push image to Dockerhub
+    #   run: |
+    #     #docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
+    #     docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
+    #   shell: bash
+    #   working-directory: js/frontend
+
+
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: https://ghcr.io
+        username: ${{ inputs.github_actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Build, tag, and push image to Dockerhub
+      run: |
+        docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-frontend:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:latest
+      shell: bash
+      working-directory: js/frontend
+
+
+    # - name: Build and push static web package
+    #   run: |
+    #     pushd js/frontend/build
+    #     #zip -r ../octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip .
+    #     zip -r ../octopub-frontend.${{ env.PACKAGE_VERSION }}.zip .
+    #     popd
+        
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=octopub-frontend" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=js/frontend/octopub-frontend.${{ env.PACKAGE_VERSION }}.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
+
+    # - name: Install Cypress modules
+    #   run: npm install
+    #   shell: bash
+    #   working-directory: js/cypress-frontend
+
+    # # End-to-end tests are performed with Cypress.
+    # - name: Build Cypress package
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #   run: >
+    #     octopus package zip create
+    #     --id octopub-frontend-cypress
+    #     --version ${{ env.PACKAGE_VERSION }}
+    #     --out-folder ..
+    #   shell: bash
+    #   working-directory: js/cypress-frontend
+
+    # # The Cypress package is pushed to the sales maven feed.
+    # - name: Push Cypress Package
+    #   run: |
+    #     mvn deploy:deploy-file \
+    #       --batch-mode \
+    #       "-DgroupId=com.octopus" \
+    #       "-DartifactId=octopub-frontend-cypress" \
+    #       "-Dversion=${{ env.PACKAGE_VERSION }}" \
+    #       "-Dpackaging=zip" \
+    #       "-Dfile=js/octopub-frontend-cypress.${{ env.PACKAGE_VERSION }}.zip" \
+    #       "-DrepositoryId=octopus-sales-public-snapshot" \
+    #       "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+    #   shell: bash
+

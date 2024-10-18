@@ -274,4 +274,3 @@ runs:
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
-
