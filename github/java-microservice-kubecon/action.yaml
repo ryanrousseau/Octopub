@@ -442,7 +442,7 @@ runs:
       uses: OctopusDeploy/deploy-release-action@v3
       with:
         project: ${{ inputs.octopus_project_name }}
-        environment: 'Development'
+        environments: 'Development'
         space: 'Target - Kubernetes'
 
     # - name: Build serverless package
