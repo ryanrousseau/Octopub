@@ -433,6 +433,7 @@ runs:
         api_Key: ${{ inputs.octopus_apikey }}
       
     - name: create-release
+      id: create-release
       uses: OctopusDeploy/create-release-action@v3
       with:
         project: ${{ inputs.octopus_project_name }}
