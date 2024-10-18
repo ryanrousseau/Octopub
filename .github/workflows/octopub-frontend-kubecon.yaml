@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Build JavaScript Frontend
-        uses: ./github/js-frontend
+        uses: ./github/js-frontend-kubecon
         with:
           run_number: ${{ github.run_number }}
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
