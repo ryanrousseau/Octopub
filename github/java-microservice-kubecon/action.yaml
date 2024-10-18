@@ -432,7 +432,7 @@ runs:
         server: ${{ inputs.octopus_url }}
         api_Key: ${{ inputs.octopus_apikey }}
       
-    - name: Create-Release
+    - name: create-release
       uses: OctopusDeploy/create-release-action@v3
       with:
         project: ${{ inputs.octopus_project_name }}
