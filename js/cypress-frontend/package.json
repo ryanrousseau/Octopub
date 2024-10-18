@@ -3,8 +3,9 @@
   "version": "0.0.1",
   "description": "A simple cypress test",
   "dependencies": {
-    "mochawesome-merge": "^4.2.0",
+    "cypress-test": "file:",
+    "mocha": "^8.2.1",
     "mochawesome": "^6.2.1",
-    "mocha": "^8.2.1"
+    "mochawesome-merge": "^4.2.0"
   }
 }

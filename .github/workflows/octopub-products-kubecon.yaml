@@ -37,7 +37,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           service_directory: products-microservice
-          octopus_project_name: "Octopub-Kustomize-Product"
+          octopus_project_name: "Octopub-Helm-Product Service"
 
       # - name: Build Audits Helm Chart
       #   uses: ./github/helm
