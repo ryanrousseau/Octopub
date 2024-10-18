@@ -29,12 +29,13 @@ jobs:
           run_number: ${{ github.run_number }}
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          octopus_url: ${{ secrets.OCTOPUS_URL }}
-          octopus_apikey: ${{ secrets.OCTOPUS_API_KEY }}
+          octopus_url: ${{ secrets.OCTOPUS_SAMPLES_URL }}
+          octopus_apikey: ${{ secrets.OCTOPUS_SAMPLES_API_KEY }}
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_password: ${{ secrets.DOCKERHUB_TOKEN }}
           github_token: ${{ github.token }}
           github_actor: ${{ github.actor }}
+          octopus_project_name: "Octopub-Helm-Frontend"
 
       # - name: Build Frontend Helm Chart
       #   uses: ./github/helm

@@ -4,14 +4,14 @@ permissions:
   packages: write
 'on':
   workflow_dispatch: {}
-  push:
-    branches:
-      - main
-    paths:
-      - '**/*'
-      - '!.github/badges/*'
-      - '!README.md'
-      - '!python/**/*'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - '**/*'
+  #     - '!.github/badges/*'
+  #     - '!README.md'
+  #     - '!python/**/*'
 
 jobs:
   build-windows:

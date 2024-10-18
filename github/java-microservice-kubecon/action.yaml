@@ -58,6 +58,9 @@ inputs:
     description: 'Whether to run tests'
     required: true
     default: true
+  octopus_project_name:
+    description: 'The name of the Octopus project'
+    required: true
 
 runs:
   using: "composite"
@@ -422,6 +425,25 @@ runs:
         docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}-mysql:latest
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
+
+    - name: Login to Octopus
+      uses: OctopusDeploy/login-action@v1
+      with:
+        server: ${{ inputs.octopus_url }}
+        apiKey: ${{ inputs.octopus_apikey }}
+      
+    - name: Create Release
+      uses: OctopusDeploy/create-release-action@v3
+      with:
+        project: ${{ inputs.octopus_project_name }}
+        space: 'Spaces-105'
+
+    - name: Deploy Release
+      uses: OctopusDeploy/deploy-release-action@v3
+      with:
+        project: ${{ inputs.octopus_project_name }}
+        environment: 'Development'
+        space: 'Spaces-105'
 
     # - name: Build serverless package
     #   if: ${{ inputs.lambda_build == 'true' }}
