@@ -34,11 +34,11 @@ jobs:
           github_token: ${{ github.token }}
           github_actor: ${{ github.actor }}
 
-      - name: Build Frontend Helm Chart
-        uses: ./github/helm
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          chart_directory: octopub-frontend
-          octopus_url: ${{ secrets.DSC_OCTOPUS_URL }}
-          octopus_apikey: ${{ secrets.DSC_OCTOPUS_API }}
+      # - name: Build Frontend Helm Chart
+      #   uses: ./github/helm
+      #   with:
+      #     aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     chart_directory: octopub-frontend
+      #     octopus_url: ${{ secrets.DSC_OCTOPUS_URL }}
+      #     octopus_apikey: ${{ secrets.DSC_OCTOPUS_API }}

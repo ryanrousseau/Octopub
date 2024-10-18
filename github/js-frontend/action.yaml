@@ -160,10 +160,10 @@ runs:
       shell: bash
       working-directory: js/frontend/public
 
-    - name: Build App
-      run: yarn run build
-      shell: bash
-      working-directory: js/frontend
+    # - name: Build App
+    #   run: yarn run build
+    #   shell: bash
+    #   working-directory: js/frontend
 
     # - name: Build and deploy serverless package
     #   run: |
