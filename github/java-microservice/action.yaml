@@ -329,17 +329,17 @@ runs:
     #   working-directory: systemd/${{ inputs.service_directory }}
 
     # The Docker image is built and pushed.
-    - name: Build, tag, and push image to Dockerhub
-      if: ${{ inputs.docker_build == 'true' }}
-      run: |
-        ls -la
-        ls -la target
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
-        docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
-        docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} octopussamples/octopub-${{ inputs.service_directory }}:latest
-        docker push octopussamples/octopub-${{ inputs.service_directory }}:latest
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
+    # - name: Build, tag, and push image to Dockerhub
+    #   if: ${{ inputs.docker_build == 'true' }}
+    #   run: |
+    #     ls -la
+    #     ls -la target
+    #     docker build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
+    #     docker push octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
+    #     docker tag  octopussamples/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} octopussamples/octopub-${{ inputs.service_directory }}:latest
+    #     docker push octopussamples/octopub-${{ inputs.service_directory }}:latest
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
 
     # Rebuild the app to support a MySQL database
     - name: Build MySQL version with Maven
@@ -375,12 +375,12 @@ runs:
     #   working-directory: java/${{ inputs.service_directory }}
 
     # The MySQL Docker image is built and pushed.
-    - name: Build, tag, and push image to Dockerhub
-      if: ${{ inputs.docker_build == 'true' }}
-      run: |
-        docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest --platform=linux/amd64 --push .
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
+    # - name: Build, tag, and push image to Dockerhub
+    #   if: ${{ inputs.docker_build == 'true' }}
+    #   run: |
+    #     docker buildx build -f src/main/docker/Dockerfile.legacy-jar -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-${{ inputs.service_directory }}-mysql:latest --platform=linux/amd64 --push .
+    #   shell: bash
+    #   working-directory: java/${{ inputs.service_directory }}
 
 
     # - name: Build and push Dockerhub
