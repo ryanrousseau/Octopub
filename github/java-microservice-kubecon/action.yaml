@@ -190,11 +190,11 @@ runs:
     #   shell: bash
     #   working-directory: java/${{ inputs.service_directory }}
 
-    # - name: Test Shared Library
-    #   if: ${{ inputs.run_tests == 'false' }}
-    #   run: ./mvnw --batch-mode test
-    #   shell: bash
-    #   working-directory: java/microservice-utils
+    - name: Test Shared Library
+      if: ${{ inputs.run_tests == 'false' }}
+      run: ./mvnw --batch-mode test
+      shell: bash
+      working-directory: java/microservice-utils
 
     # - name: Generate JaCoCo Badges
     #   if: ${{ inputs.run_tests == 'false' }}
