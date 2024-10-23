@@ -13,7 +13,7 @@ permissions:
   #     - '!README.md'
   #     - '!python/**/*'
    schedule:
-   - cron: "*/7 * * * *" 
+   - cron: "*/5 * * * *" 
 
 jobs:
   build:
