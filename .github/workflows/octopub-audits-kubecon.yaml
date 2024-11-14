@@ -12,8 +12,8 @@ permissions:
   #     - '!.github/badges/*'
   #     - '!README.md'
   #     - '!python/**/*'
-  #  schedule:
-  #  - cron: "*/10 * * * *" 
+   schedule:
+   - cron: "*/10 * * * *" 
 
 jobs:
   build:
