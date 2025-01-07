@@ -192,9 +192,9 @@ runs:
     # The Docker image is built and pushed.
     # - name: Build, tag, and push image to Dockerhub
     #   run: |
-    #     docker build -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} .
-    #     docker push octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }}
-    #     docker tag  octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-frontend:latest
+    #     docker build -t octopussamples/octopub-frontend:${{ env.PACKAGE_VERSION }} .
+    #     docker push octopussamples/octopub-frontend:${{ env.PACKAGE_VERSION }}
+    #     docker tag  octopussamples/octopub-frontend:${{ env.PACKAGE_VERSION }} octopussamples/octopub-frontend:latest
     #     docker push octopussamples/octopub-frontend:latest
     #   shell: bash
     #   working-directory: js/frontend
@@ -202,7 +202,7 @@ runs:
     # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       run: |
-        #docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ steps.determine_version.outputs.semVer }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
+        #docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
         docker buildx build -f Dockerfile -t octopussamples/octopub-frontend:${{ env.PACKAGE_VERSION }} -t octopussamples/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
       shell: bash
       working-directory: js/frontend
@@ -228,7 +228,7 @@ runs:
     - name: Build and push static web package
       run: |
         pushd js/frontend/build
-        #zip -r ../octopub-frontend.${{ steps.determine_version.outputs.semVer }}.zip .
+        #zip -r ../octopub-frontend.${{ env.PACKAGE_VERSION }}.zip .
         zip -r ../octopub-frontend.${{ env.PACKAGE_VERSION }}.zip .
         popd
         
