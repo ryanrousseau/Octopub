@@ -42,7 +42,7 @@ runs:
         additionalArguments: /overrideconfig mode=Mainline
 
     - name: Set Version
-      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      run: echo "PACKAGE_VERSION=$(date +'%Y%m%d').${{ github.run_number }}.${{ github.run_attempt }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Set up JDK 1.17
