@@ -25,16 +25,9 @@ runs:
 
     - uses: chrisdickinson/setup-yq@latest
 
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.15
-      with:
-        versionSpec: 5.x
-
-    - id: determine_version
-      name: Determine Version
-      uses: gittools/actions/gitversion/execute@v0.9.15
-      with:
-        additionalArguments: /overrideconfig mode=Mainline
+    - name: Set Version
+      run: echo "PACKAGE_VERSION=$(date +'%Y.%m.%d').$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+      shell: bash
 
     - name: Install Helm S3 plugin
       run: helm plugin install https://github.com/hypnoglow/helm-s3.git
@@ -50,8 +43,8 @@ runs:
 
     - name: Update helm version
       run: |
-        yq w -i Chart.yaml 'version' "${{ steps.determine_version.outputs.semVer }}"
-        yq w -i Chart.yaml 'appVersion' "${{ steps.determine_version.outputs.semVer }}"
+        yq w -i Chart.yaml 'version' "${{ env.PACKAGE_VERSION }}"
+        yq w -i Chart.yaml 'appVersion' "${{ env.PACKAGE_VERSION }}"
       shell: bash
       working-directory: helm/${{ inputs.chart_directory }}
 
@@ -65,7 +58,7 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws_access_key }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws_secret_access_key }}
         AWS_DEFAULT_REGION: ap-southeast-2
-      run: helm s3 push --relative --ignore-if-exists ./${{ inputs.chart_directory }}-${{ steps.determine_version.outputs.semVer }}.tgz sales
+      run: helm s3 push --relative --ignore-if-exists ./${{ inputs.chart_directory }}-${{ env.PACKAGE_VERSION }}.tgz sales
       shell: bash
       working-directory: helm/${{ inputs.chart_directory }}
 
@@ -77,5 +70,5 @@ runs:
         OCTOPUS_SPACE: Matthew Casperson
       with:
         packages: ${{ inputs.chart_directory }}
-        version: ${{ steps.determine_version.outputs.semVer }}
+        version: ${{ env.PACKAGE_VERSION }}
         overwrite_mode: OverwriteExisting
