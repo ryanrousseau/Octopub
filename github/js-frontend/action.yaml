@@ -95,19 +95,14 @@ runs:
       id: branch-name
       uses: tj-actions/branch-names@v7
 
-    - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.15
-      with:
-        versionSpec: 5.x
-
-#    - id: determine_version
-#      name: Determine Version
-#      uses: gittools/actions/gitversion/execute@v0.9.15
-#      with:
-#        additionalArguments: /overrideconfig mode=Mainline
-
     - name: Set Version
+      if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
       run: echo "PACKAGE_VERSION=$(date +'%Y%m%d').${{ github.run_number }}.${{ github.run_attempt }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set Branch Version
+      if: ${{ steps.branch-name.outputs.current_branch != 'main' }}
+      run: echo "PACKAGE_VERSION=$(date +'%Y%m%d').${{ github.run_number }}.${{ github.run_attempt }}-${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Install modules
