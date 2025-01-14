@@ -23,10 +23,20 @@ runs:
     - name: Clone code repo
       uses: actions/checkout@v2
 
+    - name: Get branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v7
+
     - uses: chrisdickinson/setup-yq@latest
 
     - name: Set Version
+      if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
       run: echo "PACKAGE_VERSION=$(date +'%Y%m%d').${{ github.run_number }}.${{ github.run_attempt }}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Set Branch Version
+      if: ${{ steps.branch-name.outputs.current_branch != 'main' }}
+      run: echo "PACKAGE_VERSION=$(date +'%Y%m%d').${{ github.run_number }}.${{ github.run_attempt }}-${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_ENV
       shell: bash
 
     - name: Install Helm S3 plugin
