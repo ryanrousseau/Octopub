@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+  
+resources:
+- octopub-ingress.yaml
+- octopub-products.yaml
+
+configMapGenerator:
+  - name: product-service-env-vars
+    env: variables.properties
+
+generatorOptions:
+  disableNameSuffixHash: true

@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: #{Octopub.Kustomize.Cluster.Namespace}
+resources:
+- ../../base
+
+patches:
+  - target: 
+      kind: Ingress
+      name: octopub-ingress-products
+    path: octopub-ingress.yaml
+  - target:
+      kind: Service
+      name: octopub-products-deployment
+    path: octopub-products-deployment.yaml
+  - target:
+      kind: Deployment
+      name: octopub-products-service
+    path: octopub-products-service.yaml
+
+configMapGenerator:
+  - name: product-service-env-vars
+    behavior: merge
+    env: variables.properties
+
+images:
+  - name: octopussamples/octopub-products-microservice
+    newName: ghcr.io/#{Octopus.Action.Package[octopub-products-microservice].PackageId}
+    newTag: #{Octopus.Action.Package[octopub-products-microservice].PackageVersion}

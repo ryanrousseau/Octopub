@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: octopub-ingress-audits
+  annotations:
+spec:
+  ingressClassName: nginx
+  rules:
+  - host:
+    http:
+      paths:
+      - path: /api/audits
+        pathType: Prefix
+        backend:
+          service:
+            name: octopub-audit-cluster-ip
+            port:
+              name: http-audit
+      - path: /health/audits
+        pathType: Prefix
+        backend:
+          service:
+            name: octopub-audit-cluster-ip
+            port:
+              name: http-audit
