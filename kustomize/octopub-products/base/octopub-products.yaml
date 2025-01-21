@@ -27,36 +27,11 @@ spec:
     spec:
       containers:
         - name: productservice
-          image: octopussamples/octopub-products-microservice-mysql
+          image: octopussamples/octopub-products-microservice
           ports:
             - name: http-product
               containerPort: 8083
           env:
-            - name: DATABASE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: database-credentials
-                  key: database-password
-            - name: DATABASE_HOSTNAME
-              valueFrom:
-                configMapKeyRef:
-                  name: product-service-env-vars
-                  key: DATABASE_HOSTNAME
-            - name: DATABASE_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: product-service-env-vars
-                  key: DATABASE_PORT
-            - name: DATABASE_NAME
-              valueFrom:
-                configMapKeyRef:
-                  name: product-service-env-vars
-                  key: DATABASE_NAME
-            - name: DATABASE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: database-credentials
-                  key: database-user
             - name: MIGRATE_AT_START
               valueFrom:
                 configMapKeyRef:
