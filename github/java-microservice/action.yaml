@@ -341,6 +341,25 @@ runs:
       shell: bash
       working-directory: java/${{ inputs.service_directory }}
 
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: https://ghcr.io
+        username: ${{ inputs.github_actor }}
+        password: ${{ inputs.github_token }}
+
+    - name: Build, tag, and push image to GHCR
+      if: ${{ inputs.docker_build == 'true' }}
+      run: |
+        ls -la
+        ls -la target
+        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
+        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
+        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}    
+
     # Rebuild the app to support a MySQL database
     - name: Build MySQL version with Maven
       run: ./mvnw --batch-mode package --file pom.xml -DskipTests -Dquarkus.profile=mysql
@@ -374,6 +393,14 @@ runs:
     #   shell: bash
     #   working-directory: java/${{ inputs.service_directory }}
 
+    - name: Login to DockerHub MySQL
+      if: ${{ inputs.docker_build == 'true' }}
+      uses: docker/login-action@v2
+      with:
+        username: ${{ inputs.dockerhub_username }}
+        password: ${{ inputs.dockerhub_password }}
+
+
     # The MySQL Docker image is built and pushed.
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
@@ -394,24 +421,13 @@ runs:
     #     context: .
     #     file: java/${{ inputs.service_directory }}/src/main/docker/Dockerfile.legacy-jar
 
-    - name: Login to GHCR
+    - name: Login to GHCR MySQL
       uses: docker/login-action@v3
       with:
         registry: https://ghcr.io
         username: ${{ inputs.github_actor }}
         password: ${{ inputs.github_token }}
 
-    - name: Build, tag, and push image to GHCR
-      if: ${{ inputs.docker_build == 'true' }}
-      run: |
-        ls -la
-        ls -la target
-        docker build -f src/main/docker/Dockerfile.legacy-jar -t ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} .
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }}
-        docker tag  ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:${{ env.PACKAGE_VERSION }} ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
-        docker push ghcr.io/octopussolutionsengineering/octopub-${{ inputs.service_directory }}:latest
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
 
     - name: Build, tag, and push image to Dockerhub
       if: ${{ inputs.docker_build == 'true' }}
