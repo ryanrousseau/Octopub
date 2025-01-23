@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: octopub-productservice-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: productservice
+  template:
+    metadata:
+      labels:
+        component: productservice
+    spec:
+      containers:
+        - name: productservice
+          image: octopussamples/octopub-products-microservice
+          ports:
+            - name: http-product
+              containerPort: 8083
+          env:
+            - name: MIGRATE_AT_START
+              value: "true"
+            - name: COGNITO_DISABLE_AUTH
+              value: "true"

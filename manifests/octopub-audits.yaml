@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: octopub-audit-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: auditservice
+  template:
+    metadata:
+      labels:
+        component: auditservice
+    spec:
+      containers:
+        - name: auditservice
+          image: octopussamples/octopub-audit-microservice
+          ports:
+            - name: http-audit
+              containerPort: 10000
+          env:
+            - name: MIGRATE_AT_START
+              value: "true"
+            - name: COGNITO_DISABLE_AUTH
+              value: "true"
