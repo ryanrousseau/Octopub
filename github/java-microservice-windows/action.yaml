@@ -82,12 +82,11 @@ runs:
           "commons-io:commons-io:2.12.0")
         $deps | % {
            echo "Installing $_"
-           $split=$_.Split(":")
-           mvn dependency:get `
+           mvn dependency:copy `
             --batch-mode `
             "-DrepoUrl=https://repo.maven.apache.org/maven2" `
             "-Dartifact=$_" `
-            "-Ddest=$mavenDir/lib/$($split[0]).$($split[1]).jar"
+            "-DoutputDirectory=$mavenDir/lib"
         }
       shell: powershell
       working-directory: java
