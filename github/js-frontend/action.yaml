@@ -249,16 +249,24 @@ runs:
       shell: bash
       working-directory: js/cypress-frontend
 
-    # End-to-end tests are performed with Cypress.
-    - name: Build Cypress package
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: >
-        octopus package zip create
-        --id octopub-frontend-cypress
-        --version ${{ env.PACKAGE_VERSION }}
-        --out-folder ..
+    # # End-to-end tests are performed with Cypress.
+    # - name: Build Cypress package
+    #   env:
+    #     OCTOPUS_URL: ${{ inputs.octopus_url }}
+    #     OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
+    #   run: >
+    #     octopus package zip create
+    #     --id octopub-frontend-cypress
+    #     --version ${{ env.PACKAGE_VERSION }}
+    #     --out-folder ..
+    #   shell: bash
+    #   working-directory: js/cypress-frontend
+
+    - name: Build zip for Cypress package
+      run: |
+        pushd js/cypress-frontend
+        zip -r octopub-frontend-cypress.${{ env.PACKAGE_VERSION }}.zip .
+        popd
       shell: bash
       working-directory: js/cypress-frontend
 
