@@ -81,7 +81,7 @@ runs:
 
     - uses: actions/setup-node@v3
       with:
-        node-version: 14
+        node-version: 19
         cache: 'npm'
         cache-dependency-path: js/frontend/yarn.lock
 
@@ -204,18 +204,25 @@ runs:
         username: ${{ inputs.github_actor }}
         password: ${{ inputs.github_token }}
 
-    - name: Build, tag, and push versioned image to Dockerhub
-      run: |
-        docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }} .
-        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }}
-      shell: bash
-      working-directory: js/frontend
+    # - name: Build, tag, and push versioned image to Dockerhub
+    #   run: |
+    #     docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }} .
+    #     docker push ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }}
+    #   shell: bash
+    #   working-directory: js/frontend
+
+    # - name: Build, tag, and push latest image to Dockerhub
+    #   if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
+    #   run: |
+    #     docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:latest .
+    #     docker push ghcr.io/octopussolutionsengineering/octopub-frontend:latest
+    #   shell: bash
+    #   working-directory: js/frontend
 
     - name: Build, tag, and push latest image to Dockerhub
       if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
       run: |
-        docker build -t ghcr.io/octopussolutionsengineering/octopub-frontend:latest .
-        docker push ghcr.io/octopussolutionsengineering/octopub-frontend:latest
+        docker buildx build -f Dockerfile -t ghcr.io/octopussolutionsengineering/octopub-frontend:${{ env.PACKAGE_VERSION }} -t ghcr.io/octopussolutionsengineering/octopub-frontend:latest --platform=linux/amd64,linux/arm64 --push .
       shell: bash
       working-directory: js/frontend
 
@@ -242,7 +249,7 @@ runs:
       shell: bash
       working-directory: js/cypress-frontend
 
-    # End-to-end tests are performed with Cypress.
+     # End-to-end tests are performed with Cypress.
     - name: Build Cypress package
       env:
         OCTOPUS_URL: ${{ inputs.octopus_url }}
