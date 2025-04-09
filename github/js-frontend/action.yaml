@@ -264,9 +264,7 @@ runs:
 
     - name: Build zip for Cypress package
       run: |
-        pushd js/cypress-frontend
         zip -r octopub-frontend-cypress.${{ env.PACKAGE_VERSION }}.zip .
-        popd
       shell: bash
       working-directory: js/cypress-frontend
 
