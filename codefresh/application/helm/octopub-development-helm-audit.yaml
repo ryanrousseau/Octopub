@@ -8,7 +8,7 @@ spec:
   project: default
   source:
      repoURL: https://github.com/OctopusSolutionsEngineering/octopub.git
-     targetRevision: HEAD
+     targetRevision: add-codefresh
      path: codefresh/helm/octopub-audits/development
   destination:
     server: https://kubernetes.default.svc
