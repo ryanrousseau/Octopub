@@ -55,7 +55,7 @@ service:
     service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
 
 ingress:
-  enabled: true
+  enabled: false
   className: "nginx"
   annotations: {}
     # kubernetes.io/ingress.class: nginx
