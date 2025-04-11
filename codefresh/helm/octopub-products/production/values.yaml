@@ -8,7 +8,7 @@ image:
   repository: octopussamples/octopub-products-microservice
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 20250409.396.1
+  tag: 20250411.397.1
 
 database:
   migrateOnStartup: true
@@ -59,7 +59,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: octopub.production.octopusdemos.com
+    - host: octopub.test.octopusdemos.com
       paths:
         - path: /api/products
           pathType: Prefix
