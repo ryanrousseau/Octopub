@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: octopussamples-octopub-frontend-production
+  annotations:
+    codefresh.io/product: octopussamples-octopub-frontend
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/OctopusSolutionsEngineering/octopub.git
+    targetRevision: HEAD
+    path: codefresh/helm/octopub-frontend/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cf-production
+  syncPolicy:
+    automated:  
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - Validate=false
+    - CreateNamespace=true

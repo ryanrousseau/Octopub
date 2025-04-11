@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "octopub.fullname" . }}
+  labels:
+    {{- include "octopub.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "octopub.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "octopub.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "octopub.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+            {{- if .Values.overrideTheme }}
+            - name: UDL_SKIPEMPTY_SETVALUE_0
+              value: "[/usr/share/nginx/html/config.json][overrideTheme]{{ .Values.overrideTheme }}"
+            {{- end }}
+            {{- if .Values.productEndpointOverride }}
+            - name: UDL_SKIPEMPTY_SETVALUE_1
+              value: "[/usr/share/nginx/html/config.json][productEndpoint]{{ .Values.productEndpointOverride }}"
+            {{- end }}
+            {{- if .Values.productHealthEndpointOverride }}
+            - name: UDL_SKIPEMPTY_SETVALUE_2
+              value: "[/usr/share/nginx/html/config.json][productHealthEndpoint]{{ .Values.productHealthEndpointOverride }}"
+            {{- end }}
+            {{- if .Values.auditsEndpointOverride }}
+            - name: UDL_SKIPEMPTY_SETVALUE_3
+              value: "[/usr/share/nginx/html/config.json][auditEndpoint]{{ .Values.auditsEndpointOverride }}"
+            {{- end }}
+            {{- if .Values.auditsHealthEndpointOverride }}
+            - name: UDL_SKIPEMPTY_SETVALUE_4
+              value: "[/usr/share/nginx/html/config.json][auditHealthEndpoint]{{ .Values.auditsHealthEndpointOverride }}"
+            {{- end }}
+            {{- if .Values.customPrimaryColor }}
+            - name: UDL_SKIPEMPTY_SETVALUE_5
+              value: "[/usr/share/nginx/html/config.json][customPrimaryColor]{{ .Values.customPrimaryColor }}"
+            {{- end }}
+            {{- if .Values.customSecondaryColor }}
+            - name: UDL_SKIPEMPTY_SETVALUE_6
+              value: "[/usr/share/nginx/html/config.json][customSecondaryColor]{{ .Values.customSecondaryColor }}"
+            {{- end }}
+            {{- if .Values.customBackgroundColor }}
+            - name: UDL_SKIPEMPTY_SETVALUE_7
+              value: "[/usr/share/nginx/html/config.json][customBackgroundColor]{{ .Values.customBackgroundColor }}"
+            {{- end }}
+            {{- if .Values.customPaperColor }}
+            - name: UDL_SKIPEMPTY_SETVALUE_8
+              value: "[/usr/share/nginx/html/config.json][customPaperColor]{{ .Values.customPaperColor }}"
+            {{- end }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.network.port }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
