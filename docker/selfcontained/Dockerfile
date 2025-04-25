@@ -4,8 +4,8 @@ FROM eclipse-temurin:17 AS builder
 
 # add pom.xml and source code
 ADD java /java
-RUN cd /java; ./mvnw install
-RUN cd /java/products-microservice; ./mvnw package
+RUN cd /java; ./mvnw install --batch-mode
+RUN cd /java/products-microservice; ./mvnw package --batch-mode
 
 # build sbom
 RUN cd /java/products-microservice; ./mvnw cyclonedx:makeAggregateBom -DskipTests --no-transfer-progress --batch-mode
