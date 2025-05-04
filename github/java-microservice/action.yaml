@@ -553,7 +553,7 @@ runs:
     - name: Create Azure Function Zip
       if: ${{ inputs.azure_build == 'true' }}
       run: |
-        cp java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-microservice-runner.jar java/${{ inputs.service_directory }}/azure-config
+        cp java/${{ inputs.service_directory }}/target/*-runner.jar java/${{ inputs.service_directory }}/azure-config
         cd java/${{ inputs.service_directory }}/azure-config
         zip ../azure-function.zip ./* -x "local.settings.json"
       shell: bash
