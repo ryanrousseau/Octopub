@@ -8,6 +8,8 @@ Write-Host "Extracting files from Docker image..."
 $IMAGE_NAME = "#{Application.Image}"
 $CONTAINER_NAME = "temporary"
 
+Write-Host "Extracting $IMAGE_NAME"
+
 # Create directory if it doesn't exist
 New-Item -Path "extracted_files" -ItemType Directory -Force | Out-Null
 
