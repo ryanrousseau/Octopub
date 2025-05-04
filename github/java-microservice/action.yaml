@@ -228,6 +228,46 @@ runs:
         commit-msg: Update badges
         github-token: ${{ inputs.github_token }}
 
+    - name: Build serverless azure function package
+      if: ${{ inputs.azure_build == 'true' }}
+      run: |
+        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+        ./mvnw \
+          --batch-mode \
+          package \
+          -P "azurefunctions" \
+          -DskipTests
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Create Azure Function Zip
+      if: ${{ inputs.azure_build == 'true' }}
+      run: |
+        cp java/${{ inputs.service_directory }}/target/*-runner.jar java/${{ inputs.service_directory }}/azure-config
+        cp java/${{ inputs.service_directory }}/target/lib java/${{ inputs.service_directory }}/azure-config
+        cd java/${{ inputs.service_directory }}/azure-config
+        zip -r ../azure-function.zip * -x "local.settings.json"
+      shell: bash
+
+    - name: Add SBOM to serverless azure function package
+      if: ${{ inputs.azure_build == 'true' }}
+      run: zip java/${{ inputs.service_directory }}/azure-function.zip java/${{ inputs.service_directory }}/target/bom.json
+      shell: bash
+
+    - name: Deploy serverless azure function package
+      if: ${{ inputs.azure_build == 'true' }}
+      run: |
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-azurefunction-jvm" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/azure-function.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
     # This step generates a Source Bill of Materials (SBOM) package that captures all the dependencies compiled
     # into the application.
     - name: Generate SBOM
@@ -537,47 +577,6 @@ runs:
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash
-
-    - name: Build serverless azure function package
-      if: ${{ inputs.azure_build == 'true' }}
-      run: |
-        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
-        ./mvnw \
-          --batch-mode \
-          package \
-          -P "azurefunctions" \
-          -DskipTests
-      shell: bash
-      working-directory: java/${{ inputs.service_directory }}
-
-    - name: Create Azure Function Zip
-      if: ${{ inputs.azure_build == 'true' }}
-      run: |
-        cp java/${{ inputs.service_directory }}/target/azure-functions/*-runner.jar java/${{ inputs.service_directory }}/azure-config
-        cp java/${{ inputs.service_directory }}/target/azure-functions/lib java/${{ inputs.service_directory }}/azure-config
-        cd java/${{ inputs.service_directory }}/azure-config
-        zip -r ../azure-function.zip * -x "local.settings.json"
-      shell: bash
-
-    - name: Add SBOM to serverless azure function package
-      if: ${{ inputs.azure_build == 'true' }}
-      run: zip java/${{ inputs.service_directory }}/azure-function.zip java/${{ inputs.service_directory }}/target/bom.json
-      shell: bash
-
-    - name: Deploy serverless azure function package
-      if: ${{ inputs.azure_build == 'true' }}
-      run: |
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=${{ inputs.service_directory }}-azurefunction-jvm" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=java/${{ inputs.service_directory }}/azure-function.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
-
 
     - name: Package the SAM template
       if: ${{ inputs.lambda_build == 'true' }}
