@@ -80,12 +80,12 @@
     <plugins>
       <plugin>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.6.0</version>
         <dependencies>
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
-            <version>9.0</version>
+            <version>10.23.1</version>
           </dependency>
         </dependencies>
         <configuration>
@@ -102,7 +102,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.7</version>
+        <version>0.8.13</version>
         <executions>
           <execution>
             <id>default-prepare-agent</id>
@@ -146,7 +146,7 @@
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
-        <version>2.7.1</version>
+        <version>2.9.1</version>
         <configuration>
           <outputFormat>all</outputFormat>
         </configuration>
