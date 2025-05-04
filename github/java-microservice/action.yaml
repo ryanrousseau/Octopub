@@ -556,6 +556,7 @@ runs:
         cp java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-microservice-runner.jar java/${{ inputs.service_directory }}/azure-config
         cd java/${{ inputs.service_directory }}/azure-config
         zip ../azure-function.zip ./* -x "local.settings.json"
+      shell: bash
 
     - name: Add SBOM to serverless azure function package
       if: ${{ inputs.azure_build == 'true' }}
