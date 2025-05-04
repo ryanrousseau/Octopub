@@ -38,6 +38,10 @@ inputs:
     description: 'Whether to build the lambda executable or not'
     required: true
     default: true
+  azure_build:
+    description: 'Whether to build the azure functions executable or not'
+    required: true
+    default: true
   postman_build:
     description: 'Whether to build the postman test'
     required: true
@@ -530,6 +534,44 @@ runs:
           "-Dversion=${{ env.PACKAGE_VERSION }}" \
           "-Dpackaging=zip" \
           "-Dfile=java/${{ inputs.service_directory }}/target/function.zip" \
+          "-DrepositoryId=octopus-sales-public-snapshot" \
+          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
+      shell: bash
+
+    - name: Build serverless azure function package
+      if: ${{ inputs.azure_build == 'true' }}
+      run: |
+        # Need to compile in docker image to fix https://github.com/quarkusio/quarkus/issues/25897
+        ./mvnw \
+          --batch-mode \
+          package \
+          -P "azurefunctions" \
+          -DskipTests
+      shell: bash
+      working-directory: java/${{ inputs.service_directory }}
+
+    - name: Create Azure Function Zip
+      if: ${{ inputs.azure_build == 'true' }}
+      run: |
+        cp java/${{ inputs.service_directory }}/target/${{ inputs.service_directory }}-microservice-runner.jar java/${{ inputs.service_directory }}/azure-config
+        cd java/${{ inputs.service_directory }}/azure-config
+        zip ../azure-function.zip ./* -x "local.settings.json"
+
+    - name: Add SBOM to serverless azure function package
+      if: ${{ inputs.azure_build == 'true' }}
+      run: zip java/${{ inputs.service_directory }}/azure-function.zip java/${{ inputs.service_directory }}/target/bom.json
+      shell: bash
+
+    - name: Deploy serverless azure function package
+      if: ${{ inputs.azure_build == 'true' }}
+      run: |
+        mvn deploy:deploy-file \
+          --batch-mode \
+          "-DgroupId=com.octopus" \
+          "-DartifactId=${{ inputs.service_directory }}-azurefunction-jvm" \
+          "-Dversion=${{ env.PACKAGE_VERSION }}" \
+          "-Dpackaging=zip" \
+          "-Dfile=java/${{ inputs.service_directory }}/azure-function.zip" \
           "-DrepositoryId=octopus-sales-public-snapshot" \
           "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
       shell: bash

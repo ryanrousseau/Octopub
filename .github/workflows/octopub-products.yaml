@@ -53,6 +53,7 @@ jobs:
           octopus_apikey: ${{ secrets.DSC_OCTOPUS_API }}
           service_directory: products-microservice-gcf
           lambda_build: false
+          azure_build: false
           postman_build: false
           liquibase_build: false
           docker_build: false
