@@ -12,6 +12,7 @@ permissions:
       - '!.github/badges/*'
       - '!README.md'
       - '!python/**/*'
+      - '!octopus/**/*'
 
 jobs:
   build:

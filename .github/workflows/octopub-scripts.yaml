@@ -11,6 +11,7 @@ permissions:
       - '**/*'
       - '!.github/badges/*'
       - '!README.md'
+      - '!octopus/**/*'
 
 jobs:
   build:
