@@ -19,10 +19,16 @@
 
   <dependencyManagement>
     <dependencies>
+      <!--
+        This dependency has to be matched to the version of JUnit supported by Quarkus (i.e., the
+        <quarkus.platform.version> setting).
+        The easiest way to find this is to use a page like https://mvnrepository.com/artifact/io.quarkus/quarkus-core/3.15.4
+        and look at the Test Dependencies.
+      -->
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.8.2</version>
+        <version>5.10.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -58,7 +64,7 @@
           <failsOnError>true</failsOnError>
           <linkXRef>false</linkXRef>
           <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
-          <violationSeverity>warning</violationSeverity>
+          <violationSeverity>error</violationSeverity>
         </configuration>
         <dependencies>
           <dependency>

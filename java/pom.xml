@@ -43,7 +43,7 @@
             <failsOnError>true</failsOnError>
             <linkXRef>false</linkXRef>
             <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
-            <violationSeverity>warning</violationSeverity>
+            <violationSeverity>error</violationSeverity>
           </configuration>
           <dependencies>
             <dependency>
