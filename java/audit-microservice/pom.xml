@@ -13,7 +13,7 @@
     <version>1.0</version>
   </parent>
   <properties>
-    <compiler-plugin.version>3.8.1</compiler-plugin.version>
+    <compiler-plugin.version>3.14.0</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
@@ -22,7 +22,7 @@
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>3.10.2</quarkus.platform.version>
-    <surefire-plugin.version>3.2.1</surefire-plugin.version>
+    <surefire-plugin.version>3.5.3</surefire-plugin.version>
   </properties>
   <build>
     <finalName>audit-service</finalName>
@@ -132,7 +132,7 @@
     <dependency>
       <groupId>io.github.trilobitsystems</groupId>
       <artifactId>rsql-jpa</artifactId>
-      <version>v2023.31.73</version>
+      <version>v2023.35.5</version>
     </dependency>
     <dependency>
       <artifactId>aws-lambda-java-events</artifactId>
