@@ -8,6 +8,11 @@ $SUCCESS = 0
 # Find all bom.json files
 $bomFiles = Get-ChildItem -Path "." -Filter "bom.json" -Recurse -File
 
+if ($bomFiles.Count -eq 0) {
+    Write-Host "No bom.json files found in the current directory."
+    exit 1
+}
+
 foreach ($file in $bomFiles) {
     Write-Host "Scanning $($file.FullName)"
 
