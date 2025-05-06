@@ -6,6 +6,7 @@ Write-Host "##octopus[stdout-default]"
 $SUCCESS = 0
 
 Write-Host "##octopus[stdout-verbose]"
+$PSStyle.EnableAnsiEscapeSequences = $false
 Get-ChildItem -Path "."
 Write-Host "##octopus[stdout-default]"
 
