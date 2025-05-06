@@ -10,9 +10,14 @@ Get-ChildItem -Path "." | Out-String
 Write-Host "##octopus[stdout-default]"
 
 # Find all bom.json files
-# Note that we scan the parent dirctory because this script is run from a git repo and the current working
-# directory is the "script" directory.
-$bomFiles = Get-ChildItem -Path ".." -Filter "bom.json" -Recurse -File
+$currentDirectoryName = Split-Path -Path $PWD -Leaf
+$path = if ($currentDirectoryName -eq "octopus") {
+    ".."
+} else {
+    "."
+}
+
+$bomFiles = Get-ChildItem -Path $path -Filter "bom.json" -Recurse -File
 
 if ($bomFiles.Count -eq 0) {
     Write-Host "No bom.json files found in the current directory."
