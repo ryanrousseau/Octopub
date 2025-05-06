@@ -5,6 +5,10 @@ Write-Host "##octopus[stdout-default]"
 
 $SUCCESS = 0
 
+Write-Host "##octopus[stdout-verbose]"
+Get-ChildItem -Path "."
+Write-Host "##octopus[stdout-default]"
+
 # Find all bom.json files
 $bomFiles = Get-ChildItem -Path "." -Filter "bom.json" -Recurse -File
 
