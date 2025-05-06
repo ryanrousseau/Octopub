@@ -10,7 +10,7 @@ $bomFiles = Get-ChildItem -Path "." -Filter "bom.json" -Recurse -File
 
 if ($bomFiles.Count -eq 0) {
     Write-Host "No bom.json files found in the current directory."
-    exit 1
+    exit 0
 }
 
 foreach ($file in $bomFiles) {
