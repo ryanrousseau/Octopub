@@ -6,8 +6,7 @@ Write-Host "##octopus[stdout-default]"
 $SUCCESS = 0
 
 Write-Host "##octopus[stdout-verbose]"
-$PSStyle.EnableAnsiEscapeSequences = $false
-Get-ChildItem -Path "."
+Get-ChildItem -Path "." | Out-String
 Write-Host "##octopus[stdout-default]"
 
 # Find all bom.json files
