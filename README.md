@@ -158,7 +158,7 @@ The following test event is used to call the health check endpoint. It is based 
       "userAgent": "Custom User Agent String",
       "user": null
     },
-    "path": "/prod/path/to/resource",
+    "path": "/health/products/GET",
     "resourcePath": "/{proxy+}",
     "httpMethod": "POST",
     "apiId": "1234567890",
