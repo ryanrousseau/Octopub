@@ -29,6 +29,14 @@ https://octopus-sales-public-maven-repo.s3.ap-southeast-2.amazonaws.com/snapshot
 * `com.octopus:audit-microservice-liquidbase` - The audit microservice Liquidbase database migration scripts. The changelog file is called `audit-changeLog.xml`.
 * `com.octopus:audit-microservice-sbom` - The audit microservice SBOM
 
+## AWS Lambda Entry Points
+
+The JVM Lambda functions used a handler of `io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler::handleRequest`.
+
+The native Lambda functions use a handler of `not.used.in.provided.runtime`.
+
+See the [Quarkus documentation](https://quarkus.io/guides/aws-lambda) for more information.
+
 ## Downloading files locally
 
 You can download Zip Maven artifacts locally with a command like:
