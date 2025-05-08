@@ -107,9 +107,14 @@ else {
 }
 
 Write-Output "Attempting to find the function $functionName in the region $regionName"
+Write-Output "##octopus[stderr-progress]"
 
 aws lambda get-function --function-name $functionName --region $regionName | Out-Null
-if ($LASTEXITCODE -eq 0) {
+$exitCode = $LASTEXITCODE
+
+Write-Output "##octopus[stderr-default]"
+
+if ($exitCode -eq 0) {
     Write-Highlight "Lambda function '$functionName' exists. Updating code from S3..."
 
     $lambdaFunction = aws lambda update-function-code `
