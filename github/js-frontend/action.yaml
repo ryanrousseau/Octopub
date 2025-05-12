@@ -162,7 +162,7 @@ runs:
     - name: Build and deploy serverless package
       run: |
         pushd js/frontend
-        zip -r octopub-frontend.${{ env.PACKAGE_VERSION }}.zip serverless.yaml build public/config.json.dot
+        zip -r octopub-frontend.${{ env.PACKAGE_VERSION }}.zip bom.json serverless.yaml build public/config.json.dot
         popd
         mvn deploy:deploy-file \
           --batch-mode \
