@@ -33,5 +33,5 @@ if ($response.nameAvailable -ne $True)
 }
 else
 {
-  Write-Host "Function name available!"
+  Write-Host "$AzureSiteName available!"
 }
