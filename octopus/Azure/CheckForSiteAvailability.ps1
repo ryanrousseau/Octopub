@@ -1,6 +1,12 @@
+# Define parameters
+param (
+    [Parameter(Mandatory=$true)]
+    [string]$AzureSiteName
+)
+
 # Configure payload
 $jsonPayload = @{
-  "name" = "#{Project.Azure.Function.Octopub.Products.Name}"
+  "name" = "$AzureSiteName"
   "type" = "Microsoft.Web/sites"
   "isFQDN" = $false
 }
@@ -23,7 +29,7 @@ Set-OctopusVariable -Name NameAvailable -Value $response.nameAvailable
 
 if ($response.nameAvailable -ne $True)
 {
-  Write-Highlight "The Function Name of #{Project.Azure.Function.Octopub.Products.Name} is already in use, please change the Project Variable Project.Azure.Function.Octopub.Products.Name to something else."
+  Write-Highlight "The Function Name of $AzureSiteName is already in use, please change the Project Variable Project.Azure.Function.Octopub.Products.Name to something else."
 }
 else
 {
