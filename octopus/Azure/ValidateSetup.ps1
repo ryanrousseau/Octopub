@@ -73,15 +73,19 @@ try
     {
       $octopusUrl = "#{Octopus.Web.ServerUri}"
     }
-    $apiKey = "#{Project.Octopus.Api.Key}"
-    $spaceId = "#{Octopus.Space.Id}"
-    $headers = @{"X-Octopus-ApiKey"="$apiKey"}
 
-    $roleTargets = Invoke-RestMethod -Method Get -Uri "$octopusUrl/api/$spaceId/machines?roles=$Role" -Headers $headers
-    
-    if ($roleTargets.Items.Count -lt 1)
+    $apiKey = "#{Project.Octopus.Api.Key}"
+    if (![string]::IsNullOrWhitespace($apiKey))
     {
-      $errorCollection += @("Expected at least 1 target for role $Role, but found $($roleTargets.Items.Count).  Have you run the Create Infrastructure runbook?")
+      $spaceId = "#{Octopus.Space.Id}"
+      $headers = @{"X-Octopus-ApiKey"="$apiKey"}
+
+      $roleTargets = Invoke-RestMethod -Method Get -Uri "$octopusUrl/api/$spaceId/machines?roles=$Role" -Headers $headers
+      
+      if ($roleTargets.Items.Count -lt 1)
+      {
+        $errorCollection += @("Expected at least 1 target for role $Role, but found $($roleTargets.Items.Count).  Have you run the Create Infrastructure runbook?")
+      }
     }
   }
 
