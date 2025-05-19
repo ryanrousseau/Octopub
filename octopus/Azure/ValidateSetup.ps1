@@ -87,6 +87,8 @@ try
 
   if ($errorCollection.Count -gt 0)
   {
+    Write-Host "The project setup could not be validated.  Please check the following errors:"
+    Write-Host "-----------------------------------------------------"
     foreach ($item in $errorCollection)
     {
       Write-Highlight "$item"
