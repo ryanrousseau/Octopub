@@ -75,7 +75,7 @@ try
     }
 
     $apiKey = "#{Project.Octopus.Api.Key}"
-    if (![string]::IsNullOrWhitespace($apiKey))
+    if (![string]::IsNullOrWhitespace($apiKey) -and $apiKey -ne "CHANGE ME")
     {
       $spaceId = "#{Octopus.Space.Id}"
       $headers = @{"X-Octopus-ApiKey"="$apiKey"}
