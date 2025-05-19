@@ -58,7 +58,6 @@ try
       "The project variable Project.Octopus.Api.Key has not been configured.",
       "See the [Octopus documentation](https://octopus.com/docs/octopus-rest-api/how-to-create-an-api-key) for details on creating an API key."
     )
-    throw "The Api Key has not been configured, unable to proceed with checks!"
   }
 
   if ($CheckForTargets)
