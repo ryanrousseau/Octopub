@@ -105,6 +105,26 @@ try
   }
 
   Set-OctopusVariable -Name SetupValid -Value $setupValid  
+
+  # Check to see if SMTP has been configured
+  $apiKey = "#{Project.Octopus.Api.Key}"
+  $spaceId = "#{Octopus.Space.Id}"
+  $headers = @{"X-Octopus-ApiKey"=$apiKey}
+
+  if ([String]::IsNullOrWhitespace("#{Octopus.Web.ServerUri}"))
+  {
+    $octopusUrl = "#{Octopus.Web.BaseUrl}"
+  }
+  else
+  {
+    $octopusUrl = "#{Octopus.Web.ServerUri}"
+  }    
+
+  $uriBuilder = New-Object System.UriBuilder("$octopusUrl/api/smtpconfiguration/isconfigured")
+  $uri = $uriBuilder.ToString()
+  $smtpConfigured= Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
+
+  Set-OctopusVariable -Name SmtpConfigured -Value $smtpConfigured.IsConfigured
 }
 catch
 {
