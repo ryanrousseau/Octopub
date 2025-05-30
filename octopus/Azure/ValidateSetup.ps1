@@ -111,7 +111,7 @@ try
 
   if ($smtpConfigured.IsConfigured -ne $true)
   {
-    $errorCollection += @("SMTP has not been configured.  Please see the [documentation](https://octopus.com/docs/deployment-targets/communication/smtp) for details on configuring SMTP.")
+    Write-Highlight "SMTP has not been configured.  Please see the [documentation](https://octopus.com/docs/deployment-targets/communication/smtp) for details on configuring SMTP."
   }  
 
   if ($errorCollection.Count -gt 0)
