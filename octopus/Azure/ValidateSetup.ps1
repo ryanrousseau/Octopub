@@ -89,23 +89,6 @@ try
     }
   }
 
-  if ($errorCollection.Count -gt 0)
-  {
-    Write-Host "The project setup could not be validated.  Please check the following errors:"
-    Write-Host "-----------------------------------------------------"
-    foreach ($item in $errorCollection)
-    {
-      Write-Highlight "$item"
-    }
-  }
-  else
-  {
-    $setupValid = $true
-    Write-Host "Setup valid!"
-  }
-
-  Set-OctopusVariable -Name SetupValid -Value $setupValid  
-
   # Check to see if SMTP has been configured
   $apiKey = "#{Project.Octopus.Api.Key}"
   $spaceId = "#{Octopus.Space.Id}"
@@ -125,6 +108,29 @@ try
   $smtpConfigured= Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
 
   Set-OctopusVariable -Name SmtpConfigured -Value $smtpConfigured.IsConfigured
+
+  if ($smtpConfigured.IsConfigured -ne $true)
+  {
+    $errorCollection += @("SMTP has not been configured.  Please see the [documentation](https://octopus.com/docs/deployment-targets/communication/smtp) for details on configuring SMTP.")
+  }  
+
+  if ($errorCollection.Count -gt 0)
+  {
+    Write-Host "The project setup could not be validated.  Please check the following errors:"
+    Write-Host "-----------------------------------------------------"
+    foreach ($item in $errorCollection)
+    {
+      Write-Highlight "$item"
+    }
+  }
+  else
+  {
+    $setupValid = $true
+    Write-Host "Setup valid!"
+  }
+
+  Set-OctopusVariable -Name SetupValid -Value $setupValid  
+
 }
 catch
 {
