@@ -34,7 +34,7 @@ foreach ($file in $samFiles) {
 
     # Generate the report, capturing the output
     try {
-        $OUTPUT = docker run --rm  -v "$($file.FullName):/input/$($file.Name)" ghcr.io/octopusdeploylabs/python-workertools sh -c "pip install checkov --root-user-action=ignore && checkov -f /input/$($file.Name)"
+        $OUTPUT = docker run --rm  -v "$($file.FullName):/input/$($file.Name)" ghcr.io/octopusdeploylabs/python-workertools sh -c "pip install checkov --root-user-action=ignore > /dev/null 2>&1 && checkov -f /input/$($file.Name)"
         $exitCode = $LASTEXITCODE
     }
     catch {
