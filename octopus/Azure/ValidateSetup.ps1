@@ -89,31 +89,6 @@ try
     }
   }
 
-  # Check to see if SMTP has been configured
-  $apiKey = "#{Project.Octopus.Api.Key}"
-  $spaceId = "#{Octopus.Space.Id}"
-  $headers = @{"X-Octopus-ApiKey"=$apiKey}
-
-  if ([String]::IsNullOrWhitespace("#{Octopus.Web.ServerUri}"))
-  {
-    $octopusUrl = "#{Octopus.Web.BaseUrl}"
-  }
-  else
-  {
-    $octopusUrl = "#{Octopus.Web.ServerUri}"
-  }    
-
-  $uriBuilder = New-Object System.UriBuilder("$octopusUrl/api/smtpconfiguration/isconfigured")
-  $uri = $uriBuilder.ToString()
-  $smtpConfigured= Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
-
-  Set-OctopusVariable -Name SmtpConfigured -Value $smtpConfigured.IsConfigured
-
-  if ($smtpConfigured.IsConfigured -ne $true)
-  {
-    Write-Highlight "SMTP has not been configured.  Please see the [documentation](https://octopus.com/docs/deployment-targets/communication/smtp) for details on configuring SMTP."
-  }  
-
   if ($errorCollection.Count -gt 0)
   {
     Write-Host "The project setup could not be validated.  Please check the following errors:"
