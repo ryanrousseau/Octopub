@@ -80,11 +80,17 @@ try
       $spaceId = "#{Octopus.Space.Id}"
       $headers = @{"X-Octopus-ApiKey"="$apiKey"}
 
-      $roleTargets = Invoke-RestMethod -Method Get -Uri "$octopusUrl/api/$spaceId/machines?roles=$Role" -Headers $headers
-      
-      if ($roleTargets.Items.Count -lt 1)
+      try
       {
-        $errorCollection += @("Expected at least 1 target for role $Role, but found $($roleTargets.Items.Count).  Have you run the Create Infrastructure runbook?")
+        $roleTargets = Invoke-RestMethod -Method Get -Uri "$octopusUrl/api/$spaceId/machines?roles=$Role" -Headers $headers
+        if ($roleTargets.Items.Count -lt 1)
+        {
+          $errorCollection += @("Expected at least 1 target for role $Role, but found $($roleTargets.Items.Count).  Have you run the Create Infrastructure runbook?")
+        }
+      }
+      catch
+      {
+        $errorCollection += @("Failed to retrieve role targets: $($_.Exception.Message)")
       }
     }
   }
