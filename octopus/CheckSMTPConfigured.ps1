@@ -19,6 +19,7 @@ if (![string]::IsNullOrWhitespace($apiKey) -and $apiKey -ne "CHANGE ME")
 
   try
   {
+    $headers = @{ "X-Octopus-ApiKey" = $apiKey }
     $smtpConfigured = Invoke-RestMethod -Method Get -Uri $uri -Headers $headers
     $isSmtpConfigured = $smtpConfigured.IsConfigured
   }
