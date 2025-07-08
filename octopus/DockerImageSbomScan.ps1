@@ -15,7 +15,11 @@ New-Item -Path "extracted_files" -ItemType Directory -Force | Out-Null
 
 Write-Host "##octopus[stdout-verbose]"
 # Create a temporary container
-docker create --name $CONTAINER_NAME $IMAGE_NAME 2>&1
+docker create --name $CONTAINER_NAME --entrypoint='' $IMAGE_NAME /bin/sleep 600 2>&1
+
+Start-Sleep 5
+
+docker logs $CONTAINER_NAME 2>&1
 
 # Export the container's root filesystem
 # PowerShell equivalent for tar extraction
