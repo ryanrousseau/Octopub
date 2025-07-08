@@ -19,7 +19,7 @@ docker create --name $CONTAINER_NAME $IMAGE_NAME 2>&1
 
 # Export the container's root filesystem
 # PowerShell equivalent for tar extraction
-docker export $CONTAINER_NAME | tar --wildcards --wildcards-match-slash -xvf - -C "/tmp/extracted_files" "**/bom.json" 2>&1
+docker export $CONTAINER_NAME | tar --wildcards --wildcards-match-slash -xvf - -C "extracted_files" "**/bom.json" 2>&1
 
 # Remove the temporary container
 docker rm $CONTAINER_NAME 2>&1
