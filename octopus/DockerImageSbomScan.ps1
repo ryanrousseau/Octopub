@@ -20,6 +20,7 @@ docker create --name $CONTAINER_NAME --entrypoint='' $IMAGE_NAME /bin/sleep 600 
 Start-Sleep 5
 
 Write-Host "Getting logs from the temporary container"
+docker top $CONTAINER_NAME 2>&1
 docker logs $CONTAINER_NAME 2>&1
 
 # Export the container's root filesystem
