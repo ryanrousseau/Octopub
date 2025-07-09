@@ -1,6 +1,6 @@
 Write-Host "Downloading Trivy"
 Write-Host "##octopus[stdout-verbose]"
-$trivyUrl = "https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.tar.gz"
+$trivyUrl = "https://github.com/aquasecurity/trivy/releases/download/v0.64.1/trivy_0.64.1_Linux-64bit.tar.gz"
 $trivyOutputPath = "trivy.tar.gz"
 Invoke-WebRequest -Uri $trivyUrl -OutFile $trivyOutputPath -UseBasicParsing
 tar -xzf "trivy.tar.gz"
