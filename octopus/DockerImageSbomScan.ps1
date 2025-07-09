@@ -29,14 +29,15 @@ ls -la $outputPath
 Write-Host "##octopus[stdout-default]"
 
 # Extract files from the Docker image
+Write-Host "Downloading image #{Application.Image}"
+Write-Host "##octopus[stdout-verbose]"
+$IMAGE_NAME = "#{Application.Image}"
+./skopeo copy "docker://$IMAGE_NAME" "oci:image:latest"
+Write-Host "##octopus[stdout-default]"
+
 Write-Host "Extracting files from Docker image #{Application.Image}"
 Write-Host "##octopus[stdout-verbose]"
-
-$IMAGE_NAME = "#{Application.Image}"
-
-./skopeo copy "docker://$IMAGE_NAME" "oci:image:latest"
 ./umoci unpack --image image --rootless bundle
-
 Write-Host "##octopus[stdout-default]"
 
 $TIMESTAMP = [DateTimeOffset]::Now.ToUnixTimeMilliseconds()
