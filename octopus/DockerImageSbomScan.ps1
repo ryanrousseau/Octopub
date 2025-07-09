@@ -6,9 +6,13 @@ Invoke-WebRequest -Uri $trivyUrl -OutFile $trivyOutputPath -UseBasicParsing
 tar -xzf "trivy.tar.gz"
 Write-Host "##octopus[stdout-default]"
 
-Write-Host "Pulling Skopio Docker Image"
+Write-Host "Downloading Skopeo"
 Write-Host "##octopus[stdout-verbose]"
-docker pull quay.io/skopeo/stable:latest
+
+$skopeoUrl = "https://github.com/lework/skopeo-binary/releases/download/v1.19.0/skopeo-linux-amd64"
+$skopeoOutputPath = "skopeo"
+Invoke-WebRequest -Uri $skopeoUrl -OutFile $skopeoOutputPath -UseBasicParsing
+chmod +x $skopeoOutputPath
 Write-Host "##octopus[stdout-default]"
 
 Write-Host "Downloading umoci binary"
@@ -27,7 +31,7 @@ Write-Host "##octopus[stdout-verbose]"
 
 $IMAGE_NAME = "#{Application.Image}"
 
-docker run -v "$(Get-Location):/output" quay.io/skopeo/stable:latest copy "docker://$IMAGE_NAME" "oci:/output/image:latest"
+./skopeo copy "docker://$IMAGE_NAME" "oci:image:latest"
 ./umoci unpack --image image --rootless bundle
 
 Write-Host "##octopus[stdout-default]"
