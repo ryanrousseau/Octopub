@@ -20,6 +20,8 @@ Write-Host "##octopus[stdout-default]"
 
 # Extract files from the Docker image
 Write-Host "Extracting files from Docker image..."
+Write-Host "##octopus[stdout-verbose]"
+
 $IMAGE_NAME = "#{Application.Image}"
 
 docker run -v "$(Get-Location):/output" quay.io/skopeo/stable:latest copy "docker://$IMAGE_NAME" "oci:/output/image:latest"
