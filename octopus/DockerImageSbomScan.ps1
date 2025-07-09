@@ -29,7 +29,7 @@ ls -la $outputPath
 Write-Host "##octopus[stdout-default]"
 
 # Extract files from the Docker image
-Write-Host "Extracting files from Docker image..."
+Write-Host "Extracting files from Docker image #{Application.Image}"
 Write-Host "##octopus[stdout-verbose]"
 
 $IMAGE_NAME = "#{Application.Image}"
