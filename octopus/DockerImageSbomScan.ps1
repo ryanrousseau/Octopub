@@ -32,7 +32,7 @@ Write-Host "##octopus[stdout-default]"
 Write-Host "Downloading image #{Application.Image}"
 Write-Host "##octopus[stdout-verbose]"
 $IMAGE_NAME = "#{Application.Image}"
-./skopeo copy "docker://$IMAGE_NAME" "oci:image:latest"
+./skopeo copy --insecure-policy "docker://$IMAGE_NAME" "oci:image:latest"
 Write-Host "##octopus[stdout-default]"
 
 Write-Host "Extracting files from Docker image #{Application.Image}"
