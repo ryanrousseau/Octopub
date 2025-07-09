@@ -48,7 +48,7 @@ foreach ($file in $bomFiles) {
 
     # Generate the report, capturing the output
     try {
-        $OUTPUT = docker run --rm -v "$($file.FullName):/input/$($file.Name)" ghcr.io/aquasecurity/trivy sbom -q "/input/$($file.Name)"
+        $OUTPUT = ./trivy sbom -q $file.FullName
         $exitCode = $LASTEXITCODE
     }
     catch {
