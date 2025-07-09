@@ -94,21 +94,6 @@ foreach ($file in $bomFiles) {
     }
 }
 
-# Cleanup
-for ($i = 1; $i -le 10; $i++) {
-    try {
-        if (Test-Path "bundle") {
-            Set-ItemProperty -Path "bundle" -Name IsReadOnly -Value $false -Recurse -ErrorAction SilentlyContinue
-            Remove-Item -Path "bundle" -Recurse -Force -ErrorAction Stop
-            break
-        }
-    }
-    catch {
-        Write-Host "Attempting to clean up files"
-        Start-Sleep -Seconds 1
-    }
-}
-
 # Set Octopus variable
 Set-OctopusVariable -Name "VerificationResult" -Value $SUCCESS
 
