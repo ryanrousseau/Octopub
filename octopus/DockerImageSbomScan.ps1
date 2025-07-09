@@ -1,6 +1,9 @@
-Write-Host "Pulling Trivy Docker Image"
+Write-Host "Downloading Trivy"
 Write-Host "##octopus[stdout-verbose]"
-docker pull ghcr.io/aquasecurity/trivy
+$trivyUrl = "https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.tar.gz"
+$trivyOutputPath = "trivy.tar.gz"
+Invoke-WebRequest -Uri $trivyUrl -OutFile $trivyOutputPath -UseBasicParsing
+tar -xzf "trivy.tar.gz"
 Write-Host "##octopus[stdout-default]"
 
 Write-Host "Pulling Skopio Docker Image"
@@ -54,7 +57,7 @@ foreach ($file in $bomFiles) {
     }
 
     # Run again to generate the JSON output
-    docker run --rm -v "${PWD}:/output" -v "$($file.FullName):/input/$($file.Name)" ghcr.io/aquasecurity/trivy sbom -q -f json -o /output/depscan-bom.json "/input/$($file.Name)"
+    ./trivy sbom -q -f json -o depscan-bom.json $file.FullName
 
     # Octopus Deploy artifact
     New-OctopusArtifact "$PWD/depscan-bom.json"
