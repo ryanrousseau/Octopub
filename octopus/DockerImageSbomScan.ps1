@@ -3,32 +3,28 @@ Write-Host "##octopus[stdout-verbose]"
 docker pull ghcr.io/aquasecurity/trivy
 Write-Host "##octopus[stdout-default]"
 
+Write-Host "Pulling Trivy Docker Image"
+Write-Host "##octopus[stdout-verbose]"
+docker pull quay.io/skopeo/stable:latest
+Write-Host "##octopus[stdout-default]"
+
+Write-Host "Downloading umoci binary"
+Write-Host "##octopus[stdout-verbose]"
+
+# Download umoci binary
+$url = "https://github.com/opencontainers/umoci/releases/download/v0.5.0/umoci.linux.amd64"
+$outputPath = "umoci"
+Invoke-WebRequest -Uri $url -OutFile $outputPath -UseBasicParsing
+chmod +x $outputPath
+Write-Host "##octopus[stdout-default]"
+
 # Extract files from the Docker image
 Write-Host "Extracting files from Docker image..."
 $IMAGE_NAME = "#{Application.Image}"
-$CONTAINER_NAME = "temporary"
 
-Write-Host "Extracting $IMAGE_NAME"
+docker run -v "$(Get-Location):/output" quay.io/skopeo/stable:latest copy "docker://$IMAGE_NAME" "oci:/output/image:latest"
+./umoci unpack --image image --rootless bundle
 
-# Create directory if it doesn't exist
-New-Item -Path "extracted_files" -ItemType Directory -Force | Out-Null
-
-Write-Host "##octopus[stdout-verbose]"
-# Create a temporary container
-docker create --name $CONTAINER_NAME --entrypoint='' $IMAGE_NAME /bin/sleep 600 2>&1
-
-Start-Sleep 5
-
-Write-Host "Getting logs from the temporary container"
-docker top $CONTAINER_NAME 2>&1
-docker logs $CONTAINER_NAME 2>&1
-
-# Export the container's root filesystem
-# PowerShell equivalent for tar extraction
-docker export $CONTAINER_NAME | tar --wildcards --wildcards-match-slash -xvf - -C "extracted_files" "**/bom.json" 2>&1
-
-# Remove the temporary container
-docker rm $CONTAINER_NAME 2>&1
 Write-Host "##octopus[stdout-default]"
 
 $TIMESTAMP = [DateTimeOffset]::Now.ToUnixTimeMilliseconds()
