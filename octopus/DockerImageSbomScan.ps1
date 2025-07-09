@@ -3,7 +3,7 @@ Write-Host "##octopus[stdout-verbose]"
 docker pull ghcr.io/aquasecurity/trivy
 Write-Host "##octopus[stdout-default]"
 
-Write-Host "Pulling Trivy Docker Image"
+Write-Host "Pulling Skopio Docker Image"
 Write-Host "##octopus[stdout-verbose]"
 docker pull quay.io/skopeo/stable:latest
 Write-Host "##octopus[stdout-default]"
