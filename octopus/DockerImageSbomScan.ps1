@@ -32,12 +32,12 @@ Write-Host "##octopus[stdout-default]"
 Write-Host "Downloading image #{Application.Image}"
 Write-Host "##octopus[stdout-verbose]"
 $IMAGE_NAME = "#{Application.Image}"
-./skopeo copy --insecure-policy "docker://$IMAGE_NAME" "oci:image:latest"
+./skopeo copy --insecure-policy "docker://$IMAGE_NAME" "oci:image:latest" 2>&1
 Write-Host "##octopus[stdout-default]"
 
 Write-Host "Extracting files from Docker image #{Application.Image}"
 Write-Host "##octopus[stdout-verbose]"
-./umoci unpack --image image --rootless bundle
+./umoci unpack --image image --rootless bundle 2>&1
 Write-Host "##octopus[stdout-default]"
 
 $TIMESTAMP = [DateTimeOffset]::Now.ToUnixTimeMilliseconds()
