@@ -57,7 +57,7 @@ foreach ($file in $bomFiles) {
 
     # Generate the report, capturing the output
     try {
-        $OUTPUT = ./trivy sbom "$($file.FullName)"
+        $OUTPUT = ./trivy sbom -q "$($file.FullName)"
         $exitCode = $LASTEXITCODE
     }
     catch {
@@ -66,7 +66,7 @@ foreach ($file in $bomFiles) {
     }
 
     # Run again to generate the JSON output
-    ./trivy sbom -f json -o depscan-bom.json "$($file.FullName)"
+    ./trivy sbom -q -f json -o depscan-bom.json "$($file.FullName)"
 
     # Octopus Deploy artifact
     New-OctopusArtifact "$PWD/depscan-bom.json"
