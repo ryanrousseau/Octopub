@@ -4,6 +4,7 @@ $trivyUrl = "https://github.com/aquasecurity/trivy/releases/download/v0.18.3/tri
 $trivyOutputPath = "trivy.tar.gz"
 Invoke-WebRequest -Uri $trivyUrl -OutFile $trivyOutputPath -UseBasicParsing
 tar -xzf "trivy.tar.gz"
+ls -la trivy
 Write-Host "##octopus[stdout-default]"
 
 Write-Host "Downloading Skopeo"
@@ -13,6 +14,7 @@ $skopeoUrl = "https://github.com/lework/skopeo-binary/releases/download/v1.19.0/
 $skopeoOutputPath = "skopeo"
 Invoke-WebRequest -Uri $skopeoUrl -OutFile $skopeoOutputPath -UseBasicParsing
 chmod +x $skopeoOutputPath
+ls -la $skopeoOutputPath
 Write-Host "##octopus[stdout-default]"
 
 Write-Host "Downloading umoci binary"
@@ -23,6 +25,7 @@ $url = "https://github.com/opencontainers/umoci/releases/download/v0.5.0/umoci.l
 $outputPath = "umoci"
 Invoke-WebRequest -Uri $url -OutFile $outputPath -UseBasicParsing
 chmod +x $outputPath
+ls -la $outputPath
 Write-Host "##octopus[stdout-default]"
 
 # Extract files from the Docker image
