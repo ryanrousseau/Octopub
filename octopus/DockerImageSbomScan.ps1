@@ -48,7 +48,10 @@ $bomFiles = Get-ChildItem -Path "." -Filter "bom.json" -Recurse -File
 
 foreach ($file in $bomFiles) {
     Write-Host "Scanning $($file.FullName)"
+
+    Write-Host "##octopus[stdout-verbose]"
     Get-Content -Path $file.FullName | Out-String | Write-Host
+    Write-Host "##octopus[stdout-default]"
 
     # Delete any existing report file
     if (Test-Path "$PWD/depscan-bom.json") {
