@@ -52,18 +52,3 @@ jobs:
           docker push octopussamples/octopub-selfcontained:latest
         shell: bash
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: https://ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
-
-      - name: Build, tag, and push worker image to GHRC
-        if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
-        run: |
-          docker build -f docker/selfcontained/Dockerfile -t ghcr.io/octopussolutionsengineering/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }} .
-          docker push ghcr.io/octopussolutionsengineering/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }}
-          docker tag  ghcr.io/octopussolutionsengineering/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }} ghcr.io/octopussolutionsengineering/octopub-selfcontained:latest
-          docker push ghcr.io/octopussolutionsengineering/octopub-selfcontained:latest
-        shell: bash
