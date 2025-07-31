@@ -120,33 +120,6 @@ runs:
       shell: bash
       working-directory: js/frontend
 
-    # We capture the SBOM, which is found in the file bom.xml, as a versioned ZIP package.
-    - name: Build SBOM package
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: >
-        octopus package zip create
-        --id javascript-frontend-sbom
-        --version ${{ env.PACKAGE_VERSION }}
-        --include **/bom.json
-      shell: bash
-      working-directory: js/frontend
-
-    # The SBOM package is pushed to the sales maven feed
-    - name: Push SBOM Package
-      run: |       
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=octopub-frontend-sbom" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=js/frontend/javascript-frontend-sbom.${{ env.PACKAGE_VERSION }}.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
-
     - name: Set version
       run: |
         jq '.frontendVersion = "v${{ env.PACKAGE_VERSION }}"' config.json > /tmp/config.json
