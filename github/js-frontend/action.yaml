@@ -158,22 +158,6 @@ runs:
       run: yarn run build
       shell: bash
       working-directory: js/frontend
-
-    - name: Build and deploy serverless package
-      run: |
-        pushd js/frontend
-        zip -r octopub-frontend.${{ env.PACKAGE_VERSION }}.zip bom.json serverless.yaml build public/config.json.dot
-        popd
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=octopub-frontend-serverless" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=js/frontend/octopub-frontend.${{ env.PACKAGE_VERSION }}.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
  
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -226,52 +210,4 @@ runs:
       shell: bash
       working-directory: js/frontend
 
-    - name: Build and push static web package
-      run: |
-        pushd js/frontend/build
-        #zip -r ../octopub-frontend.${{ env.PACKAGE_VERSION }}.zip .
-        zip -r ../octopub-frontend.${{ env.PACKAGE_VERSION }}.zip .
-        popd
-        
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=octopub-frontend" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=js/frontend/octopub-frontend.${{ env.PACKAGE_VERSION }}.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
 
-    - name: Install Cypress modules
-      run: npm install
-      shell: bash
-      working-directory: js/cypress-frontend
-
-     # End-to-end tests are performed with Cypress.
-    - name: Build Cypress package
-      env:
-        OCTOPUS_URL: ${{ inputs.octopus_url }}
-        OCTOPUS_API_KEY: ${{ inputs.octopus_apikey }}
-      run: >
-        octopus package zip create
-        --id octopub-frontend-cypress
-        --version ${{ env.PACKAGE_VERSION }}
-        --out-folder ..
-      shell: bash
-      working-directory: js/cypress-frontend
-
-    # The Cypress package is pushed to the sales maven feed.
-    - name: Push Cypress Package
-      run: |
-        mvn deploy:deploy-file \
-          --batch-mode \
-          "-DgroupId=com.octopus" \
-          "-DartifactId=octopub-frontend-cypress" \
-          "-Dversion=${{ env.PACKAGE_VERSION }}" \
-          "-Dpackaging=zip" \
-          "-Dfile=js/octopub-frontend-cypress.${{ env.PACKAGE_VERSION }}.zip" \
-          "-DrepositoryId=octopus-sales-public-snapshot" \
-          "-Durl=s3://octopus-sales-public-maven-repo/snapshot"
-      shell: bash
