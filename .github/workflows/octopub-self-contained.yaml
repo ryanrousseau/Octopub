@@ -46,9 +46,9 @@ jobs:
       - name: Build, tag, and push worker image to Dockerhub
         if: ${{ steps.branch-name.outputs.current_branch == 'main' }}
         run: |
-          docker build -f docker/selfcontained/Dockerfile -t octopussamples/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }} .
-          docker push octopussamples/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }}
-          docker tag  octopussamples/octopub-selfcontained:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-selfcontained:latest
-          docker push octopussamples/octopub-selfcontained:latest
+          docker build -f docker/selfcontained/Dockerfile -t octopussolutionsengineering/octopub:${{ steps.determine_version.outputs.semVer }} .
+          docker push octopussolutionsengineering/octopub:${{ steps.determine_version.outputs.semVer }}
+          docker tag  octopussolutionsengineering/octopub:${{ steps.determine_version.outputs.semVer }} octopussamples/octopub-selfcontained:latest
+          docker push octopussolutionsengineering/octopub:latest
         shell: bash
 
